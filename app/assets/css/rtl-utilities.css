@@ -1,0 +1,320 @@
+/* ==========================================================================
+   RTL Utilities - Complete RTL Support System
+   ========================================================================== */
+
+/* ==========================================================================
+   Logical Properties Utilities
+   ========================================================================== */
+
+/* Margin Inline Utilities */
+.ms-1 { margin-inline-start: 4px !important; }
+.ms-2 { margin-inline-start: 8px !important; }
+.ms-3 { margin-inline-start: 12px !important; }
+.ms-4 { margin-inline-start: 16px !important; }
+.ms-5 { margin-inline-start: 20px !important; }
+.ms-6 { margin-inline-start: 24px !important; }
+
+.me-1 { margin-inline-end: 4px !important; }
+.me-2 { margin-inline-end: 8px !important; }
+.me-3 { margin-inline-end: 12px !important; }
+.me-4 { margin-inline-end: 16px !important; }
+.me-5 { margin-inline-end: 20px !important; }
+.me-6 { margin-inline-end: 24px !important; }
+
+/* Padding Inline Utilities */
+.ps-1 { padding-inline-start: 4px !important; }
+.ps-2 { padding-inline-start: 8px !important; }
+.ps-3 { padding-inline-start: 12px !important; }
+.ps-4 { padding-inline-start: 16px !important; }
+.ps-5 { padding-inline-start: 20px !important; }
+.ps-6 { padding-inline-start: 24px !important; }
+
+.pe-1 { padding-inline-end: 4px !important; }
+.pe-2 { padding-inline-end: 8px !important; }
+.pe-3 { padding-inline-end: 12px !important; }
+.pe-4 { padding-inline-end: 16px !important; }
+.pe-5 { padding-inline-end: 20px !important; }
+.pe-6 { padding-inline-end: 24px !important; }
+
+/* Text Alignment Utilities */
+.text-start { text-align: start !important; }
+.text-end { text-align: end !important; }
+
+/* ==========================================================================
+   RTL-Specific Component Fixes
+   ========================================================================== */
+
+/* Sidebar RTL Support */
+[dir="rtl"] .app-sidebar {
+  border-left: 1px solid rgb(var(--v-theme-outline-variant));
+  border-right: none;
+}
+
+[dir="ltr"] .app-sidebar {
+  border-right: 1px solid rgb(var(--v-theme-outline-variant));
+  border-left: none;
+}
+
+/* Header RTL Support - rely on flex and logical spacing; no forced margins */
+
+/* Scroll to Top Button */
+[dir="rtl"] .scroll-top-btn {
+  right: auto !important;
+  left: 24px !important;
+}
+
+[dir="ltr"] .scroll-top-btn {
+  right: 24px !important;
+  left: auto !important;
+}
+
+/* ==========================================================================
+   Data Tables RTL Support
+   ========================================================================== */
+
+/* Table Header Icons */
+[dir="rtl"] .v-data-table thead th .v-data-table-header__icon {
+  margin-left: 0;
+  margin-right: 4px;
+}
+
+[dir="ltr"] .v-data-table thead th .v-data-table-header__icon {
+  margin-left: 4px;
+  margin-right: 0;
+}
+
+/* Table Cell Alignment */
+[dir="rtl"] .v-data-table td,
+[dir="rtl"] .v-data-table th {
+  text-align: start;
+}
+
+/* ==========================================================================
+   Lists and Navigation RTL Support
+   ========================================================================== */
+
+/* List Items */
+[dir="rtl"] .v-list-item__prepend {
+  margin-inline-end: 16px;
+  margin-inline-start: 0;
+}
+
+[dir="ltr"] .v-list-item__prepend {
+  margin-inline-start: 0;
+  margin-inline-end: 16px;
+}
+
+[dir="rtl"] .v-list-item__append {
+  margin-inline-start: 16px;
+  margin-inline-end: 0;
+}
+
+[dir="ltr"] .v-list-item__append {
+  margin-inline-start: 16px;
+  margin-inline-end: 0;
+}
+
+/* ==========================================================================
+   Menu and Dropdown RTL Support
+   ========================================================================== */
+
+/* Menu Positioning */
+[dir="rtl"] .v-menu {
+  transform-origin: top left;
+}
+
+[dir="ltr"] .v-menu {
+  transform-origin: top right;
+}
+
+/* ==========================================================================
+   Form Elements RTL Support
+   ========================================================================== */
+
+/* Input Icons */
+[dir="rtl"] .v-input__prepend {
+  margin-inline-end: 12px;
+  margin-inline-start: 0;
+}
+
+[dir="rtl"] .v-input__append {
+  margin-inline-start: 12px;
+  margin-inline-end: 0;
+}
+
+/* Checkboxes and Radio Buttons */
+[dir="rtl"] .v-selection-control {
+  flex-direction: row-reverse;
+}
+
+/* ==========================================================================
+   Card and Panel RTL Support
+   ========================================================================== */
+
+/* Card Actions */
+[dir="rtl"] .v-card-actions {
+  flex-direction: row-reverse;
+}
+
+/* ==========================================================================
+   Breadcrumbs RTL Support
+   ========================================================================== */
+
+[dir="rtl"] .v-breadcrumbs {
+  direction: rtl;
+}
+
+[dir="rtl"] .v-breadcrumbs .v-breadcrumbs__item {
+  direction: rtl;
+}
+
+/* Do not flip divider; icon is chosen directionally in code */
+
+/* ==========================================================================
+   Pagination RTL Support
+   ========================================================================== */
+
+/* [dir="rtl"] .v-pagination {
+  flex-direction: row-reverse;
+} */
+
+/* [dir="rtl"] .v-pagination__item,
+[dir="rtl"] .v-pagination__navigation {
+  transform: scaleX(-1);
+} */
+
+/* Fix icon flip in pagination buttons */
+/* [dir="rtl"] .v-pagination__navigation .v-icon {
+  transform: scaleX(-1);
+} */
+
+/* ==========================================================================
+   Chip and Badge RTL Support
+   ========================================================================== */
+
+[dir="rtl"] .v-chip__prepend {
+  margin-inline-end: 8px;
+  margin-inline-start: 0;
+}
+
+[dir="rtl"] .v-chip__append {
+  margin-inline-start: 8px;
+  margin-inline-end: 0;
+}
+
+[dir="rtl"] .v-badge {
+  left: auto;
+  right: 0;
+}
+
+/* ==========================================================================
+   Avatar Group RTL Support
+   ========================================================================== */
+
+[dir="rtl"] .v-avatar-group .v-avatar {
+  margin-inline-start: -8px;
+  margin-inline-end: 0;
+}
+
+[dir="rtl"] .v-avatar-group .v-avatar:first-child {
+  margin-inline-start: 0;
+}
+
+/* ==========================================================================
+   Tabs RTL Support
+   ========================================================================== */
+
+[dir="rtl"] .v-tabs {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .v-tab {
+  text-align: start;
+}
+
+/* ==========================================================================
+   Timeline RTL Support
+   ========================================================================== */
+
+[dir="rtl"] .v-timeline {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .v-timeline-item {
+  flex-direction: row-reverse;
+}
+
+/* ==========================================================================
+   Stepper RTL Support
+   ========================================================================== */
+
+[dir="rtl"] .v-stepper-header {
+  flex-direction: row-reverse;
+}
+
+/* ==========================================================================
+   Utility Classes for Common RTL Patterns
+   ========================================================================== */
+
+/* Flip Icons */
+.flip-rtl {
+  transform: scaleX(-1);
+}
+
+[dir="rtl"] .flip-in-rtl {
+  transform: scaleX(-1);
+}
+
+/* Position Utilities */
+.inset-inline-start-0 { inset-inline-start: 0; }
+.inset-inline-end-0 { inset-inline-end: 0; }
+
+/* Float Utilities */
+.float-start { float: inline-start; }
+.float-end { float: inline-end; }
+
+/* ==========================================================================
+   Animation and Transition RTL Support
+   ========================================================================== */
+
+/* Slide Transitions */
+[dir="rtl"] .v-slide-group__prev,
+[dir="rtl"] .v-slide-group__next {
+  transform: scaleX(-1);
+}
+
+/* ==========================================================================
+   Responsive RTL Support
+   ========================================================================== */
+
+@media (max-width: 960px) {
+  [dir="rtl"] .scroll-top-btn {
+    left: 16px !important;
+  }
+  
+  [dir="ltr"] .scroll-top-btn {
+    right: 16px !important;
+  }
+}
+
+@media (max-width: 600px) {
+  [dir="rtl"] .scroll-top-btn {
+    left: 12px !important;
+  }
+  
+  [dir="ltr"] .scroll-top-btn {
+    right: 12px !important;
+  }
+}
+
+/* ==========================================================================
+   Print Media RTL Support
+   ========================================================================== */
+
+@media print {
+  [dir="rtl"] * {
+    direction: rtl;
+    text-align: start;
+  }
+}
+

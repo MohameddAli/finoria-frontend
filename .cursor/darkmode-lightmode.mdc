@@ -1,0 +1,161 @@
+# Title
+Global Dark/Light Mode for Nuxt 4 + Vuetify 3 (SSR-safe, no custom CSS)
+
+# Summary
+- Use `@nuxtjs/color-mode` to detect/persist theme and prevent SSR flicker.
+- Keep styling 100% in Vuetify 3 theme tokens (no extra CSS added).
+- Centralize colors in `app/theme.ts` so you can change branding in one place.
+- Update `app/plugins/vuetify.ts` to sync with color mode while preserving your icons, RTL, and display thresholds.
+- Wire the header toggle in `app/components/AppHeader.vue`.
+
+# Commands
+- Install Nuxt Color Mode (adds module entry automatically if needed):
+```bash
+npx nuxi module add @nuxtjs/color-mode
+```
+
+# Edits
+- Update `nuxt.config.ts`:
+  - Ensure the `modules` include `'@nuxtjs/color-mode'`.
+  - Add the following config (do not remove any existing options):
+    ```ts
+    colorMode: {
+      preference: 'system',
+      fallback: 'light',
+      classSuffix: '',
+    },
+    ```
+
+- Update `app/components/AppHeader.vue`:
+  - Template: replace the theme button handler
+    - From: `@click="noop"`
+    - To: `@click="toggleTheme"`
+  - Script: add the composable and remove the noop
+    - Add near other composables:
+      ```ts
+      const { isDark, toggle: toggleTheme, setTheme } = useAppTheme()
+      ```
+    - Remove the line: `const noop = () => {}`
+
+# Files
+
+## app/theme.ts
+```ts filename="app/theme.ts"
+import type { ThemeDefinition } from 'vuetify'
+
+export const lightTheme: ThemeDefinition = {
+  dark: false,
+  colors: {
+    // Keep current brand defaults, tweak anytime
+    primary: '#1976D2',
+    secondary: '#424242',
+    accent: '#82B1FF',
+    error: '#FF5252',
+    info: '#2196F3',
+    success: '#4CAF50',
+    warning: '#FFC107',
+    background: '#FAFAFA',
+    surface: '#FFFFFF',
+  },
+}
+
+export const darkTheme: ThemeDefinition = {
+  dark: true,
+  colors: {
+    primary: '#64B5F6',      // tuned for dark
+    secondary: '#BDBDBD',
+    accent: '#82B1FF',
+    error: '#EF9A9A',
+    info: '#4FC3F7',
+    success: '#81C784',
+    warning: '#FFCC80',
+    background: '#0E0F13',
+    surface: '#121212',
+  },
+}
+```
+
+## app/plugins/vuetify.ts
+```ts filename="app/plugins/vuetify.ts"
+// import this after install `@mdi/font` package
+import '@mdi/font/css/materialdesignicons.css'
+
+import 'vuetify/styles'
+import { createVuetify } from 'vuetify'
+import { aliases, mdi } from 'vuetify/iconsets/mdi'
+import { watchEffect } from 'vue'
+import { lightTheme, darkTheme } from '~/theme'
+
+export default defineNuxtPlugin((app) => {
+  const colorMode = useColorMode()
+
+  const vuetify = createVuetify({
+    locale: {
+      // Preserve your RTL behavior for Arabic
+      rtl: { ar: true },
+    },
+    theme: {
+      defaultTheme: colorMode.value === 'dark' ? 'dark' : 'light',
+      themes: {
+        light: lightTheme,
+        dark: darkTheme,
+      },
+    },
+    icons: {
+      defaultSet: 'mdi',
+      aliases,
+      sets: { mdi },
+    },
+    display: {
+      mobileBreakpoint: 'sm',
+      thresholds: { xs: 0, sm: 600, md: 960, lg: 1280, xl: 1920 },
+    },
+  })
+
+  // Keep Vuetify theme in sync with Nuxt Color Mode (SSR-safe persistence)
+  watchEffect(() => {
+    vuetify.theme.global.name.value = colorMode.value === 'dark' ? 'dark' : 'light'
+  })
+
+  app.vueApp.use(vuetify)
+})
+```
+
+## app/composables/useAppTheme.ts
+```ts filename="app/composables/useAppTheme.ts"
+export function useAppTheme() {
+  const colorMode = useColorMode()
+  const isDark = computed(() => colorMode.value === 'dark')
+
+  function toggle() {
+    colorMode.preference = isDark.value ? 'light' : 'dark'
+  }
+
+  function setTheme(theme: 'light' | 'dark' | 'system') {
+    colorMode.preference = theme
+  }
+
+  return { isDark, toggle, setTheme }
+}
+```
+
+# Optional (nice to have)
+- To reflect the brand color in the browser address bar, make the theme-color meta dynamic in `app/layouts/default.vue`:
+  ```ts
+  // replace current static theme-color meta with a computed one
+  const themeColor = computed(() => (process.client && document.documentElement.classList.contains('dark')
+    ? '#121212' /* dark surface */
+    : '#1976D2' /* light primary */))
+
+  useHead({
+    meta: [
+      { name: 'theme-color', content: () => themeColor.value },
+    ],
+  })
+  ```
+  Note: Nuxt Color Mode toggles a root class and provides SSR-safe persistence; Vuetify styling still comes solely from the theme tokens above.
+
+# Notes
+- No CSS changes are required; your existing `app/assets/css/global.css` already uses Vuetify CSS variables and will adapt.
+- `@nuxtjs/color-mode` avoids SSR/CSR mismatch and initial flash, replacing any need for manual `localStorage` theme logic.
+- All color edits live in `app/theme.ts`. Change once, apply everywhere.

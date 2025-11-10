@@ -1,0 +1,244 @@
+---
+description: "Create and enforce a global dark/light theme system in Nuxt 4 + Vuetify 3 with configurable color palettes and simple integration for any page"
+globs:
+  - "nuxt.config.ts"
+  - "app/plugins/vuetify.ts"
+  - "app/plugins/vuetify-color-mode.client.ts"
+  - "app/stores/app.ts"
+  - "app/layouts/**"
+  - "app/app.vue"
+  - "app/components/**"
+  - "assets/css/**"
+  - "assets/theme.css"
+  - "app/composables/useThemeMode.ts"
+  - "app/components/ThemeSwitch.vue"
+alwaysApply: false
+---
+
+### Goal | الهدف
+Implement a professional, global dark/light theme system with Vuetify 3 in Nuxt 4 that:
+- Is globally applied across the whole app via Vuetify and the default layout
+- Provides easy color customization (extend palettes and control per theme)
+- Persists user choice (localStorage) and respects SSR/CSR
+- Exposes a clear toggle for UI and a simple API for pages to read current mode
+
+### What already exists in this repo
+- `app/plugins/vuetify.ts` registers Vuetify with light/dark themes and MDI icons.
+- `app/stores/app.ts` exposes `isDarkMode`, `toggleTheme`, `setTheme` and persists the setting.
+- `app/layouts/default.vue` wraps content in `<v-app>` and uses Vuetify properly. A theme toggle is already wired in `app/components/AppHeader.vue` using the store.
+
+Use the steps below to enhance colors and ensure global best practices.
+
+### 1) Configure Vuetify themes globally (colors you control)
+Edit `app/plugins/vuetify.ts` to define rich palettes for both themes. Include all core tokens plus your custom ones (e.g., `brand`, `neutral`, `positive`, `negative`). Keep background/surface defined.
+
+Example palette keys to include in both light and dark themes:
+- `primary`, `secondary`, `accent`
+- `success`, `warning`, `info`, `error`
+- `background`, `surface`
+- Custom: `brand`, `neutral`, `muted`, `positive`, `negative`
+
+Usage in components: set `color="primary"` (or any of your keys), or reference CSS vars: `rgb(var(--v-theme-primary))`.
+
+### 2) Global toggle and persistence (store-driven)
+Keep (or add if missing) in `app/stores/app.ts`:
+- State: `isDarkMode: boolean`
+- Actions: `toggleTheme()`, `setTheme(dark: boolean)` to set `useTheme().global.name.value = dark ? 'dark' : 'light'`
+- Persistence: watch `isDarkMode` and write `localStorage.setItem('theme', dark ? 'dark' : 'light')`
+- Initialization: `initializeTheme()` reads stored theme and applies it on mount
+
+This store API is already implemented in this project. Prefer using it everywhere.
+
+### 3) Apply globally in the layout
+Ensure the default layout (`app/layouts/default.vue`) has `<v-app>` at the root (already present). This guarantees theme applies to all pages. Optionally, keep `useHead` to set a `theme-color` meta tag. You may dynamically bind it to the current theme primary color by reading `useTheme().current.value.colors.primary` on client.
+
+### 4) Provide a reusable toggle component (optional)
+You can keep the existing switch in `AppHeader.vue` or add a simple `ColorModeToggle.vue` in `app/components/` that calls the store `toggleTheme()` and reflects `isDarkMode`. Mount it in headers or settings pages as needed.
+
+### 5) How to use on new pages | كيفية الاستخدام في صفحات جديدة
+Nothing special is required. Because `<v-app>` wraps everything, your new page automatically inherits the current theme. To use colors:
+- Vuetify props: `<v-btn color="primary">` or `<v-alert color="success">`
+- CSS variables: `color: rgb(var(--v-theme-on-background)); background: rgb(var(--v-theme-surface));`
+- Script access (optional): `const theme = useTheme(); const colors = theme.current.value.colors`
+
+### 6) Best practices
+- Define complete color sets for both themes; avoid leaving keys undefined.
+- Keep semantic names (`success`, `warning`, `error`, `info`) stable across themes.
+- Prefer the store for toggling; avoid duplicating `useTheme()` calls across many components.
+- Persist user preference and hydrate on client without blocking SSR.
+- Use CSS variables (`--v-theme-*`) in global CSS for advanced styling without hard-coded hex values.
+
+### 7) Quick edit checklist (what to change if customizing)
+- `app/plugins/vuetify.ts`: extend `themes.light.colors` and `themes.dark.colors` with your desired keys and hex codes.
+- `app/stores/app.ts`: confirm `toggleTheme`, `setTheme`, localStorage watches, and `initializeTheme` exist (they do in this repo).
+- `app/components/AppHeader.vue`: keep or replace the theme switch with your own toggle component.
+- `assets/css/global.css`: if needed, add styles referencing `--v-theme-*` variables.
+
+### Arabic notes | ملاحظات بالعربية
+- هذا النظام يطبّق المظهرين الفاتح والداكن على مستوى التطبيق بالكامل عبر Vuetify.
+- يمكنك التحكم الكامل بالألوان من ملف `app/plugins/vuetify.ts` بإضافة مفاتيح ألوان مخصّصة لكل ثيم.
+- يَحفظ التطبيق تفضيل المستخدم (فاتح/داكن) في `localStorage`، ويتم تطبيقه تلقائياً عند فتح التطبيق.
+- عند إنشاء أي صفحة جديدة، لا تحتاج لشيء إضافي—ستَرِث الصفحة الثيم تلقائياً. استخدم خصائص Vuetify مثل `color="primary"` أو متغيرات CSS `--v-theme-*` للألوان.
+
+### Validation
+- After edits, open the app and verify:
+  - Toggling changes between `light` and `dark` instantly
+  - Colors applied from your custom palette in both themes
+  - Preference persists across reloads
+
+---
+
+## Recommended combined approach (Nuxt color-mode + Vuetify sync)
+
+This is the strongest, SSR-safe setup: Use `@nuxtjs/color-mode` as the single source of truth (supports `light`/`dark`/`system`, avoids flash, handles SSR), and let Vuetify apply component colors via `useTheme()`. Optionally enable Client Hints for even better SSR behavior.
+
+### 1) nuxt.config.ts
+
+Add `@nuxtjs/color-mode` to modules and configure it to avoid theme flash and respect OS preference. Keep your existing Vuetify integration (via plugin) or use the `vuetify-nuxt-module` if preferred.
+
+```ts
+// nuxt.config.ts
+export default defineNuxtConfig({
+  modules: [
+    '@nuxtjs/color-mode',
+    '@pinia/nuxt',
+    // If you prefer the module approach instead of a custom plugin:
+    // 'vuetify-nuxt-module'
+  ],
+
+  // Color Mode: SSR-friendly + prevents flash
+  colorMode: {
+    preference: 'system',   // respects OS preference
+    fallback: 'light',
+    classSuffix: '',        // <html class="dark"> or "light"
+    storage: 'cookie',      // SSR-friendly persistence
+    storageKey: 'theme',
+  },
+
+  // If using vuetify-nuxt-module (optional):
+  vuetify: {
+    vuetifyOptions: {
+      theme: {
+        defaultTheme: 'light', // Vuetify expects a real theme id; system is handled by color-mode
+        themes: {
+          light: {
+            colors: {
+              primary: '#2563eb',
+              secondary: '#64748b',
+              background: '#ffffff',
+              surface: '#ffffff',
+            },
+          },
+          dark: {
+            colors: {
+              primary: '#60a5fa',
+              secondary: '#94a3b8',
+              background: '#0b0f14',
+              surface: '#0f141a',
+            },
+          },
+        },
+      },
+    },
+    // Optional: use client hints to read user preference on server
+    moduleOptions: {
+      ssrClientHints: { prefersColorScheme: true },
+    },
+  },
+})
+```
+
+If you are keeping the current custom Vuetify plugin (`app/plugins/vuetify.ts`), just ensure your `themes.light.colors` and `themes.dark.colors` include your desired palette; you do not need the `vuetify` block above.
+
+### 2) Prevent theme flash globally
+
+Wrap your app once with `<ColorScheme>` so SSR/CSR match and no flash occurs.
+
+```vue
+<!-- app/app.vue or app/layouts/default.vue -->
+<template>
+  <ColorScheme placeholder=" " tag="div">
+    <NuxtLayout>
+      <NuxtPage />
+    </NuxtLayout>
+  </ColorScheme>
+</template>
+```
+
+### 3) Sync color-mode with Vuetify (client plugin)
+
+Create `app/plugins/vuetify-color-mode.client.ts` to watch `color-mode` and set Vuetify theme accordingly. This keeps Vuetify in lockstep with `light`/`dark`/`system`.
+
+```ts
+// app/plugins/vuetify-color-mode.client.ts
+import { useColorMode } from '#imports'
+import { useTheme } from 'vuetify'
+import { watchEffect } from 'vue'
+
+export default defineNuxtPlugin(() => {
+  const cm = useColorMode()
+  const theme = useTheme()
+
+  watchEffect(() => {
+    theme.global.name.value = cm.value === 'dark' ? 'dark' : 'light'
+  })
+})
+```
+
+### 4) Composable and Toggle component (reusable)
+
+```ts
+// app/composables/useThemeMode.ts
+export function useThemeMode() {
+  const cm = useColorMode()
+  const isDark = computed(() => cm.value === 'dark')
+  const set = (v: 'light' | 'dark' | 'system') => (cm.preference = v)
+  const toggle = () => (cm.preference = isDark.value ? 'light' : 'dark')
+  return { mode: cm, isDark, set, toggle }
+}
+```
+
+```vue
+<!-- app/components/ThemeSwitch.vue -->
+<script setup lang="ts">
+const { isDark, toggle } = useThemeMode()
+</script>
+
+<template>
+  <v-btn icon variant="text" @click="toggle">
+    <v-icon>{{ isDark ? 'mdi-weather-sunny' : 'mdi-weather-night' }}</v-icon>
+  </v-btn>
+  <!-- Or a v-switch if you prefer a labeled control -->
+</template>
+```
+
+Mount `ThemeSwitch` in `AppHeader.vue` or anywhere in the layout.
+
+### 5) Global CSS access to Vuetify colors (optional)
+
+Expose color variables for non-Vuetify CSS.
+
+```css
+/* assets/theme.css */
+:root {
+  --c-bg: rgb(var(--v-theme-background));
+  --c-surface: rgb(var(--v-theme-surface));
+  --c-text: rgb(var(--v-theme-on-surface));
+  --c-primary: rgb(var(--v-theme-primary));
+}
+body { background: var(--c-bg); color: var(--c-text); }
+```
+
+Then include it in `nuxt.config.ts` `css: ['@/assets/css/global.css', '@/assets/theme.css']`.
+
+### Which is “best” alone?
+- Using only Vuetify works, but you may see theme flash and weaker SSR behavior.
+- Using only `@nuxtjs/color-mode` without syncing leaves Vuetify unaware of the active theme.
+- The combined approach above is the most robust: SSR-friendly, no flash, unified `system` support, and full Vuetify color control.
+
+### Arabic notes (الخلاصة)
+- اجعل `@nuxtjs/color-mode` هو مصدر الحقيقة للوضع (`light`/`dark`/`system`).
+- استخدم مكوّن `<ColorScheme>` لمنع فلاش الثيم في SSR.
+- زامِن Vuetify برمجياً عبر `useTheme()` داخل إضافة عميل.
+- خصّص الألوان عالميًا داخل تكوين Vuetify، واستخدم متغيرات CSS للوصول للألوان خارج مكوّنات Vuetify.
+

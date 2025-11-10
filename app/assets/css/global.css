@@ -1,0 +1,322 @@
+/* Global Styles for Prime Dashboard */
+
+/* Import Material Design Icons */
+
+/* ==========================================================================
+   LAYOUT & STRUCTURE VARIABLES
+   ========================================================================== */
+:root {
+  /* Layout Dimensions */
+  --header-height: 72px;
+  --sidebar-width: 280px;
+  --sidebar-mini-width: 72px;
+  
+  /* Border Radius Scale */
+  --border-radius-xs: 4px;
+  --border-radius-sm: 8px;
+  --border-radius-md: 12px;
+  --border-radius-lg: 16px;
+  --border-radius-xl: 20px;
+  --border-radius-2xl: 24px;
+  --border-radius-full: 9999px;
+  
+  /* Spacing Scale */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-2xl: 48px;
+  --spacing-3xl: 64px;
+  
+  /* Transition System */
+  --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* Z-index Scale */
+  --z-dropdown: 1000;
+  --z-sticky: 1020;
+  --z-fixed: 1030;
+  --z-modal-backdrop: 1040;
+  --z-modal: 1050;
+  --z-popover: 1060;
+  --z-tooltip: 1070;
+  --z-toast: 1080;
+}
+
+/* Base Styles */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: rgb(var(--v-theme-background)) !important;
+}
+
+/* Vuetify Base Override */
+.v-application {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+}
+
+/* Layout Enhancements */
+.app-header {
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgb(var(--v-theme-outline-variant)) !important;
+  box-shadow: var(--v-shadow-sm) !important;
+}
+
+.app-sidebar {
+  border-right: 1px solid rgb(var(--v-theme-outline-variant)) !important;
+  box-shadow: var(--v-shadow-md) !important;
+}
+
+/* Custom Utility Classes */
+.glass-effect {
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  background: rgba(var(--v-theme-surface), 0.8);
+  border: 1px solid rgba(var(--v-theme-outline-variant), 0.1);
+}
+
+.gradient-text {
+  /* Remove gradient; use primary color text */
+  background: none;
+  color: rgb(var(--v-theme-primary));
+}
+
+/* Animation Classes */
+.fade-in {
+  animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(var(--v-theme-on-surface), 0.2);
+  border-radius: 4px;
+  transition: background var(--transition-fast);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(var(--v-theme-on-surface), 0.3);
+}
+
+/* Responsive Design */
+@media (max-width: 1280px) {
+  .header-content {
+    padding: 0 16px !important;
+  }
+}
+
+@media (max-width: 960px) {
+  .header-center {
+    max-width: 300px !important;
+    margin: 0 16px !important;
+  }
+  
+  .dashboard-page {
+    padding: 16px !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .header-content {
+    padding: 0 12px !important;
+  }
+  
+  .header-center {
+    display: none !important;
+  }
+  
+  .dashboard-page {
+    padding: 12px !important;
+  }
+  
+  .v-card {
+    margin-bottom: 16px !important;
+  }
+}
+
+/* Print Styles */
+@media (print) {
+  .app-header,
+  .app-sidebar,
+  .v-btn,
+  .scroll-top-btn {
+    display: none !important;
+  }
+  
+  .main-content {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  
+  .v-card {
+    box-shadow: none !important;
+    border: 1px solid #ccc !important;
+  }
+}
+
+/* RTL Support for Borders */
+[dir="rtl"] .app-sidebar {
+  border-left: 1px solid rgb(var(--v-theme-outline-variant)) !important;
+  border-right: none !important;
+}
+
+[dir="ltr"] .app-sidebar {
+  border-right: 1px solid rgb(var(--v-theme-outline-variant)) !important;
+  border-left: none !important;
+}
+
+/* Accessibility */
+@media (prefers-contrast: high) {
+  .v-card,
+  .v-btn,
+  .v-text-field .v-field {
+    border: 2px solid rgb(var(--v-theme-on-surface)) !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Focus Styles for Accessibility */
+.v-btn:focus-visible,
+.v-text-field:focus-within,
+.v-list-item:focus-visible,
+.v-pagination .v-pagination__item:focus-visible,
+.v-tab:focus-visible {
+  outline: 2px solid rgb(var(--v-theme-primary));
+  outline-offset: 2px;
+  border-radius: var(--border-radius-sm);
+}
+
+/* Custom Focus Ring for Buttons */
+.v-btn:focus-visible {
+  box-shadow: 0 0 0 2px rgb(var(--v-theme-surface)), 0 0 0 4px rgb(var(--v-theme-primary));
+}
+
+/* ==========================================
+   Unified Hover System (theme-aware)
+   Uses --v-theme-primary-hover from Vuetify theme
+   ========================================== */
+
+/* Buttons - text/plain/outlined get subtle primary hover */
+.v-btn.v-btn--variant-text:not(.v-btn--disabled):hover,
+.v-btn.v-btn--variant-plain:not(.v-btn--disabled):hover {
+  background-color: rgba(var(--v-theme-primary-hover), 0.10) !important;
+  color: rgb(var(--v-theme-primary)) !important;
+}
+
+.v-btn.v-btn--variant-outlined:not(.v-btn--disabled):hover {
+  background-color: rgba(var(--v-theme-primary-hover), 0.08) !important;
+  border-color: rgb(var(--v-theme-primary)) !important;
+  color: rgb(var(--v-theme-primary)) !important;
+}
+
+/* List items - menus, dropdowns, navs (avoid overriding active nav item) */
+.v-list-item:hover:not(.nav-item-active) {
+  background-color: rgba(var(--v-theme-primary-hover), 0.08);
+  color: rgb(var(--v-theme-primary));
+}
+.v-list-item:hover:not(.nav-item-active) .v-icon,
+.v-list-item:hover:not(.nav-item-active) .v-list-item-title,
+.v-list-item:hover:not(.nav-item-active) .v-list-item-subtitle {
+  color: rgb(var(--v-theme-primary));
+}
+
+/* Pagination - non-active buttons hover */
+.v-pagination .v-btn:not([aria-current="true"]):hover {
+  background-color: rgba(var(--v-theme-primary-hover), 0.10) !important;
+  color: rgb(var(--v-theme-primary)) !important;
+  border-color: rgba(var(--v-theme-primary), 0.3) !important;
+}
+
+/* Active Dropdown/Menu items (v-menu, v-select overlays) */
+.v-overlay-container .v-list-item--active,
+.v-overlay-container .v-list-item[aria-selected="true"] {
+  background-color: rgb(var(--v-theme-primary)) !important;
+  color: rgb(var(--v-theme-on-primary)) !important;
+}
+
+.v-overlay-container .v-list-item--active .v-list-item-title,
+.v-overlay-container .v-list-item--active .v-list-item-subtitle,
+.v-overlay-container .v-list-item--active .v-icon,
+.v-overlay-container .v-list-item[aria-selected="true"] .v-list-item-title,
+.v-overlay-container .v-list-item[aria-selected="true"] .v-list-item-subtitle,
+.v-overlay-container .v-list-item[aria-selected="true"] .v-icon {
+  color: rgb(var(--v-theme-on-primary)) !important;
+}
+
+.v-overlay-container .v-list-item--active:hover,
+.v-overlay-container .v-list-item[aria-selected="true"]:hover {
+  background-color: rgb(var(--v-theme-primary)) !important;
+  color: rgb(var(--v-theme-on-primary)) !important;
+}
+
+/* ==========================================================================
+   TABLE ACTION BUTTONS - GLOBAL SPACING
+   ========================================================================== */
+
+/* 
+ * Global class for table action button groups
+ * Ensures consistent spacing across all data tables in the application
+ * 
+ * Usage:
+ * <div class="table-actions-group">
+ *   <v-btn>...</v-btn>
+ *   <v-btn>...</v-btn>
+ * </div>
+ */
+.table-actions-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px; /* Consistent gap between buttons */
+  min-width: fit-content;
+}
+
+/* Ensure buttons inside action group maintain their styles */
+.table-actions-group .v-btn {
+  flex-shrink: 0;
+}
+
+/* Optional: Add some padding on hover for better UX */
+.table-actions-group .v-btn:hover {
+  transform: scale(1.05);
+  transition: transform 0.2s ease;
+}
+
+/* RTL Support for table actions - buttons maintain natural order */
+/* In RTL mode, buttons will flow from right to left naturally without reversing */

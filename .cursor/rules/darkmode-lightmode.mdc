@@ -1,0 +1,196 @@
+---
+alwaysApply: false
+---
+## الهدف
+- إنشاء وتوحيد نظام سمة عالمي (فاتح/داكن) يعمل مع Nuxt 4 وVuetify 3، متوافق مع SSR وRTL، مع لوحتَي ألوان قابلة للتخصيص وسهل الدمج بأي صفحة أو مكوّن.
+
+## أفضل الممارسات (مختصر)
+- استخدم `@nuxtjs/color-mode` لاكتشاف وحفظ الوضع (system/light/dark) بشكل آمن مع SSR بدون وميض.
+- اعتبر Vuetify هو المصدر الوحيد للألوان. عرّف لوحتَي الألوان في ملف واحد `app/theme.ts`.
+- اربط Vuetify مع `color-mode` عبر `plugins/vuetify.ts` وغيّر `defaultTheme` واسم السمة بشكل تفاعلي.
+- وفّر مركبًا موحّدًا `useAppTheme` للتبديل والتعيين، بدل نشر منطق متكرر عبر المكونات.
+- لا تضع CSS مخصص للألوان؛ استخدم رموز Vuetify (`background`, `surface`, `primary` ...).
+- حافظ على i18n وRTL متزامنين كما في المشروع (تعيين `dir/lang` موجود بالفعل).
+
+## المتطلبات
+- إضافة الحزمة: `@nuxtjs/color-mode`.
+- تعديل `nuxt.config.ts` لإضافة الموديول وإعداد `colorMode`.
+- إنشاء `app/theme.ts` للوحات الألوان.
+- تحديث `app/plugins/vuetify.ts` لربط Vuetify مع color-mode.
+- إضافة `app/composables/useAppTheme.ts` للاستخدام السهل.
+- ربط زر تبديل السمة في `app/components/AppHeader.vue` (يوجد زر حاليًا لكنه لا يعمل).
+
+## الأوامر
+```bash
+npm i @nuxtjs/color-mode
+```
+
+## التعديلات المطلوبة
+
+### 1) nuxt.config.ts
+أضف الموديول وإعداد `colorMode` بدون حذف الإعدادات الحالية:
+
+```ts
+export default defineNuxtConfig({
+  modules: [
+    // ...القائمة الحالية
+    '@nuxtjs/color-mode'
+  ],
+  colorMode: {
+    preference: 'system',
+    fallback: 'light',
+    classSuffix: '',
+  },
+})
+```
+
+### 2) app/theme.ts
+لوحتا ألوان واضحتان وقابلتان للتعديل:
+
+```ts filename="app/theme.ts"
+import type { ThemeDefinition } from 'vuetify'
+
+export const lightTheme: ThemeDefinition = {
+  dark: false,
+  colors: {
+    background: '#FAFAFA',
+    surface: '#FFFFFF',
+    primary: '#1976D2',
+    secondary: '#424242',
+    success: '#4CAF50',
+    info: '#2196F3',
+    warning: '#FFC107',
+    error: '#FF5252',
+  },
+}
+
+export const darkTheme: ThemeDefinition = {
+  dark: true,
+  colors: {
+    background: '#0B0B0F',
+    surface: '#121212',
+    primary: '#90CAF9',
+    secondary: '#BDBDBD',
+    success: '#81C784',
+    info: '#64B5F6',
+    warning: '#FFCA28',
+    error: '#EF9A9A',
+  },
+}
+```
+
+### 3) plugins/vuetify.ts
+اربط Vuetify مع `useColorMode()`، وحدث اسم السمة تلقائيًا:
+
+```ts filename="app/plugins/vuetify.ts"
+import '@mdi/font/css/materialdesignicons.css'
+import 'vuetify/styles'
+import { createVuetify, type ThemeDefinition } from 'vuetify'
+import { aliases, mdi } from 'vuetify/iconsets/mdi'
+import { watchEffect } from 'vue'
+import { lightTheme, darkTheme } from '~/theme'
+
+export default defineNuxtPlugin((nuxtApp) => {
+  const colorMode = useColorMode()
+
+  const vuetify = createVuetify({
+    locale: { rtl: { ar: true } },
+    theme: {
+      defaultTheme: colorMode.value === 'dark' ? 'dark' : 'light',
+      themes: {
+        light: lightTheme as ThemeDefinition,
+        dark: darkTheme as ThemeDefinition,
+      },
+    },
+    icons: {
+      defaultSet: 'mdi',
+      aliases,
+      sets: { mdi },
+    },
+    display: {
+      mobileBreakpoint: 'sm',
+      thresholds: { xs: 0, sm: 600, md: 960, lg: 1280, xl: 1920 },
+    },
+  })
+
+  watchEffect(() => {
+    vuetify.theme.global.name.value = colorMode.value === 'dark' ? 'dark' : 'light'
+  })
+
+  nuxtApp.vueApp.use(vuetify)
+})
+```
+
+### 4) composables/useAppTheme.ts
+واجهة بسيطة للتبديل/التعيين:
+
+```ts filename="app/composables/useAppTheme.ts"
+export const useAppTheme = () => {
+  const colorMode = useColorMode()
+  const isDark = computed(() => colorMode.value === 'dark')
+
+  const toggle = () => {
+    colorMode.preference = isDark.value ? 'light' : 'dark'
+  }
+
+  const setTheme = (theme: 'light' | 'dark' | 'system') => {
+    colorMode.preference = theme
+  }
+
+  return { isDark, toggle, setTheme }
+}
+```
+
+### 5) ربط زر التبديل في AppHeader.vue
+استبدل الاستدعاء الحالي الذي لا يفعل شيئًا بـ `useAppTheme`:
+
+```diff filename="app/components/AppHeader.vue"
+- const noop = () => {}
++ const { isDark, toggle } = useAppTheme()
+```
+
+وفي القالب:
+
+```diff
+- <v-btn icon variant="text" size="small" class="me-2" :aria-label="$t('header.toggleTheme')" @click="noop">
+-   <v-icon>mdi-theme-light-dark</v-icon>
+- </v-btn>
++ <v-btn icon variant="text" size="small" class="me-2" :aria-label="$t('header.toggleTheme')" @click="toggle">
++   <v-icon>{{ isDark ? 'mdi-weather-night' : 'mdi-weather-sunny' }}</v-icon>
++ </v-btn>
+```
+
+> ملاحظة: مفاتيح i18n موجودة بالفعل (`header.toggleTheme`).
+
+## التحقق والجودة
+- SSR: تعتمد على `@nuxtjs/color-mode` لتفادي وميض السمة، وVuetify لتطبيق الألوان.
+- RTL: مفعّل للعربية في Vuetify (`rtl: { ar: true }`).
+- إمكانية الوصول: زر التبديل يحافظ على `aria-label` والقابلية للوصول.
+- الأداء: لا CSS إضافي للألوان؛ كل شيء عبر رموز Vuetify.
+
+## طريقة الاستخدام في أي صفحة
+لا حاجة لأي كود خاص بالصفحات. إن رغبت بإظهار اختيار الوضع:
+
+```vue
+<script setup lang="ts">
+const { setTheme } = useAppTheme()
+</script>
+
+<template>
+  <v-btn @click="setTheme('system')">System</v-btn>
+  <v-btn @click="setTheme('light')">Light</v-btn>
+  <v-btn @click="setTheme('dark')">Dark</v-btn>
+  <!-- الألوان ستنعكس تلقائيًا على جميع المكونات -->
+  <v-card color="surface">...</v-card>
+  <div class="text-primary">...</div>
+  <div class="bg-background">...</div>
+  <div class="bg-surface">...</div>
+  <div class="text-error">...</div>
+  <!-- الخ -->
+  
+</template>
+```
+
+## ملاحظات ختامية
+- لتخصيص الهوية البصرية، عدّل فقط `app/theme.ts`.
+- لا تنس تثبيت الحزمة ثم تشغيل التطوير/البناء.

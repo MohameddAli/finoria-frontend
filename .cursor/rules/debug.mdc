@@ -1,0 +1,125 @@
+---
+name: Nuxt 4 + Vuetify 3 + Pinia 3 Project Rules
+alwaysApply: true
+description: Opinionated planning & debugging rules tailored for a Nuxt 4 + Vuetify 3 + Pinia 3 frontend codebase in Cursor.
+---
+
+# Cursor Planning & Debugging Rules — Nuxt 4, Vuetify 3, Pinia 3
+
+> Triggers: say **"Planner Mode"** for planning or **"Debugger Mode"** for diagnostics.
+
+## Preliminary Requirements
+- **Role & Quality Bar:** Act as a senior software engineer optimizing for scalability, maintainability, and DX. Prefer type-safety and SSR-safe patterns.
+- **Devtools:** Enable **Nuxt DevTools** and **Vue Devtools** locally; prefer framework-native insights over ad-hoc guessing.
+- **BrowserTools MCP:** Use `getConsoleLogs`, `getConsoleErrors`, `getNetworkLogs`, `getNetworkErrors` to collect browser traces during **Debugger Mode**.
+- **Testing:** Prefer `@nuxt/test-utils` + Vitest for unit/SSR tests; Playwright for E2E.
+- **House Rules:** Use TypeScript strict mode, ESLint + Prettier, and commit-linted, single-line PR messages (see “PR Message Note” below).
+
+## Nuxt 4 Conventions
+- **Project Structure:** Prefer the `src/` layout if enabled; keep **app**, **pages**, **components**, **composables**, **plugins**, **server/** (for API routes), **assets/**, **public/** tidy and shallow.
+- **Auto-imports:** Use Nuxt auto-imports for composables & components; avoid manual barrel files unless necessary.
+- **Routing & SEO:** Use file-based routes, `definePageMeta`, and route-rules where helpful. Co-locate page-level data logic with pages; share cross-page logic via `composables/`.
+- **Data Fetching:** Default to `useAsyncData`/`useFetch` with keys; lean on cache/dedupe semantics; never fetch in `setup` with raw `fetch`. Prefer `$fetch` to keep isomorphic behavior.
+- **Edge & SSR:** Keep server-only code in `server/` or behind `process.server` guards. Avoid leaking secrets to client bundles.
+
+## Vuetify 3 Integration (Nuxt)
+- Prefer the **Vuetify Nuxt Module** for SSR, theme, and client-hints support. Configure themes in one place and avoid ad-hoc global CSS tweaks.
+- Use design tokens and theme objects; avoid deep selector overrides. Expose a single `useTheme` abstraction in `composables/` that reads/writes the active theme safely with SSR in mind.
+- For display breakpoints, don’t assume client width on first SSR render—hydrate carefully and use client hints or a tolerant fallback.
+
+## Pinia 3 Patterns
+- One store per domain (auth, user, cart, ui…); keep them small and typed. Use `defineStore` with the setup-style API, getters for derived state, and actions for business logic.
+- No direct cross-store mutations—compose via actions. Keep SSR safety (no global singletons with mutable state outside stores).
+- Persist minimal slices explicitly (e.g. via plugins); never blanket-persist entire stores.
+
+## File & Function Splitting
+- **Files:** >300–400 lines → split by responsibility.
+- **Functions:** >60–80 lines or >2 responsibilities → extract helpers.
+- **Components:** Smart/presentational split; pages orchestrate, components render.
+
+## Code Reflection (Always After Changes)
+Write a **1–2 paragraph** reflection that covers:
+1) scalability & maintainability, 2) SSR/CSR correctness, 3) performance (network, hydration, rendering), 4) testing hooks, 5) next steps.
+
+---
+
+## Planner Mode
+1) **Deep Scan:** Read the request and relevant code. Map scope across pages, components, composables, stores, plugins, and server routes.
+2) **Ask 4–6 Clarifying Questions** (targeted, non-blocking) about UX, data contracts, edge cases, SSR specifics, and acceptance tests.
+3) **Draft a Plan:** Break into phases with owner-visible tasks, risks, and test notes. Call out SSR/CSR boundaries, stores touched, and migration impact.
+4) **Implement in Phases:** Complete items in order; keep diffs small and typed.
+5) **Communicate Progress:** After each phase, state “Done → Next” and list remaining phases.
+
+_While planning, prefer:_
+- `useAsyncData`/`useFetch` for isomorphic data, unique keys, and caching.
+- Composables for reusable logic; stores for app-level state.
+- Server routes in `server/api/*` for backend glue.
+
+---
+
+## Debugger Mode
+1) **Enumerate 5–7 suspects** (logic, reactivity, SSR hydration, caching/keys, race conditions, store misuse, SSR/client mismatch, module/plugin order, rendering constraints, network/contracts).
+2) **Narrow to Top 1–2** by likelihood and blast radius.
+3) **Add Logs First:** 
+   - Page/composable: input params, `useRoute()` snapshot, `pending/error` from `useAsyncData`.
+   - Network: `$fetch` request/response shapes; cache keys; timing.
+   - Pinia: action start/end, payloads, state diffs.
+   - SSR: `process.server` vs `process.client` branches; request IDs.
+4) **Collect Logs:** Run & gather `getConsoleLogs`, `getConsoleErrors`, `getNetworkLogs`, `getNetworkErrors`. If available, add server logs (Nitro) and paste into chat.
+5) **Deep Analysis:** Correlate logs with control flow and SSR/CSR transitions; verify data keys and invalidations.
+6) **If unclear:** Propose **additional targeted logs**; repeat collection.
+7) **Fix & Verify:** Once fixed, confirm via tests and logs.
+8) **Cleanup:** Ask permission to remove temporary logging.
+
+---
+
+## Nuxt 4 Data-Fetching Rules of Thumb
+- Prefer `useAsyncData('key', () => $fetch(...))` or `useFetch` with explicit **stable keys** per param set.
+- Use `server:`/`lazy:`/`default:` options intentionally; avoid refetching on hydration.
+- Avoid “keyless” fetching or ambiguous reactivity triggers; watch specific params only.
+- Co-locate queries with the page; extract to composables when reused.
+
+## Vuetify 3 SSR/Theming Rules
+- Use the Nuxt module; turn off inline SSR styles if customizing SASS via config. Theme detection should degrade gracefully on first request; reconcile on client after hydration.
+- Prefer component props and theme tokens over global CSS overrides; centralize elevations, radii, and density.
+
+## Pinia 3 Usage Rules
+- Stores are the single source of truth for global state; pages/components consume via getters and invoke **actions** for mutations.
+- Keep stores framework-agnostic; any direct DOM or router access goes into composables.
+- Add store-level tests for critical invariants; snapshot state changes in actions.
+
+## Clean Code Defaults
+- **Naming:** `useX` for composables, `XStore` for stores, `TheX` for top-level layout components, `AppX` for app-wide primitives.
+- **Props/Emits:** Explicit types; no `any`.
+- **Side Effects:** Never in render paths; isolate in actions or composables.
+- **Accessibility:** Ensure Vuetify components receive proper `aria-*` and label associations; dark/light contrast verified.
+- **Performance:** Code-split routes, prefer lazy components for heavy UI, debounce expensive watchers, memoize derived state in getters.
+- **Security:** Never expose secrets to client; validate server route inputs; sanitize output; use HTTP-only cookies for auth.
+
+## Testing Checklist (per change)
+- Unit test composables and stores (happy + edge paths).
+- Component test for critical UI states (loading/empty/error).
+- SSR test with `@nuxt/test-utils`.
+- E2E for primary flows (auth, navigation, cart/checkout, etc).
+
+## PR Message Note
+Write the PR description as **a single line** (no newlines). Include scope, summary, notable trade-offs, and test notes, e.g.:  
+`feat(cart): migrate to pinia action queue; dedupe useAsyncData calls; add SSR-safe theme init; adds unit/e2e coverage`
+
+## Performance & Optimization (Nuxt 4 / Vuetify 3 / Pinia 3)
+- Use Hybrid Rendering + `routeRules` to pick SSR/CSR/ISR per route and set proper cache headers.
+- Prefer `useAsyncData`/`useFetch` with stable keys; avoid hydration refetch; exploit built-in cache & dedupe.
+- Cache Nitro API routes via `cachedEventHandler` and tune `Cache-Control`.
+- Use `@nuxt/image` and `<NuxtImg>` for responsive, optimized images (whitelist external domains).
+- Embrace code-splitting and Nuxt advanced/experimental features when stable in your version.
+- Vue-side: apply `v-memo`/`KeepAlive` carefully; prefer `computed` over heavy `watch` chains.
+- Vuetify: rely on the Nuxt module for SSR/theming; avoid client-width assumptions on first render.
+- Pinia: prevent SSR state leaks; keep stores small; skipHydrate when persisting client-only state.
+
+## Security Best Practices
+- Enforce strict CSP (prefer nonces); if using `nuxt-security`, set per-route `security` and verify Nuxt 4 compatibility.
+- Add security headers: HSTS, `X-Content-Type-Options=nosniff`, `Referrer-Policy`, and `frame-ancestors` in CSP (optionally X-Frame-Options for legacy).
+- Cookies: `HttpOnly` + `Secure` + `SameSite` for session/auth; never store tokens in localStorage.
+- CSRF: treat SameSite as defense-in-depth; still use anti-CSRF tokens (e.g., header or double-submit).
+- Scope route-level protections with `routeRules`; prefer server-side validation in Nitro handlers.
+- Pinia & SSR: initialize stores per-request only; avoid globals that can leak user state across requests.
