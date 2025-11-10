@@ -102,7 +102,8 @@ export default defineNuxtConfig({
             vuetify: ["vuetify"],
             pinia: ["pinia"],
             charts: ["apexcharts"],
-            i18n: ["vue-i18n", "@nuxtjs/i18n"],
+            // Only bundle runtime-safe i18n utilities; the Nuxt module stays server-side
+            i18n: ["vue-i18n"],
             // Group common utilities
             utils: ["./shared/utils/helpers", "./app/composables/useUtils"],
           },
