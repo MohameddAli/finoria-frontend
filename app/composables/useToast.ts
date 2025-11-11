@@ -1,26 +1,7 @@
 /**
  * 🍞 Toast Notification System - Nuxt 4
  * ────────────────────────────────────────────────────────────────────────────
- *
- * نظام Toast احترافي مع دعم كامل لـ:
- * - Multi-line messages
- * - API response normalization
- * - RTL support
- * - i18n integration
- * - HTTP status code detection
- * - Network status monitoring
- *
- * @example
- * const toast = useToast()
- *
- * // رسالة بسيطة
- * toast.success('تم الحفظ بنجاح')
- *
- * // من API response
- * toast.fromResponse(response, 201)
- *
- * // متعدد الأسطر
- * toast.show(['السطر الأول', 'السطر الثاني'], { variant: 'info' })
+ * نظام Toast موحد مع دعم Multi-line, RTL, i18n, وAPI responses
  */
 
 import { useToastState } from "./useToastState";
@@ -30,9 +11,6 @@ import {
   type ToastVariant,
 } from "~~/shared/utils/toast";
 
-/**
- * Icon mapping for each variant
- */
 const VARIANT_ICONS: Record<ToastVariant, string> = {
   success: "mdi-check-circle",
   error: "mdi-alert-circle",
@@ -40,27 +18,18 @@ const VARIANT_ICONS: Record<ToastVariant, string> = {
   info: "mdi-information",
 };
 
-/**
- * Get icon based on variant
- */
-function getIconByVariant(variant: ToastVariant): string {
-  return VARIANT_ICONS[variant] ?? "mdi-information";
-}
+const VARIANT_TIMEOUTS: Record<ToastVariant, number> = {
+  success: 4000,
+  error: 6000,
+  warning: 5000,
+  info: 4000,
+};
 
-/**
- * Composable للتحكم في Toast
- */
 export const useToast = () => {
   const state = useToastState();
 
-  /**
-   * عرض Toast - Low-level API
-   *
-   * @param inLines - Array of message lines to display
-   * @param options - Configuration options
-   */
   function show(
-    inLines: string[],
+    inLines: string | string[],
     options: {
       variant?: ToastVariant;
       timeout?: number;
@@ -68,103 +37,41 @@ export const useToast = () => {
     } = {}
   ) {
     const finalVariant = options.variant ?? "info";
+    const lines = Array.isArray(inLines) ? inLines : [inLines];
 
-    state.lines.value = inLines;
+    state.lines.value = lines;
     state.variant.value = finalVariant;
-    state.timeout.value = options.timeout ?? 4000;
-    state.icon.value = options.icon ?? getIconByVariant(finalVariant);
+    state.timeout.value = options.timeout ?? VARIANT_TIMEOUTS[finalVariant];
+    state.icon.value = options.icon ?? VARIANT_ICONS[finalVariant];
     state.visible.value = true;
   }
 
-  /**
-   * Success Toast - أخضر ✅
-   *
-   * @param message - Single message or array of messages
-   */
-  function success(message: string | string[]) {
-    const lines = Array.isArray(message) ? message : [message];
-    show(lines, { variant: "success", timeout: 4000 });
-  }
+  const success = (message: string | string[]) => show(message, { variant: "success" });
+  const error = (message: string | string[]) => show(message, { variant: "error" });
+  const warning = (message: string | string[]) => show(message, { variant: "warning" });
+  const info = (message: string | string[]) => show(message, { variant: "info" });
 
-  /**
-   * Error Toast - أحمر ❌
-   *
-   * @param message - Single message or array of messages
-   */
-  function error(message: string | string[]) {
-    const lines = Array.isArray(message) ? message : [message];
-    show(lines, { variant: "error", timeout: 6000 });
-  }
-
-  /**
-   * Warning Toast - برتقالي ⚠️
-   *
-   * @param message - Single message or array of messages
-   */
-  function warning(message: string | string[]) {
-    const lines = Array.isArray(message) ? message : [message];
-    show(lines, { variant: "warning", timeout: 5000 });
-  }
-
-  /**
-   * Info Toast - أزرق ℹ️
-   *
-   * @param message - Single message or array of messages
-   */
-  function info(message: string | string[]) {
-    const lines = Array.isArray(message) ? message : [message];
-    show(lines, { variant: "info", timeout: 4000 });
-  }
-
-  /**
-   * 🎯 السحر الحقيقي - من API Response
-   *
-   * يحلل أي response من backend ويعرضه بشكل جميل
-   *
-   * Examples:
-   * - { msg: "success" } -> Success toast
-   * - { errors: { email: ["taken"] } } -> Error toast with "email: taken"
-   * - { data: { user: "created", email: "updated" } } -> Multi-line success toast
-   *
-   * @param payload - API response data
-   * @param statusCode - HTTP status code (optional, auto-detects variant)
-   */
   function fromResponse(payload: unknown, statusCode?: number) {
     const { lines: normalizedLines } = normalizeBackendMessage(payload);
     const detectedVariant = pickToastType(statusCode);
-
     show(normalizedLines, { variant: detectedVariant });
   }
 
-  /**
-   * إخفاء Toast
-   */
-  function hide() {
-    state.visible.value = false;
-  }
-
-  /**
-   * مسح كل البيانات
-   */
-  function clear() {
+  const hide = () => (state.visible.value = false);
+  const clear = () => {
     state.lines.value = [];
     state.visible.value = false;
-  }
+  };
 
   return {
-    // High-level APIs
     success,
     error,
     warning,
     info,
     fromResponse,
-
-    // Low-level APIs
     show,
     hide,
     clear,
-
-    // State (readonly للقراءة من Component)
     state: {
       lines: readonly(state.lines),
       variant: readonly(state.variant),
@@ -175,58 +82,23 @@ export const useToast = () => {
   };
 };
 
-// ═══════════════════════════════════════════════════════════════════════════
-// 🔄 Backward Compatibility Layer - للتوافق مع الكود القديم
-// ═══════════════════════════════════════════════════════════════════════════
-
-/**
- * @deprecated استخدم useToast() بدلاً منه
- * هذا موجود فقط للتوافق مع الكود القديم
- *
- * @example
- * // ❌ القديم (لا يُنصح)
- * const { showSuccess } = useSnackbar()
- *
- * // ✅ الجديد (استخدم هذا)
- * const toast = useToast()
- * toast.success('رسالة')
- */
+// Backward Compatibility
 export const useSnackbar = () => {
   const toast = useToast();
   const state = useToastState();
 
   return {
     snackbar: {
-      get show() {
-        return state.visible.value;
-      },
-      set show(val: boolean) {
-        state.visible.value = val;
-      },
-      get message() {
-        return state.lines.value[0] || "";
-      },
-      set message(val: string) {
-        state.lines.value = [val];
-      },
-      get color() {
-        return state.variant.value;
-      },
-      set color(val: ToastVariant) {
-        state.variant.value = val;
-      },
-      get timeout() {
-        return state.timeout.value;
-      },
-      set timeout(val: number) {
-        state.timeout.value = val;
-      },
-      get icon() {
-        return state.icon.value;
-      },
-      set icon(val: string) {
-        state.icon.value = val;
-      },
+      get show() { return state.visible.value; },
+      set show(val: boolean) { state.visible.value = val; },
+      get message() { return state.lines.value[0] || ""; },
+      set message(val: string) { state.lines.value = [val]; },
+      get color() { return state.variant.value; },
+      set color(val: ToastVariant) { state.variant.value = val; },
+      get timeout() { return state.timeout.value; },
+      set timeout(val: number) { state.timeout.value = val; },
+      get icon() { return state.icon.value; },
+      set icon(val: string) { state.icon.value = val; },
     },
     showSuccess: toast.success,
     showError: toast.error,

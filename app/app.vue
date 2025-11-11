@@ -14,7 +14,8 @@
     <!-- 🍞 Global Toast System - New Unified Toast -->
     <ToastHost />
 
-    <NuxtPage />
+    <!-- إضافة key للإجبار على re-render عند تغيير المسار -->
+    <NuxtPage :key="route.fullPath" />
   </NuxtLayout>
 </template>
 

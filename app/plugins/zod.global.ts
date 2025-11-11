@@ -1,5 +1,3 @@
-import { z } from 'zod'
+import { z } from "zod";
 
-export default defineNuxtPlugin((nuxtApp) => {
-  nuxtApp.provide('z', z)
-})
+export default defineNuxtPlugin((nuxtApp) => nuxtApp.provide("z", z));

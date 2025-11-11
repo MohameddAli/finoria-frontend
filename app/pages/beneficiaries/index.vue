@@ -102,33 +102,35 @@
               md="4"
               lg="3"
             >
-              <v-card 
-                rounded="lg" 
-                :elevation="2" 
-                height="380" 
-                class="bene-card d-flex flex-column"
-              >
-                <!-- Card Image/Avatar Section -->
-                <div class="card-image-wrapper position-relative">
-                  <v-img 
-                    :src="b.avatar || placeholder(b)" 
-                    height="140" 
-                    cover
-                    class="card-main-image"
-                  />
-                  <v-btn 
-                    icon 
-                    variant="text" 
-                    size="small"
-                    class="fav-btn"
-                    @click.stop="toggleFav(b)"
-                  >
-                    <v-icon
-                      :icon="isFav(b.id) ? 'mdi-heart' : 'mdi-heart-outline'"
-                      :color="isFav(b.id) ? 'error' : 'white'"
+              <v-hover v-slot="{ isHovering, props: hoverProps }">
+                <v-card 
+                  v-bind="hoverProps"
+                  rounded="lg" 
+                  :elevation="isHovering ? 12 : 2" 
+                  height="380" 
+                  class="bene-card d-flex flex-column"
+                >
+                  <!-- Card Image/Avatar Section -->
+                  <div class="card-image-wrapper position-relative">
+                    <v-img 
+                      :src="b.avatar || placeholder(b)" 
+                      height="140" 
+                      cover
+                      class="card-main-image"
                     />
-                  </v-btn>
-                </div>
+                    <v-btn 
+                      icon 
+                      variant="text" 
+                      size="small"
+                      class="fav-btn"
+                      @click.stop="toggleFav(b)"
+                    >
+                      <v-icon
+                        :icon="isFav(b.id) ? 'mdi-heart' : 'mdi-heart-outline'"
+                        :color="isFav(b.id) ? 'error' : 'white'"
+                      />
+                    </v-btn>
+                  </div>
 
                 <!-- Card Title -->
                 <v-card-title class="text-subtitle-1 pb-1">
@@ -168,10 +170,10 @@
                     size="small"
                     variant="text"
                     color="primary"
-                    prepend-icon="mdi-swap-horizontal"
+                    prepend-icon="mdi-hand-heart"
                     @click="quickTransfer(b)"
                   >
-                    تحويل سريع
+                    دعم المشروع
                   </v-btn>
                   <v-spacer />
                   <v-btn 
@@ -193,6 +195,7 @@
                   </v-btn>
                 </v-card-actions>
               </v-card>
+              </v-hover>
             </v-col>
           </v-row>
 
@@ -376,7 +379,7 @@
     <v-dialog v-model="transferOpen" max-width="520">
       <v-card>
         <v-card-title class="d-flex align-center ga-2"
-          ><v-icon>mdi-swap-horizontal</v-icon>دعم المشروع</v-card-title
+          ><v-icon>mdi-hand-heart</v-icon>دعم المشروع</v-card-title
         >
         <v-card-text>
           <div class="text-medium-emphasis mb-2">
@@ -511,6 +514,14 @@ function mk(
   iban: string,
   tags: string[]
 ): Beneficiary {
+  const projectImages = [
+    'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=400',
+    'https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=400',
+    'https://images.unsplash.com/photo-1552664730-d307ca884978?w=400',
+    'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=400',
+  ];
+  const randomImage = projectImages[Math.floor(Math.random() * projectImages.length)];
+  
   return {
     id: Math.random().toString(36).slice(2),
     name,
@@ -520,9 +531,7 @@ function mk(
     iban,
     tags,
     favorite: tags.includes("favorite"),
-    avatar: `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(
-      name
-    )}`,
+    avatar: randomImage,
   };
 }
 
@@ -768,14 +777,42 @@ onMounted(() => {
     "Liberation Mono", "Courier New", monospace;
 }
 
-/* Card Styling - Same as cards page */
+/* Card Styling - Same as cards page with hover effects */
 .bene-card {
-  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.bene-card::before,
+.bene-card::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  background-color: rgb(var(--v-theme-primary));
+  transition: width 0.3s ease-out;
+  z-index: 1;
+}
+
+.bene-card::before {
+  top: 0;
+  left: 0;
+}
+
+.bene-card::after {
+  bottom: 0;
+  right: 0;
 }
 
 .bene-card:hover {
   transform: translateY(-3px);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08) !important;
+}
+
+.bene-card:hover::before,
+.bene-card:hover::after {
+  width: 100%;
 }
 
 /* Image Wrapper */

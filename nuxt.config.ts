@@ -189,7 +189,6 @@ export default defineNuxtConfig({
         "/language-test",
         "/auth-test",
         "/theme-test",
-        "/loading-test",
         "/pagination-test",
       ],
       //

@@ -17,6 +17,11 @@ import type { RouteLocationNormalized } from "vue-router";
  * ✅ SPA mode - Client-side only (localStorage)
  */
 export default defineNuxtRouteMiddleware((to: RouteLocationNormalized) => {
+  // تجنب redirect loop - avoid infinite redirects
+  if (to.path === '/auth/login' || to.path === '/login') {
+    return;
+  }
+
   // ────────────────────────────────────────────────────────
   // 🔒 تحديد ما إذا كانت الصفحة تتطلب المصادقة (layout: 'dashboard')
   // ────────────────────────────────────────────────────────
