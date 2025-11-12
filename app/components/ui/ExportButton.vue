@@ -108,24 +108,22 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
-import { useExport, type ExportColumn, type ExportOptions } from '@/composables/useExport'
+import type { ExportColumn, ExportOptions } from '@/composables/useExport'
 
-// Props
 interface Props {
-  data: any[]
-  columns: ExportColumn[]
-  filename?: string
-  formats?: ('pdf' | 'excel')[]
-  disabled?: boolean
-  showAsMenu?: boolean
-  showProgress?: boolean
-  color?: string
-  variant?: 'text' | 'outlined' | 'tonal' | 'elevated' | 'flat'
-  size?: 'small' | 'default' | 'large'
-  icon?: string
-  buttonText?: string
-  autoExport?: boolean
+  data: any[];
+  columns: ExportColumn[];
+  filename?: string;
+  formats?: ('pdf' | 'excel')[];
+  disabled?: boolean;
+  showAsMenu?: boolean;
+  showProgress?: boolean;
+  color?: string;
+  variant?: 'text' | 'outlined' | 'tonal' | 'elevated' | 'flat';
+  size?: 'small' | 'default' | 'large';
+  icon?: string;
+  buttonText?: string;
+  autoExport?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -139,66 +137,37 @@ const props = withDefaults(defineProps<Props>(), {
   icon: 'mdi-download',
   buttonText: 'Export',
   autoExport: false,
-  serverSide: false
-})
+});
 
-// Events
 const emit = defineEmits<{
-  'export-start': [format: string, options: ExportOptions]
-  'export-complete': [format: string, filename: string]
-  'export-error': [error: string]
-}>()
+  'export-start': [format: string, options: ExportOptions];
+  'export-complete': [format: string, filename: string];
+  'export-error': [error: string];
+}>();
 
-// Composables
-const {
-  exportData,
-  isExporting,
-  exportProgress,
-  currentJob,
-  cancelExport,
-  generateFilename
-} = useExport()
+const { exportData, isExporting, exportProgress, currentJob, cancelExport, generateFilename } = useExport();
 
-// Local state
-const showDialog = ref(false)
-const currentFormat = ref<string>('')
+const showDialog = ref(false);
+const currentFormat = ref<string>('');
 
-// Computed
-const defaultFilename = computed(() => {
-  if (props.filename) return props.filename
-  
-  const timestamp = new Date().toISOString().split('T')[0]
-  return `Export_${timestamp}`
-})
+const defaultFilename = computed(() => props.filename || `Export_${new Date().toISOString().split('T')[0]}`);
 
 const progressText = computed(() => {
   if (currentJob.value) {
-    const status = currentJob.value.status
-    if (status === 'processing') {
-      return `Processing ${currentFormat.value.toUpperCase()} export...`
-    } else if (status === 'pending') {
-      return 'Preparing export...'
-    }
+    const status = currentJob.value.status;
+    if (status === 'processing') return `Processing ${currentFormat.value.toUpperCase()} export...`;
+    if (status === 'pending') return 'Preparing export...';
   }
-  return `Generating ${currentFormat.value.toUpperCase()}...`
-})
+  return `Generating ${currentFormat.value.toUpperCase()}...`;
+});
 
-// Methods
-const getFormatIcon = (format: string): string => {
-  const icons = {
-    pdf: 'mdi-file-pdf-box',
-    excel: 'mdi-file-excel-box'
-  }
-  return icons[format as keyof typeof icons] || 'mdi-file'
-}
+const getFormatIcon = (format: string) => ({ pdf: 'mdi-file-pdf-box', excel: 'mdi-file-excel-box' }[format] || 'mdi-file');
 
-const closeMenu = () => {
-  // This would close the menu - handled by Vuetify
-}
+const closeMenu = () => {};
 
 const handleQuickExport = async (format: 'pdf' | 'excel') => {
   if (props.autoExport) {
-    const options: ExportOptions = {
+    await handleExport({
       format,
       filename: generateFilename(defaultFilename.value, format),
       selectedColumns: props.columns.map(col => col.key),
@@ -206,52 +175,35 @@ const handleQuickExport = async (format: 'pdf' | 'excel') => {
       includeHeaders: true,
       pageOrientation: 'portrait',
       pageSize: 'A4'
-    }
-    
-    await handleExport(options)
+    });
   } else {
-    showDialog.value = true
+    showDialog.value = true;
   }
-}
+};
 
 const handleExport = async (options: ExportOptions) => {
-  if (!props.data || props.data.length === 0) {
-    emit('export-error', 'No data available for export')
-    return
+  if (!props.data?.length) {
+    emit('export-error', 'No data available for export');
+    return;
   }
-
   try {
-    currentFormat.value = options.format
-    emit('export-start', options.format, options)
-    
-    await exportData(
-      props.data,
-      props.columns,
-      options
-    )
-    
-    emit('export-complete', options.format, options.filename)
-    showDialog.value = false
+    currentFormat.value = options.format;
+    emit('export-start', options.format, options);
+    await exportData(props.data, props.columns, options);
+    emit('export-complete', options.format, options.filename);
+    showDialog.value = false;
   } catch (error: any) {
-    const errorMessage = error.message || 'Export failed'
-    emit('export-error', errorMessage)
+    emit('export-error', error.message || 'Export failed');
   } finally {
-    currentFormat.value = ''
+    currentFormat.value = '';
   }
-}
+};
 
 const handleCancelExport = async () => {
-  if (currentJob.value) {
-    await cancelExport(currentJob.value.id)
-  }
-}
+  if (currentJob.value) await cancelExport(currentJob.value.id);
+};
 
-// Watch for data changes
-watch(() => props.data, (newData) => {
-  if (!newData || newData.length === 0) {
-    // Handle empty data
-  }
-}, { immediate: true })
+watch(() => props.data, (newData) => {}, { immediate: true });
 </script>
 
 <style scoped>

@@ -49,30 +49,20 @@
 </template>
 
 <script setup lang="ts">
-// استيراد متجر التحميل - Import loading store
 const loadingStore = useLoadingStore();
 
-// الخصائص المحسوبة - Computed properties
-const isVisible = computed(() => loadingStore.isLoading);     // هل التحميل مرئي
-const displayText = computed(() => loadingStore.loadingText);  // النص المعروض
-const spinnerColor = computed(() => loadingStore.spinnerColor); // لون المؤشر
+const isVisible = computed(() => loadingStore.isLoading);
+const displayText = computed(() => loadingStore.loadingText);
+const spinnerColor = computed(() => loadingStore.spinnerColor);
 
-// تنظيف العمليات القديمة دورياً - Periodic cleanup of old operations
 let cleanupInterval: ReturnType<typeof setInterval>;
 
-// عند تركيب المكون - On component mount
 onMounted(() => {
-  // بدء تنظيف دوري كل 10 ثواني - Start periodic cleanup every 10 seconds
-  cleanupInterval = setInterval(() => {
-    loadingStore.cleanupOldOperations();
-  }, 10000);
+  cleanupInterval = setInterval(() => loadingStore.cleanupOldOperations(), 10000);
 });
 
-// عند إلغاء تركيب المكون - On component unmount
 onUnmounted(() => {
-  if (cleanupInterval) {
-    clearInterval(cleanupInterval);        // إيقاف التنظيف الدوري
-  }
+  if (cleanupInterval) clearInterval(cleanupInterval);
 });
 </script>
 

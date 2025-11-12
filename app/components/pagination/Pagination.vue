@@ -62,195 +62,72 @@
 </template>
 
 <script setup lang="ts">
-// @ts-nocheck
-/**
- * Pagination Component - مكون الباجينيشن
- * يدعم Nuxt 4 و Vuetify 3 مع دعم RTL والثيم
- * Supports Nuxt 4 & Vuetify 3 with RTL and theme support
- */
-
 import { useTheme } from 'vuetify'
 
-// تعريف الخصائص - Props definition
-const props = defineProps({
-  // بيانات الباجينيشن (data.results, data.count) - Pagination data
-  data: {
-    type: Object,
-    default: () => ({ results: [], count: 0 })
-  },
-  // رقم الصفحة الحالية - Current page number
-  page: {
-    type: Number,
-    default: undefined
-  },
-  // إجمالي عدد الصفحات - Total number of pages
-  length: {
-    type: Number,
-    default: undefined
-  },
-  // إجمالي عدد العناصر - Total items count
-  totalItems: {
-    type: Number,
-    default: undefined
-  },
-  // عدد العناصر في كل صفحة - Items per page
-  perPage: {
-    type: Number,
-    default: 10
-  },
-  // اسم بديل لـ perPage - Alternative name for perPage
-  pageSize: {
-    type: Number,
-    default: undefined
-  },
-  // خيارات أحجام الصفحات - Page size options
-  pageSizes: {
-    type: Array,
-    default: () => [5, 10, 20, 50, 100]
-  },
-  // عدد الأزرار المرئية - Number of visible pagination buttons
-  totalVisible: {
-    type: Number,
-    default: 10
-  },
-  // حجم الأزرار - Button size
-  size: {
-    type: String,
-    default: 'small'
-  },
-  // عرض محدد حجم الصفحة - Show page size selector
-  showPageSize: {
-    type: Boolean,
-    default: true
-  },
-  // عرض النطاق - Show range text
-  showRange: {
-    type: Boolean,
-    default: true
-  },
-  // عرض أزرار الانتقال للأولى والأخيرة - Show first/last buttons
-  showFirstLast: {
-    type: Boolean,
-    default: false
-  },
-  // المحاذاة - Alignment
-  align: {
-    type: String,
-    default: 'end',
-    validator: (value) => ['start', 'center', 'end', 'space-between'].includes(value)
-  },
-  // مدمج - Dense mode
-  dense: {
-    type: Boolean,
-    default: false
-  },
-  // اللون - Color
-  color: {
-    type: String,
-    default: 'primary'
-  }
+interface Props {
+  data?: { results?: any[]; count?: number }
+  page?: number
+  length?: number
+  totalItems?: number
+  perPage?: number
+  pageSize?: number
+  pageSizes?: number[]
+  totalVisible?: number
+  size?: string
+  showPageSize?: boolean
+  showRange?: boolean
+  showFirstLast?: boolean
+  align?: 'start' | 'center' | 'end' | 'space-between'
+  dense?: boolean
+  color?: string
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  data: () => ({ results: [], count: 0 }),
+  perPage: 10,
+  pageSizes: () => [5, 10, 20, 50, 100],
+  totalVisible: 10,
+  size: 'small',
+  showPageSize: true,
+  showRange: true,
+  showFirstLast: false,
+  align: 'end',
+  dense: false,
+  color: 'primary',
 })
 
-// تعريف الأحداث - Events definition
 const emit = defineEmits(['page-changed', 'update:page', 'update:pageSize', 'update:page-size'])
 
-// استخدام composables من Nuxt
 const route = useRoute()
 const { t, locale } = useI18n()
-
-// الحصول على الثيم من Vuetify
 const theme = useTheme()
 
-// التحقق من اتجاه اللغة - Check language direction
 const isRTL = computed(() => locale.value === 'ar')
-
-// لون الصفحة النشطة من الثيم - Active page color from theme
 const activeColor = computed(() => theme.global.current.value.colors.primary)
-
-// حجم الصفحة الفعلي - Actual page size
 const actualPageSize = computed(() => props.pageSize || props.perPage)
-
-// رقم الصفحة الحالية - Current page
 const currentPage = computed(() => props.page !== undefined ? props.page : Number(route.query.page) || 1)
+const total = computed(() => props.totalItems !== undefined ? props.totalItems : props.data?.count || 0)
+const from = computed(() => total.value === 0 ? 0 : (currentPage.value - 1) * actualPageSize.value + 1)
+const to = computed(() => total.value === 0 ? 0 : Math.min(currentPage.value * actualPageSize.value, total.value))
+const lastPage = computed(() => props.length !== undefined ? props.length : total.value ? Math.ceil(total.value / actualPageSize.value) : 1)
+const rangeText = computed(() => !props.showRange ? '' : total.value <= 0 ? t('pagination.rangeEmpty') || 'لا توجد نتائج' : t('pagination.showing_from_to_items', { from: from.value, to: to.value, total: total.value }))
+const alignmentClass = computed(() => ({ 'justify-start': props.align === 'start', 'justify-center': props.align === 'center', 'justify-space-between': props.align === 'space-between', 'justify-end': props.align === 'end' }))
 
-// مراقبة تغيير route.query.page - Watch route.query.page changes (فقط إذا لم يتم تمرير page كـ prop)
 watch(() => route.query.page, (newPage) => {
   if (props.page === undefined) {
     const pageNum = Number(newPage) || 1
-    if (pageNum !== currentPage.value) {
-      handlePageChange(pageNum)
-    }
+    if (pageNum !== currentPage.value) handlePageChange(pageNum)
   }
 })
 
-// إجمالي العناصر - Total items count
-const total = computed(() => {
-  if (props.totalItems !== undefined) return props.totalItems
-  return props.data?.count || 0
-})
-
-// حساب العنصر الأول - Calculate first item number
-const from = computed(() => {
-  if (total.value === 0) return 0
-  return (currentPage.value - 1) * actualPageSize.value + 1
-})
-
-// حساب العنصر الأخير - Calculate last item number
-const to = computed(() => {
-  if (total.value === 0) return 0
-  return Math.min(currentPage.value * actualPageSize.value, total.value)
-})
-
-// حساب عدد الصفحات - Calculate total pages
-const lastPage = computed(() => {
-  if (props.length !== undefined) return props.length
-  if (total.value) {
-    return Math.ceil(total.value / actualPageSize.value)
-  }
-  return 1
-})
-
-// نص نطاق العرض مع الترجمة - Range text with translation
-const rangeText = computed(() => {
-  if (!props.showRange) return ''
-  if (total.value <= 0) {
-    return t('pagination.rangeEmpty') || 'لا توجد نتائج'
-  }
-  // استخدام الترجمة مع المعاملات
-  return t('pagination.showing_from_to_items', {
-    from: from.value,
-    to: to.value,
-    total: total.value
-  })
-})
-
-// فئات المحاذاة - Alignment classes
-const alignmentClass = computed(() => {
-  switch (props.align) {
-    case 'start':
-      return 'justify-start'
-    case 'center':
-      return 'justify-center'
-    case 'space-between':
-      return 'justify-space-between'
-    case 'end':
-    default:
-      return 'justify-end'
-  }
-})
-
-// معالج تغيير الصفحة - Page change handler
-const handlePageChange = (page) => {
-  // إطلاق الأحداث - Emit events
+const handlePageChange = (page: number) => {
   emit('page-changed', page)
   emit('update:page', page)
 }
 
-// معالج تغيير حجم الصفحة - Page size change handler
-const handleUpdatePageSize = (size) => {
+const handleUpdatePageSize = (size: number) => {
   emit('update:pageSize', size)
   emit('update:page-size', size)
-  // إعادة تعيين الصفحة إلى 1
   emit('update:page', 1)
   emit('page-changed', 1)
 }

@@ -13,53 +13,33 @@
   </v-btn>
 </template>
 
-<script setup>
-const { t } = useI18n();
+<script setup lang="ts">
+interface Props {
+  url: string;
+  filter?: Record<string, any>;
+}
 
-const props = defineProps({
-  url: {
-    type: String,
-    required: true,
-  },
-  filter: {
-    type: Object,
-    default: () => ({}),
-  },
+const props = withDefaults(defineProps<Props>(), {
+  filter: () => ({})
 });
 
+const { t } = useI18n();
 const config = useRuntimeConfig();
 const authStore = useAuthStore();
 
 const fullUrl = computed(() => {
   const params = { ...(props.filter ?? {}) };
-
-  // include auth token if needed by backend
-  if (authStore.token) {
-    params._token = authStore.token;
-  }
-
+  if (authStore.token) params._token = authStore.token;
   let serverUrl = config.public.apiBase || "";
-
-  // إذا لم يكن هناك serverUrl، استخدم window.location.origin
-  if (!serverUrl && typeof window !== "undefined") {
-    serverUrl = window.location.origin;
-  }
-
-  if (serverUrl.endsWith("/api")) {
-    serverUrl = serverUrl.slice(0, -4);
-  }
-
+  if (!serverUrl && typeof window !== "undefined") serverUrl = window.location.origin;
+  if (serverUrl.endsWith("/api")) serverUrl = serverUrl.slice(0, -4);
   const queryString = new URLSearchParams(params).toString();
   const printUrl = `${serverUrl}/print/${props.url}`;
-
   return queryString ? `${printUrl}?${queryString}` : printUrl;
 });
 
 const openPrintWindow = () => {
-  // Ensure we're in browser environment
-  if (typeof window !== "undefined") {
-    window.open(fullUrl.value, "_blank");
-  }
+  if (typeof window !== "undefined") window.open(fullUrl.value, "_blank");
 };
 </script>
 

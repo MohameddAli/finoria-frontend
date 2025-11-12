@@ -354,302 +354,161 @@
 </template>
 
 <script setup lang="ts">
-// @ts-nocheck
-/**
- * FilterPanel Component
- *
- * A reusable, flexible filter panel component for Nuxt 4 + Vuetify 3
- * Supports various field types: text, number, select, autocomplete, date, checkbox, switch
- * Fully RTL-compatible and theme-aware
- */
+interface FilterField {
+  name: string
+  type: 'text' | 'number' | 'email' | 'select' | 'autocomplete' | 'date' | 'checkbox' | 'switch'
+  label: string
+  placeholder?: string
+  items?: any[]
+  itemTitle?: string
+  itemValue?: string
+  multiple?: boolean
+  clearable?: boolean
+  disabled?: boolean
+  cols?: number
+  sm?: number
+  md?: number
+  lg?: number
+  hint?: string
+  persistentHint?: boolean
+  counter?: boolean
+  maxlength?: number
+  min?: number
+  max?: number
+  step?: number
+  color?: string
+  prependInnerIcon?: string
+  rules?: ((v: any) => boolean | string)[]
+}
 
-/**
- * FilterField type definition:
- * {
- *   name: string - Unique field name (used as v-model key)
- *   type: 'text' | 'number' | 'email' | 'select' | 'autocomplete' | 'date' | 'checkbox' | 'switch'
- *   label: string - Field label
- *   placeholder?: string - Placeholder text
- *   items?: any[] - Items for select/autocomplete
- *   multiple?: boolean - Multiple selection
- *   clearable?: boolean - Show clear button (default: true)
- *   disabled?: boolean - Disable field
- *   cols?: number - Grid cols (default: 12)
- *   sm?: number - Grid sm breakpoint (default: 6)
- *   md?: number - Grid md breakpoint (default: 4)
- *   lg?: number - Grid lg breakpoint (default: 3)
- *   hint?: string - Help text
- *   persistentHint?: boolean - Always show hint
- *   counter?: boolean - Show character counter
- *   maxlength?: number - Max character length
- *   color?: string - Color for checkbox/switch
- * }
- */
+interface Props {
+  fields?: FilterField[]
+  modelValue?: Record<string, any>
+  collapsible?: boolean
+  initialOpen?: boolean
+  buttonVariant?: 'flat' | 'text' | 'elevated' | 'outlined' | 'plain' | 'tonal'
+  buttonColor?: string
+  filterIcon?: string
+  toggleButtonLabel?: string
+  showActiveCount?: boolean
+  chipColor?: string
+  activeFiltersLabel?: string
+  showSubmitButton?: boolean
+  submitButtonColor?: string
+  submitButtonVariant?: 'flat' | 'text' | 'elevated' | 'outlined' | 'plain' | 'tonal'
+  submitButtonIcon?: string
+  submitButtonText?: string
+  submitButtonLabel?: string
+  submitButtonCols?: number
+  submitButtonSm?: number
+  submitButtonMd?: number
+  submitButtonLg?: number
+  showClearButton?: boolean
+  clearButtonColor?: string
+  clearButtonVariant?: 'flat' | 'text' | 'elevated' | 'outlined' | 'plain' | 'tonal'
+  clearButtonIcon?: string
+  clearButtonText?: string
+  clearButtonLabel?: string
+  showDivider?: boolean
+  loading?: boolean
+}
 
-const props = defineProps({
-  // Filter fields configuration
-  fields: {
-    type: Array,
-    default: () => [],
-  },
+const props = withDefaults(defineProps<Props>(), {
+  fields: () => [],
+  modelValue: () => ({}),
+  collapsible: true,
+  initialOpen: false,
+  buttonVariant: 'outlined',
+  buttonColor: 'primary',
+  filterIcon: 'mdi-filter-variant',
+  toggleButtonLabel: 'Filter',
+  showActiveCount: true,
+  chipColor: 'primary',
+  activeFiltersLabel: 'active',
+  showSubmitButton: true,
+  submitButtonColor: 'primary',
+  submitButtonVariant: 'flat',
+  submitButtonIcon: 'mdi-magnify',
+  submitButtonText: '',
+  submitButtonLabel: 'Search',
+  submitButtonCols: 12,
+  submitButtonSm: 3,
+  submitButtonMd: 2,
+  submitButtonLg: 2,
+  showClearButton: true,
+  clearButtonColor: 'default',
+  clearButtonVariant: 'outlined',
+  clearButtonIcon: 'mdi-close',
+  clearButtonText: '',
+  clearButtonLabel: 'Clear',
+  showDivider: true,
+  loading: false,
+})
 
-  // Initial filter values
-  modelValue: {
-    type: Object,
-    default: () => ({}),
-  },
+const emit = defineEmits(['update:modelValue', 'submit', 'clear', 'toggle'])
+const { locale } = useI18n()
 
-  // Collapsible mode - if false, filters are always visible without toggle button
-  collapsible: {
-    type: Boolean,
-    default: true,
-  },
+const isRTL = computed(() => locale.value === 'ar')
+const isOpen = ref(props.collapsible ? props.initialOpen : true)
+const formRef = ref<any>(null)
+const filterValues = ref({ ...props.modelValue })
+const isUpdating = ref(false)
 
-  // Initial open state (only used when collapsible is true)
-  initialOpen: {
-    type: Boolean,
-    default: false,
-  },
+watch(() => props.modelValue, (n) => {
+  if (!isUpdating.value) {
+    isUpdating.value = true
+    filterValues.value = { ...n }
+    nextTick(() => { isUpdating.value = false })
+  }
+}, { deep: true })
 
-  // Toggle button props
-  buttonVariant: {
-    type: String,
-    default: "outlined",
-  },
-  buttonColor: {
-    type: String,
-    default: "primary",
-  },
-  filterIcon: {
-    type: String,
-    default: "mdi-filter-variant",
-  },
-  toggleButtonLabel: {
-    type: String,
-    default: "Filter",
-  },
+watch(filterValues, (n) => {
+  if (!isUpdating.value) emit('update:modelValue', n)
+}, { deep: true })
 
-  // Active filters indicator
-  showActiveCount: {
-    type: Boolean,
-    default: true,
-  },
-  chipColor: {
-    type: String,
-    default: "primary",
-  },
-  activeFiltersLabel: {
-    type: String,
-    default: "active",
-  },
-
-  // Submit button props
-  showSubmitButton: {
-    type: Boolean,
-    default: true,
-  },
-  submitButtonColor: {
-    type: String,
-    default: "primary",
-  },
-  submitButtonVariant: {
-    type: String,
-    default: "flat",
-  },
-  submitButtonIcon: {
-    type: String,
-    default: "mdi-magnify",
-  },
-  submitButtonText: {
-    type: String,
-    default: "",
-  },
-  submitButtonLabel: {
-    type: String,
-    default: "Search",
-  },
-  submitButtonCols: {
-    type: Number,
-    default: 12,
-  },
-  submitButtonSm: {
-    type: Number,
-    default: 3,
-  },
-  submitButtonMd: {
-    type: Number,
-    default: 2,
-  },
-  submitButtonLg: {
-    type: Number,
-    default: 2,
-  },
-
-  // Clear button props
-  showClearButton: {
-    type: Boolean,
-    default: true,
-  },
-  clearButtonColor: {
-    type: String,
-    default: "default",
-  },
-  clearButtonVariant: {
-    type: String,
-    default: "outlined",
-  },
-  clearButtonIcon: {
-    type: String,
-    default: "mdi-close",
-  },
-  clearButtonText: {
-    type: String,
-    default: "",
-  },
-  clearButtonLabel: {
-    type: String,
-    default: "Clear",
-  },
-
-  // UI options
-  showDivider: {
-    type: Boolean,
-    default: true,
-  },
-
-  // Loading state (passed from parent)
-  loading: {
-    type: Boolean,
-    default: false,
-  },
-});
-
-// Define emits
-const emit = defineEmits(["update:modelValue", "submit", "clear", "toggle"]);
-
-// i18n for RTL detection
-const { locale } = useI18n();
-const isRTL = computed(() => locale.value === "ar");
-
-// Local state
-const isOpen = ref(props.collapsible ? props.initialOpen : true);
-const formRef = ref(null);
-
-// Filter values - synced with v-model
-const filterValues = ref({ ...props.modelValue });
-
-// Flag to prevent watch loops during programmatic updates
-const isUpdating = ref(false);
-
-// Watch for external changes to modelValue
-watch(
-  () => props.modelValue,
-  (newValue) => {
-    if (!isUpdating.value) {
-      isUpdating.value = true;
-      filterValues.value = { ...newValue };
-      nextTick(() => {
-        isUpdating.value = false;
-      });
-    }
-  },
-  { deep: true }
-);
-
-// Watch for internal changes and emit - debounced for performance
-watch(
-  filterValues,
-  (newValue) => {
-    if (!isUpdating.value) {
-      emit("update:modelValue", newValue);
-    }
-  },
-  { deep: true }
-);
-
-// Computed: Count active filters (non-empty values) - memoized for performance
 const activeFiltersCount = computed(() => {
-  const values = filterValues.value;
-  let count = 0;
-
-  for (const key in values) {
-    const value = values[key];
-    if (value === null || value === undefined || value === "") continue;
-    if (Array.isArray(value) && value.length === 0) continue;
-    count++;
+  const v = filterValues.value
+  let c = 0
+  for (const k in v) {
+    const val = v[k]
+    if (val === null || val === undefined || val === '') continue
+    if (Array.isArray(val) && val.length === 0) continue
+    c++
   }
+  return c
+})
 
-  return count;
-});
-
-// Computed: Check if form is valid
 const isValid = computed(() => {
-  // If no fields have rules, consider form valid
-  const hasRequiredFields = props.fields.some(
-    (field) => field.rules && field.rules.length > 0
-  );
-  if (!hasRequiredFields) return true;
+  const hasRules = props.fields.some(f => f.rules && f.rules.length > 0)
+  if (!hasRules) return true
+  return props.fields.every(f => {
+    if (!f.rules || f.rules.length === 0) return true
+    const v = filterValues.value[f.name]
+    return f.rules.every(r => r(v) === true)
+  })
+})
 
-  // Check each field with rules
-  return props.fields.every((field) => {
-    if (!field.rules || field.rules.length === 0) return true;
-    const value = filterValues.value[field.name];
-    return field.rules.every((rule) => {
-      const result = rule(value);
-      return result === true;
-    });
-  });
-});
-
-// Toggle filters visibility
 const toggleFilters = () => {
-  isOpen.value = !isOpen.value;
-  emit("toggle", isOpen.value);
-};
+  isOpen.value = !isOpen.value
+  emit('toggle', isOpen.value)
+}
 
-// Handle form submit
-const handleSubmit = () => {
-  emit("submit", filterValues.value);
-};
+const handleSubmit = () => emit('submit', filterValues.value)
 
-// Clear all filters - optimized for performance
 const clearFilters = async () => {
-  // Prevent watch from emitting during clear operation
-  isUpdating.value = true;
+  isUpdating.value = true
+  const cleared: Record<string, any> = {}
+  props.fields.forEach(f => {
+    cleared[f.name] = (f.type === 'checkbox' || f.type === 'switch') ? false : f.multiple ? [] : ''
+  })
+  filterValues.value = cleared
+  if (formRef.value) formRef.value.reset()
+  await nextTick()
+  isUpdating.value = false
+  emit('clear')
+}
 
-  // Build cleared values object efficiently
-  const clearedValues = {};
-  props.fields.forEach((field) => {
-    if (field.type === "checkbox" || field.type === "switch") {
-      clearedValues[field.name] = false;
-    } else if (field.multiple) {
-      clearedValues[field.name] = [];
-    } else {
-      clearedValues[field.name] = "";
-    }
-  });
-
-  // Update values in one operation
-  filterValues.value = clearedValues;
-
-  // Reset form validation if exists
-  if (formRef.value) {
-    formRef.value.reset();
-  }
-
-  // Wait for DOM update, then emit and allow watches
-  await nextTick();
-  isUpdating.value = false;
-  emit("clear");
-};
-
-// Expose methods for parent component
-defineExpose({
-  toggleFilters,
-  clearFilters,
-  isOpen,
-  filterValues,
-});
+defineExpose({ toggleFilters, clearFilters, isOpen, filterValues })
 </script>
 
 <style scoped>

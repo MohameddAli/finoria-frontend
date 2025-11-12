@@ -1,7 +1,7 @@
 <template>
-  <v-menu :location="location" :offset="offset" transition="fade-transition">
+  <v-menu location="bottom end" :offset="[0, 8]" transition="fade-transition">
     <template #activator="{ props: activatorProps }">
-      <v-btn v-bind="activatorProps" :variant="btnVariant" class="user-profile-btn">
+      <v-btn v-bind="activatorProps" variant="text" class="user-profile-btn">
         <div class="d-flex align-center">
           <v-avatar :size="avatarSize" class="me-2">
             <v-img :src="avatarSrc" :alt="avatarAlt" />
@@ -33,48 +33,36 @@
 </template>
 
 <script setup lang="ts">
+interface MenuItem {
+  title: string;
+  icon: string;
+  action: () => void;
+}
 
-const props = defineProps({
-  name: { type: String, default: 'Robin Jivan' },
-  role: { type: String, default: 'Admin' },
-  avatar: { type: String, default: 'https://cdn.vuetifyjs.com/images/john.jpg' },
-  avatarAlt: { type: String, default: 'User avatar' },
-  showUserInfo: { type: Boolean, default: true },
-  items: {
-    type: Array,
-    default: undefined,
-    validator: (arr) => !arr || (Array.isArray(arr) && arr.every(i => i && typeof i.title === 'string' && typeof i.icon === 'string' && typeof i.action === 'function'))
-  },
-  location: {
-    type: String,
-    default: 'bottom end',
-    validator: (v) => ['bottom end', 'bottom start', 'top end', 'top start'].includes(v)
-  },
-  offset: {
-    type: Array,
-    default: () => [0, 8],
-    validator: (v) => Array.isArray(v) && v.length === 2 && v.every((n) => typeof n === 'number')
-  },
-  avatarSize: { type: [Number, String], default: 32 },
-  btnVariant: {
-    type: String,
-    default: 'text',
-    validator: (v) => ['text', 'elevated', 'flat', 'tonal', 'outlined', 'plain'].includes(v)
-  }
-})
+const props = defineProps<{
+  name?: string;
+  role?: string;
+  avatar?: string;
+  avatarAlt?: string;
+  showUserInfo?: boolean;
+  items?: MenuItem[];
+  location?: string;
+  offset?: [number, number];
+  avatarSize?: number | string;
+  btnVariant?: string;
+}>()
 
 const emit = defineEmits(['logout', 'navigate'])
-
-const displayName = computed(() => props.name)
-const displayRole = computed(() => props.role)
-const avatarSrc = computed(() => props.avatar)
-
-const navigate = (to) => emit('navigate', to)
-const logout = () => emit('logout')
-
 const { t } = useI18n()
 
-const defaultItems = computed(() => [
+const displayName = computed(() => props.name || 'Robin Jivan')
+const displayRole = computed(() => props.role || 'Admin')
+const avatarSrc = computed(() => props.avatar || 'https://cdn.vuetifyjs.com/images/john.jpg')
+
+const navigate = (to: string) => emit('navigate', to)
+const logout = () => emit('logout')
+
+const defaultItems = computed<MenuItem[]>(() => [
   { title: t('header.profile'), icon: 'mdi-account-outline', action: () => navigate('/profile') },
   { title: t('navigation.settings'), icon: 'mdi-cog-outline', action: () => navigate('/settings') },
   { title: t('navigation.support'), icon: 'mdi-help-circle-outline', action: () => navigate('/support') },

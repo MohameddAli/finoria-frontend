@@ -130,170 +130,74 @@
 </template>
 
 <script setup lang="ts">
-/* eslint-disable */
-import { useDisplay, useLocale } from "vuetify";
-import NotificationsMenu from "~/components/notifications/NotificationsMenu.vue";
-import GlobalSearchInput from "~/components/search/GlobalSearchInput.vue";
-import UserProfileMenu from "~/components/user/UserProfileMenu.vue";
-import ThemeSelector from "~/components/theme/ThemeSelector.vue";
-import ThemeToggle from "~/components/theme/ThemeToggle.vue";
-// @ts-ignore
-import { useAppStore } from "~/stores/app";
-import { useAuthStore } from "~/stores/auth/storeAuth";
-import { useAuthApi } from "~/composables/api/useAuthApi";
+import { useDisplay, useLocale } from "vuetify"
+import { useAppStore } from "~/stores/app"
+import { useAuthStore } from "~/stores/auth/storeAuth"
+import { useAuthApi } from "~/composables/api/useAuthApi"
 
-// Composables
-const { mobile } = useDisplay();
-const vuetifyLocale = useLocale();
-const appStore = useAppStore();
-const authStore = useAuthStore();
-const router = useRouter();
-const { t, locale, setLocale: i18nSetLocale } = useI18n();
+const { mobile } = useDisplay()
+const vuetifyLocale = useLocale()
+const appStore = useAppStore()
+const authStore = useAuthStore()
+const router = useRouter()
+const { t, locale, setLocale: i18nSetLocale } = useI18n()
 
-// State
-const searchQuery = ref("");
-const notificationCount = ref(3);
+const searchQuery = ref("")
+const notificationCount = ref(3)
 
-// Computed
-const isArabic = computed(() => locale.value === "ar");
-const menuLocation = computed(() =>
-  isArabic.value ? "bottom start" : "bottom end"
-);
-// @ts-ignore
-const menuOffset = computed<[number, number]>(() => [0, 8]);
-
-// ملاحظة: المزامنة مع app store تتم في app.vue (single source of truth)
-
-// Date range handled by DateRangePicker component and store
+const isArabic = computed(() => locale.value === "ar")
+const menuLocation = computed(() => isArabic.value ? "bottom start" : "bottom end")
+const menuOffset = computed<[number, number]>(() => [0, 8])
 
 const userMenuItems = computed(() => [
-  {
-    title: t("navigation.profile"),
-    icon: "mdi-account-outline",
-    action: () => navigateTo("/profile"),
-  },
-  {
-    title: t("navigation.settings"),
-    icon: "mdi-cog-outline",
-    action: () => navigateTo("/settings"),
-  },
-  {
-    title: t("navigation.help"),
-    icon: "mdi-help-circle-outline",
-    action: () => navigateTo("/help"),
-  },
-  {
-    title: t("header.logout"),
-    icon: "mdi-logout",
-    action: () => Logout(),
-  },
-]);
+  { title: t("navigation.profile"), icon: "mdi-account-outline", action: () => navigateTo("/profile") },
+  { title: t("navigation.settings"), icon: "mdi-cog-outline", action: () => navigateTo("/settings") },
+  { title: t("navigation.help"), icon: "mdi-help-circle-outline", action: () => navigateTo("/help") },
+  { title: t("header.logout"), icon: "mdi-logout", action: () => Logout() },
+])
 
-// Notifications data
 const notifications = ref([
-  {
-    id: 1,
-    title: "New transaction received",
-    time: "2 minutes ago",
-    icon: "mdi-currency-btc",
-    color: "success",
-  },
-  {
-    id: 2,
-    title: "Wallet backup completed",
-    time: "1 hour ago",
-    icon: "mdi-shield-check",
-    color: "info",
-  },
-  {
-    id: 3,
-    title: "Security alert",
-    time: "3 hours ago",
-    icon: "mdi-alert",
-    color: "warning",
-  },
-]);
+  { id: 1, title: "New transaction received", time: "2 minutes ago", icon: "mdi-currency-btc", color: "success" },
+  { id: 2, title: "Wallet backup completed", time: "1 hour ago", icon: "mdi-shield-check", color: "info" },
+  { id: 3, title: "Security alert", time: "3 hours ago", icon: "mdi-alert", color: "warning" },
+])
 
-// User info from auth store
-const userName = computed(() => authStore.admin?.name || "Guest");
-const userRole = computed(() => authStore.admin?.email || "User");
-const userAvatar = computed(() => "https://cdn.vuetifyjs.com/images/john.jpg"); // Default avatar
+const userName = computed(() => authStore.admin?.name || "Guest")
+const userRole = computed(() => authStore.admin?.email || "User")
+const userAvatar = computed(() => "https://cdn.vuetifyjs.com/images/john.jpg")
 
-// @ts-ignore
-function handleUserNavigate(to) {
-  navigateTo(to);
-}
+const handleUserNavigate = (to: string) => navigateTo(to)
+const handleNotificationSelect = () => {}
+const handleViewAllNotifications = () => {}
 
-const handleNotificationSelect = () => {};
-const handleViewAllNotifications = () => {};
-
-/**
- * تبديل اللغة
- * ────────────────────────────────────────────────────────
- * يقوم بتحديث i18n + حفظ في localStorage + مزامنة كل شيء
- */
-// @ts-ignore
-const setLang = async (code) => {
-  if (code !== "en" && code !== "ar") return;
-  if (locale.value === code) return;
-
+const setLang = async (code: string) => {
+  if ((code !== "en" && code !== "ar") || locale.value === code) return
   try {
-    // 1. تحديث i18n locale
-    await i18nSetLocale(code);
-
-    // 2. حفظ في localStorage
+    await i18nSetLocale(code)
     if (import.meta.client) {
-      localStorage.setItem("i18n_locale", code);
+      localStorage.setItem("i18n_locale", code)
+      const html = document.documentElement
+      html.setAttribute("lang", code)
+      html.setAttribute("dir", code === "ar" ? "rtl" : "ltr")
+      html.classList.toggle("v-locale--is-rtl", code === "ar")
+      document.body.classList.toggle("rtl", code === "ar")
     }
-
-    // 3. مزامنة Vuetify
-    vuetifyLocale.current.value = code;
-
-    // 4. مزامنة Store
-    appStore.setLocale(code);
-
-    // 5. تحديث DOM attributes
-    if (import.meta.client) {
-      const html = document.documentElement;
-      html.setAttribute("lang", code);
-      html.setAttribute("dir", code === "ar" ? "rtl" : "ltr");
-      html.classList.toggle("v-locale--is-rtl", code === "ar");
-
-      // إضافة/إزالة class rtl من body (للتوافق مع الأنماط القديمة)
-      if (code === "ar") {
-        document.body.classList.add("rtl");
-      } else {
-        document.body.classList.remove("rtl");
-      }
-    }
-
-    console.log(`✅ تم تبديل اللغة إلى: ${code}`);
+    vuetifyLocale.current.value = code
+    appStore.setLocale(code)
   } catch (error) {
-    console.error("❌ خطأ في تبديل اللغة:", error);
+    console.error("❌ خطأ في تبديل اللغة:", error)
   }
-};
+}
 
 const Logout = async () => {
   try {
-    // 1. استدعاء logout API (يحذف localStorage + cookie)
-    useAuthApi().logout();
-    // 2. مسح بيانات المصادقة من store و localStorage
-    authStore.clearAuth();
-
-    // 2. مسح بيانات إضافية
-    // if (import.meta.client) {
-    //   localStorage.removeItem("auth_redirect_url");
-    //   localStorage.removeItem("remember_me");
-    // }
-
-    // 3. إعادة التوجيه لصفحة تسجيل الدخول
-    await router.push("/auth/login");
-
-    console.log("✅ تم تسجيل الخروج بنجاح");
+    useAuthApi().logout()
+    authStore.clearAuth()
+    await router.push("/auth/login")
   } catch (error) {
-    console.error("❌ خطأ في تسجيل الخروج:", error);
+    console.error("❌ خطأ في تسجيل الخروج:", error)
   }
-};
+}
 </script>
 
 <style scoped>

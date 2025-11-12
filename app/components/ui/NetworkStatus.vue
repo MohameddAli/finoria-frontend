@@ -25,21 +25,13 @@
     </v-snackbar>
   </template>
   
-  <script setup>
-  import { ref, watch } from 'vue'
-  import { useNetworkStatus } from '~/composables/useNetworkStatus'
-  
-  const { isOnline } = useNetworkStatus()
-  const show = ref(false)
-  
-  watch(isOnline, (newValue, oldValue) => {
-    if (oldValue !== undefined) { // Skip initial value
-      show.value = true
-    }
-  })
-  
-  const retryConnection = () => {
-    // Trigger a refresh of the current page
-    window.location.reload()
-  }
-  </script>
+  <script setup lang="ts">
+const { isOnline } = useNetworkStatus();
+const show = ref(false);
+
+watch(isOnline, (newValue, oldValue) => {
+  if (oldValue !== undefined) show.value = true;
+});
+
+const retryConnection = () => { window.location.reload(); };
+</script>

@@ -52,51 +52,35 @@
 
 <script setup lang="ts">
 import { useAppStore } from '~/stores/app'
+
 const { t, locale } = useI18n()
 const appStore = useAppStore()
-
 const isOpen = ref(false)
 
 const isArabic = computed(() => locale.value === 'ar')
-const currentLocale = computed(() => (isArabic.value ? 'ar-EG' : 'en-US'))
-const menuLocation = computed(() => (isArabic.value ? 'bottom start' : 'bottom end'))
-
-const iconLeft = computed(() => (isArabic.value ? 'mdi-calendar' : 'mdi-calendar'))
+const currentLocale = computed(() => isArabic.value ? 'ar-EG' : 'en-US')
+const menuLocation = computed(() => isArabic.value ? 'bottom start' : 'bottom end')
+const iconLeft = computed(() => 'mdi-calendar')
 const iconRight = computed(() => 'mdi-chevron-down')
 
-// Bind to store
 const pickerRange = ref<[string, string] | string[] | null>(null)
-
 const displayText = computed(() => appStore.formattedDateRange || t('dateRange.selectRange'))
 
-watch(
-  () => appStore.dateRange,
-  (val) => {
-    if (val.start && val.end) {
-      pickerRange.value = [val.start, val.end]
-    } else {
-      pickerRange.value = null
-    }
-  },
-  { immediate: true, deep: true }
-)
+watch(() => appStore.dateRange, (val) => {
+  pickerRange.value = val.start && val.end ? [val.start, val.end] : null
+}, { immediate: true, deep: true })
 
 const handleApply = () => {
   if (Array.isArray(pickerRange.value) && pickerRange.value.length >= 2) {
     const [start, end] = pickerRange.value as string[]
-    appStore.setDateRange({ start, end })
+    if (start && end) appStore.setDateRange({ start, end })
   }
   isOpen.value = false
 }
 
-const handleClear = () => {
-  appStore.clearDateRange()
-}
+const handleClear = () => appStore.clearDateRange()
 
-onMounted(() => {
-  // ensure initialized defaults
-  appStore.initializeApp()
-})
+onMounted(() => appStore.initializeApp())
 </script>
 
 <style scoped>

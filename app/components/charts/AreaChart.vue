@@ -24,33 +24,47 @@
   </v-card>
 </template>
 
-<script setup>
-import { useI18n } from 'vue-i18n'
-import { useTheme } from 'vuetify'
+<script setup lang="ts">
+import { useTheme } from 'vuetify';
 
-const props = defineProps({
-  series: { type: Array, default: () => [ { name: 'Series 1', data: [31, 40, 28, 51, 42, 109, 100] } ] },
-  categories: { type: Array, default: () => ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'] },
-  title: { type: String, default: '' },
-  height: { type: [Number, String], default: 350 },
-  width: { type: [Number, String], default: '100%' },
-  elevation: { type: Number, default: 2 },
-  curve: { type: String, default: 'smooth' },
-  dataLabels: { type: Boolean, default: false },
-  colors: { type: Array, default: () => ['#008FFB', '#00E396', '#FEB019'] },
-  showLegend: { type: Boolean, default: true },
-  showGrid: { type: Boolean, default: true },
-  showDownload: { type: Boolean, default: true },
-  customOptions: { type: Object, default: () => ({}) },
-})
+interface Props {
+  series?: any[];
+  categories?: string[];
+  title?: string;
+  height?: number | string;
+  width?: number | string;
+  elevation?: number;
+  curve?: string;
+  dataLabels?: boolean;
+  colors?: string[];
+  showLegend?: boolean;
+  showGrid?: boolean;
+  showDownload?: boolean;
+  customOptions?: Record<string, any>;
+}
 
-const { locale } = useI18n()
-const { current: currentTheme } = useTheme()
+const props = withDefaults(defineProps<Props>(), {
+  series: () => [{ name: 'Series 1', data: [31, 40, 28, 51, 42, 109, 100] }],
+  categories: () => ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+  title: '',
+  height: 350,
+  width: '100%',
+  elevation: 2,
+  curve: 'smooth',
+  dataLabels: false,
+  colors: () => ['#008FFB', '#00E396', '#FEB019'],
+  showLegend: true,
+  showGrid: true,
+  showDownload: true,
+  customOptions: () => ({}),
+});
 
-const isRTL = computed(() => locale.value === 'ar')
-const isDark = computed(() => currentTheme.value.dark)
+const { locale } = useI18n();
+const theme = useTheme();
 
-const chartRef = ref(null)
+const isRTL = computed(() => locale.value === 'ar');
+const isDark = computed(() => theme.current.value.dark);
+const chartRef = ref(null);
 
 const baseOptions = computed(() => ({
   chart: {
@@ -61,43 +75,33 @@ const baseOptions = computed(() => ({
   colors: props.colors,
   dataLabels: { enabled: props.dataLabels },
   stroke: { curve: props.curve, width: 2 },
-  legend: {
-    show: props.showLegend,
-    position: 'top',
-    labels: { colors: isDark.value ? '#fff' : '#000' },
-  },
-  xaxis: {
-    categories: props.categories,
-    labels: { style: { colors: isDark.value ? '#aaa' : '#666' } },
-  },
-  yaxis: {
-    labels: { style: { colors: isDark.value ? '#aaa' : '#666' } },
-  },
+  legend: { show: props.showLegend, position: 'top', labels: { colors: isDark.value ? '#fff' : '#000' } },
+  xaxis: { categories: props.categories, labels: { style: { colors: isDark.value ? '#aaa' : '#666' } } },
+  yaxis: { labels: { style: { colors: isDark.value ? '#aaa' : '#666' } } },
   grid: { show: props.showGrid, borderColor: isDark.value ? '#444' : '#e0e0e0' },
   tooltip: { theme: isDark.value ? 'dark' : 'light' },
-  fill: {
-    type: 'gradient',
-    gradient: { shadeIntensity: 0.4, opacityFrom: 0.6, opacityTo: 0.05, stops: [0, 90, 100] },
-  },
-}))
+  fill: { type: 'gradient', gradient: { shadeIntensity: 0.4, opacityFrom: 0.6, opacityTo: 0.05, stops: [0, 90, 100] } },
+}));
 
-const chartOptions = computed(() => mergeDeep(baseOptions.value, props.customOptions))
+const chartOptions = computed(() => mergeDeep(baseOptions.value, props.customOptions));
 
-const mergeDeep = (t, s) => {
-  const o = { ...t }
-  if (s && typeof s === 'object') Object.keys(s).forEach(k => { o[k] = (s[k] && typeof s[k] === 'object' && !Array.isArray(s[k])) ? mergeDeep(t[k] || {}, s[k]) : s[k] })
-  return o
-}
+const mergeDeep = (t: any, s: any): any => {
+  const o = { ...t };
+  if (s && typeof s === 'object') {
+    Object.keys(s).forEach(k => { o[k] = (s[k] && typeof s[k] === 'object' && !Array.isArray(s[k])) ? mergeDeep(t[k] || {}, s[k]) : s[k]; });
+  }
+  return o;
+};
 
 const downloadChart = () => {
-  chartRef.value?.chart?.dataURI().then(({ imgURI }) => {
-    const a = document.createElement('a')
-    a.href = imgURI
-    a.download = `${props.title || 'area-chart'}.png`
-    a.click()
-  })
-}
+  (chartRef.value as any)?.chart?.dataURI().then(({ imgURI }: { imgURI: string }) => {
+    const a = document.createElement('a');
+    a.href = imgURI;
+    a.download = `${props.title || 'area-chart'}.png`;
+    a.click();
+  });
+};
 
-defineExpose({ downloadChart })
+defineExpose({ downloadChart });
 </script>
 

@@ -292,20 +292,17 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue'
-import { useFileUpload, type FileUploadOptions } from '@/composables/useFileUpload'
-import { useUtils } from '@/composables/useUtils'
+import type { FileUploadOptions } from '@/composables/useFileUpload'
 
-// Props
 interface Props extends Partial<FileUploadOptions> {
-  disabled?: boolean
-  height?: string | number
-  variant?: 'default' | 'compact' | 'minimal'
+  disabled?: boolean;
+  height?: string | number;
+  variant?: 'default' | 'compact' | 'minimal';
 }
 
 const props = withDefaults(defineProps<Props>(), {
   multiple: true,
-  maxFileSize: 50 * 1024 * 1024, // 50MB
+  maxFileSize: 50 * 1024 * 1024,
   maxFiles: 10,
   accept: () => ['*'],
   showPreview: true,
@@ -316,164 +313,103 @@ const props = withDefaults(defineProps<Props>(), {
   variant: 'default',
   uploadMethod: 'POST',
   uploadUrl: '/api/upload'
-})
+});
 
-// Events
 const emit = defineEmits<{
-  'files-selected': [files: File[]]
-  'upload-start': [files: File[]]
-  'upload-progress': [progress: any]
-  'upload-complete': [results: any[]]
-  'upload-error': [error: any]
-  'file-removed': [file: File]
-}>()
+  'files-selected': [files: File[]];
+  'upload-start': [files: File[]];
+  'upload-progress': [progress: any];
+  'upload-complete': [results: any[]];
+  'upload-error': [error: any];
+  'file-removed': [file: File];
+}>();
 
-// Template refs
-const dropZone = ref<HTMLElement>()
-const fileInput = ref<HTMLInputElement>()
+const dropZone = ref<HTMLElement>();
+const fileInput = ref<HTMLInputElement>();
 
-// File upload composable
 const {
-  files,
-  isUploading,
-  isDragActive,
-  validationErrors,
-  uploadProgress,
-  config,
-  hasFiles,
-  canUpload,
-  failedFiles,
-  addFiles,
-  removeFile,
-  clearFiles,
-  uploadFiles,
-  cancelUploads,
-  retryFailedUploads,
-  formatFileSize,
-  getFileIcon
+  files, isUploading, isDragActive, validationErrors, uploadProgress, config, hasFiles, canUpload, failedFiles,
+  addFiles, removeFile, clearFiles, uploadFiles, cancelUploads, retryFailedUploads, formatFileSize, getFileIcon
 } = useFileUpload({
-  uploadUrl: props.uploadUrl,
-  accept: props.accept,
-  maxFileSize: props.maxFileSize,
-  maxFiles: props.maxFiles,
-  multiple: props.multiple,
-  uploadMethod: props.uploadMethod,
-  uploadHeaders: props.uploadHeaders,
-  showPreview: props.showPreview,
-  showProgress: props.showProgress,
-  autoUpload: props.autoUpload
-})
+  uploadUrl: props.uploadUrl, accept: props.accept, maxFileSize: props.maxFileSize, maxFiles: props.maxFiles,
+  multiple: props.multiple, uploadMethod: props.uploadMethod, uploadHeaders: props.uploadHeaders,
+  showPreview: props.showPreview, showProgress: props.showProgress, autoUpload: props.autoUpload
+});
 
-// Computed properties
 const dropZoneClasses = computed(() => ({
   'drop-zone--active': isDragActive.value,
   'drop-zone--disabled': props.disabled,
   'drop-zone--has-files': hasFiles.value,
   [`drop-zone--${props.variant}`]: true
-}))
+}));
 
-const dropZoneIcon = computed(() => {
-  if (isDragActive.value) return 'mdi-cloud-upload'
-  if (hasFiles.value) return 'mdi-file-multiple'
-  return 'mdi-cloud-upload-outline'
-})
+const dropZoneIcon = computed(() => isDragActive.value ? 'mdi-cloud-upload' : hasFiles.value ? 'mdi-file-multiple' : 'mdi-cloud-upload-outline');
+const dropZoneTitle = computed(() => isDragActive.value ? 'Drop files here' : hasFiles.value ? 'Add more files' : 'Upload your files');
+const dropZoneSubtitle = computed(() => isDragActive.value ? 'Release to add files' : 'Drag and drop files here, or click to browse');
+const acceptAttribute = computed(() => !props.accept || props.accept.includes('*') ? undefined : props.accept.join(','));
 
-const dropZoneTitle = computed(() => {
-  if (isDragActive.value) return 'Drop files here'
-  if (hasFiles.value) return 'Add more files'
-  return 'Upload your files'
-})
-
-const dropZoneSubtitle = computed(() => {
-  if (isDragActive.value) return 'Release to add files'
-  return 'Drag and drop files here, or click to browse'
-})
-
-const acceptAttribute = computed(() => {
-  if (!props.accept || props.accept.includes('*')) return undefined
-  return props.accept.join(',')
-})
-
-// Methods
 const triggerFileInput = () => {
-  if (!props.disabled && fileInput.value) {
-    fileInput.value.click()
-  }
-}
+  if (!props.disabled && fileInput.value) fileInput.value.click();
+};
 
 const handleFileSelect = (event: Event) => {
-  const target = event.target as HTMLInputElement
-  if (target.files && target.files.length > 0) {
-    const filesArray = Array.from(target.files)
-    addFiles(filesArray)
-    emit('files-selected', filesArray)
-    
-    // Reset input
-    target.value = ''
+  const target = event.target as HTMLInputElement;
+  if (target.files?.length) {
+    const filesArray = Array.from(target.files);
+    addFiles(filesArray);
+    emit('files-selected', filesArray);
+    target.value = '';
   }
-}
+};
 
 const handleDragOver = (event: DragEvent) => {
-  event.preventDefault()
-  event.stopPropagation()
-}
+  event.preventDefault();
+  event.stopPropagation();
+};
 
 const handleDragEnter = (event: DragEvent) => {
-  event.preventDefault()
-  event.stopPropagation()
-  isDragActive.value = true
-}
+  event.preventDefault();
+  event.stopPropagation();
+  isDragActive.value = true;
+};
 
 const handleDragLeave = (event: DragEvent) => {
-  event.preventDefault()
-  event.stopPropagation()
-  
-  // Only set to false if leaving the drop zone entirely
-  if (!dropZone.value?.contains(event.relatedTarget as Node)) {
-    isDragActive.value = false
-  }
-}
+  event.preventDefault();
+  event.stopPropagation();
+  if (!dropZone.value?.contains(event.relatedTarget as Node)) isDragActive.value = false;
+};
 
 const handleDrop = (event: DragEvent) => {
-  event.preventDefault()
-  event.stopPropagation()
-  isDragActive.value = false
-
-  if (props.disabled) return
-
-  const files = event.dataTransfer?.files
-  if (files && files.length > 0) {
-    const filesArray = Array.from(files)
-    addFiles(filesArray)
-    emit('files-selected', filesArray)
+  event.preventDefault();
+  event.stopPropagation();
+  isDragActive.value = false;
+  if (props.disabled) return;
+  const files = event.dataTransfer?.files;
+  if (files?.length) {
+    const filesArray = Array.from(files);
+    addFiles(filesArray);
+    emit('files-selected', filesArray);
   }
-}
+};
 
 const fileItemClasses = (file: any) => ({
   'file-item--uploading': file.status === 'uploading',
   'file-item--completed': file.status === 'completed',
   'file-item--error': file.status === 'error',
   'file-item--cancelled': file.status === 'cancelled'
-})
+});
 
-// استخدام الدوال المساعدة الموحدة
-const { getStatusColor } = useUtils()
+const { getStatusColor } = useUtils();
 
-const getStatusIcon = (status: string) => {
-  const icons = {
-    pending: 'mdi-clock-outline',
-    uploading: 'mdi-loading mdi-spin',
-    completed: 'mdi-check-circle',
-    error: 'mdi-alert-circle',
-    cancelled: 'mdi-cancel'
-  }
-  return icons[status as keyof typeof icons] || 'mdi-file'
-}
+const getStatusIcon = (status: string) => ({
+  pending: 'mdi-clock-outline',
+  uploading: 'mdi-loading mdi-spin',
+  completed: 'mdi-check-circle',
+  error: 'mdi-alert-circle',
+  cancelled: 'mdi-cancel'
+}[status] || 'mdi-file');
 
-// Cleanup on unmount
-onUnmounted(() => {
-  clearFiles()
-})
+onUnmounted(() => { clearFiles(); });
 </script>
 
 <style scoped>

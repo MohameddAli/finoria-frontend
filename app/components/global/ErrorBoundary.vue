@@ -57,27 +57,11 @@
 </template>
 
 <script setup lang="ts">
-/**
- * ErrorBoundary Component
- * Catches and displays errors in child components
- *
- * Usage:
- * <ErrorBoundary>
- *   <YourComponent />
- * </ErrorBoundary>
- */
-
 import { useToast } from "~/composables/useToast";
 
-// ═══════════════════════════════════════════════
-// Props & Emits
-// ═══════════════════════════════════════════════
 interface Props {
-  /** Show toast notification on error */
   showToast?: boolean;
-  /** Custom error message */
   fallbackMessage?: string;
-  /** Log errors to console */
   logErrors?: boolean;
 }
 
@@ -92,28 +76,17 @@ const emit = defineEmits<{
   reset: [];
 }>();
 
-// ═══════════════════════════════════════════════
-// Composables
-// ═══════════════════════════════════════════════
 const { t } = useI18n();
 const router = useRouter();
 const toast = useToast();
 
-// ═══════════════════════════════════════════════
-// State
-// ═══════════════════════════════════════════════
 const hasError = ref(false);
 const errorDetails = ref<string>("");
 const isDev = ref(import.meta.dev);
 
-// ═══════════════════════════════════════════════
-// Error Handler
-// ═══════════════════════════════════════════════
 onErrorCaptured((error: Error, instance, info) => {
   hasError.value = true;
   errorDetails.value = `${error.message}\n\nStack:\n${error.stack}\n\nInfo: ${info}`;
-
-  // Log to console if enabled
   if (props.logErrors) {
     console.error("ErrorBoundary caught:", {
       error,
@@ -121,26 +94,13 @@ onErrorCaptured((error: Error, instance, info) => {
       info,
     });
   }
-
-  // Show toast notification
   if (props.showToast) {
-    toast.error(
-      props.fallbackMessage ||
-        t("errors.boundary.notification") ||
-        "حدث خطأ في تحميل المكون"
-    );
+    toast.error(props.fallbackMessage || t("errors.boundary.notification") || "حدث خطأ في تحميل المكون");
   }
-
-  // Emit error event
   emit("error", error);
-
-  // Prevent error from propagating further
   return false;
 });
 
-// ═══════════════════════════════════════════════
-// Methods
-// ═══════════════════════════════════════════════
 function resetError() {
   hasError.value = false;
   errorDetails.value = "";
@@ -152,12 +112,7 @@ function goHome() {
   router.push("/");
 }
 
-// ═══════════════════════════════════════════════
-// Lifecycle
-// ═══════════════════════════════════════════════
-onBeforeUnmount(() => {
-  resetError();
-});
+onBeforeUnmount(() => resetError());
 </script>
 
 <style scoped>

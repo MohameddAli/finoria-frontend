@@ -115,7 +115,7 @@
                   <template v-slot:prepend>
                     <v-checkbox
                       :model-value="exportOptions.selectedColumns.includes(column.key)"
-                      @update:model-value="toggleColumn(column.key, $event)"
+                      @update:model-value="(v) => toggleColumn(column.key, !!v)"
                       color="primary"
                       hide-details
                       density="compact"
@@ -268,35 +268,31 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, nextTick } from 'vue'
 import type { ExportColumn, ExportOptions, ExcelExportOptions } from '@/composables/useExport'
 
-// Props
 interface Props {
-  modelValue: boolean
-  data: any[]
-  columns: ExportColumn[]
-  defaultFilename: string
-  formats: ('pdf' | 'excel')[]
-  hasSelectedData?: boolean
-  isLoading?: boolean
+  modelValue: boolean;
+  data: any[];
+  columns: ExportColumn[];
+  defaultFilename: string;
+  formats: ('pdf' | 'excel')[];
+  hasSelectedData?: boolean;
+  isLoading?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   formats: () => ['pdf', 'excel'],
   hasSelectedData: false,
   isLoading: false
-})
+});
 
-// Events
 const emit = defineEmits<{
-  'update:modelValue': [value: boolean]
-  'export': [options: ExportOptions]
-}>()
+  'update:modelValue': [value: boolean];
+  'export': [options: ExportOptions];
+}>();
 
-// Local state
-const form = ref()
-const selectedFormat = ref<'pdf' | 'excel'>('pdf')
+const form = ref();
+const selectedFormat = ref<'pdf' | 'excel'>('pdf');
 
 const exportOptions = ref<ExportOptions>({
   format: 'pdf',
@@ -308,7 +304,7 @@ const exportOptions = ref<ExportOptions>({
   pageSize: 'A4',
   title: '',
   subtitle: ''
-})
+});
 
 const excelOptions = ref<ExcelExportOptions>({
   ...exportOptions.value,
@@ -316,163 +312,74 @@ const excelOptions = ref<ExcelExportOptions>({
   includeFilters: false,
   freezeHeader: true,
   columnWidths: 'auto'
-})
+});
 
-// Computed
-const orientationOptions = computed(() => [
-  { title: 'Portrait', value: 'portrait' },
-  { title: 'Landscape', value: 'landscape' }
-])
-
-const pageSizeOptions = computed(() => [
-  { title: 'A4', value: 'A4' },
-  { title: 'A3', value: 'A3' },
-  { title: 'Letter', value: 'Letter' }
-])
+const orientationOptions = computed(() => [{ title: 'Portrait', value: 'portrait' }, { title: 'Landscape', value: 'landscape' }]);
+const pageSizeOptions = computed(() => [{ title: 'A4', value: 'A4' }, { title: 'A3', value: 'A3' }, { title: 'Letter', value: 'Letter' }]);
 
 const filenameRules = computed(() => [
   (v: string) => !!v || 'Filename is required',
   (v: string) => v.length <= 100 || 'Filename must be less than 100 characters',
   (v: string) => /^[a-zA-Z0-9_\-\s]+$/.test(v) || 'Filename contains invalid characters'
-])
+]);
 
-const canExport = computed(() => {
-  return exportOptions.value.filename.trim() !== '' &&
-         exportOptions.value.selectedColumns.length > 0 &&
-         props.data.length > 0
-})
+const canExport = computed(() => exportOptions.value.filename.trim() !== '' && exportOptions.value.selectedColumns.length > 0 && props.data.length > 0);
 
 const estimatedFileSize = computed(() => {
-  const rowCount = props.data.length
-  const columnCount = exportOptions.value.selectedColumns.length
-  const avgCellSize = 20 // bytes
-  
-  let estimatedBytes = rowCount * columnCount * avgCellSize
-  
-  if (selectedFormat.value === 'excel') {
-    estimatedBytes *= 1.5 // Excel overhead
-  } else {
-    estimatedBytes *= 2 // PDF overhead
-  }
-  
-  if (estimatedBytes < 1024) {
-    return `${Math.round(estimatedBytes)} B`
-  } else if (estimatedBytes < 1024 * 1024) {
-    return `${Math.round(estimatedBytes / 1024)} KB`
-  } else {
-    return `${Math.round(estimatedBytes / (1024 * 1024))} MB`
-  }
-})
+  const rowCount = props.data.length;
+  const columnCount = exportOptions.value.selectedColumns.length;
+  let estimatedBytes = rowCount * columnCount * 20 * (selectedFormat.value === 'excel' ? 1.5 : 2);
+  if (estimatedBytes < 1024) return `${Math.round(estimatedBytes)} B`;
+  if (estimatedBytes < 1024 * 1024) return `${Math.round(estimatedBytes / 1024)} KB`;
+  return `${Math.round(estimatedBytes / (1024 * 1024))} MB`;
+});
 
-// Methods
-const getFormatIcon = (format: string): string => {
-  const icons = {
-    pdf: 'mdi-file-pdf-box',
-    excel: 'mdi-file-excel-box'
-  }
-  return icons[format as keyof typeof icons] || 'mdi-file'
-}
-
-const getFileExtension = (format: string): string => {
-  const extensions = {
-    pdf: '.pdf',
-    excel: '.xlsx'
-  }
-  return extensions[format as keyof typeof extensions] || ''
-}
-
-const getTypeColor = (type: string): string => {
-  const colors = {
-    string: 'blue',
-    number: 'green',
-    date: 'orange',
-    boolean: 'warning'
-  }
-  return colors[type as keyof typeof colors] || 'grey'
-}
+const getFormatIcon = (format: string) => ({ pdf: 'mdi-file-pdf-box', excel: 'mdi-file-excel-box' }[format] || 'mdi-file');
+const getFileExtension = (format: string) => ({ pdf: '.pdf', excel: '.xlsx' }[format] || '');
+const getTypeColor = (type: string) => ({ string: 'blue', number: 'green', date: 'orange', boolean: 'warning' }[type] || 'grey');
 
 const toggleColumn = (columnKey: string, selected: boolean) => {
-  if (selected) {
-    if (!exportOptions.value.selectedColumns.includes(columnKey)) {
-      exportOptions.value.selectedColumns.push(columnKey)
-    }
-  } else {
-    const index = exportOptions.value.selectedColumns.indexOf(columnKey)
-    if (index > -1) {
-      exportOptions.value.selectedColumns.splice(index, 1)
-    }
-  }
-}
+  const idx = exportOptions.value.selectedColumns.indexOf(columnKey);
+  if (selected && idx === -1) exportOptions.value.selectedColumns.push(columnKey);
+  else if (!selected && idx > -1) exportOptions.value.selectedColumns.splice(idx, 1);
+};
 
-const selectAllColumns = () => {
-  exportOptions.value.selectedColumns = props.columns.map(col => col.key)
-}
-
-const clearAllColumns = () => {
-  exportOptions.value.selectedColumns = []
-}
+const selectAllColumns = () => { exportOptions.value.selectedColumns = props.columns.map(col => col.key); };
+const clearAllColumns = () => { exportOptions.value.selectedColumns = []; };
 
 const initializeOptions = () => {
-  // Set default filename
-  if (!exportOptions.value.filename) {
-    exportOptions.value.filename = props.defaultFilename
-  }
-  
-  // Select all columns by default
-  if (exportOptions.value.selectedColumns.length === 0) {
-    selectAllColumns()
-  }
-  
-  // Set format
-  exportOptions.value.format = selectedFormat.value
-}
+  if (!exportOptions.value.filename) exportOptions.value.filename = props.defaultFilename;
+  if (exportOptions.value.selectedColumns.length === 0) selectAllColumns();
+  exportOptions.value.format = selectedFormat.value;
+};
 
 const handleExport = async () => {
-  if (!form.value?.validate()) return
-  
-  const options = {
-    ...exportOptions.value,
-    format: selectedFormat.value
-  }
-  
-  // Add Excel-specific options if needed
-  if (selectedFormat.value === 'excel') {
-    Object.assign(options, excelOptions.value)
-  }
-  
-  emit('export', options)
-}
+  if (!form.value?.validate()) return;
+  const options = { ...exportOptions.value, format: selectedFormat.value };
+  if (selectedFormat.value === 'excel') Object.assign(options, excelOptions.value);
+  emit('export', options);
+};
 
-const closeDialog = () => {
-  emit('update:modelValue', false)
-}
+const closeDialog = () => { emit('update:modelValue', false); };
 
-// Watchers
 watch(selectedFormat, (newFormat) => {
-  exportOptions.value.format = newFormat
-  
-  // Update filename extension
-  const baseName = exportOptions.value.filename.replace(/\.(pdf|xlsx)$/, '')
-  exportOptions.value.filename = baseName + getFileExtension(newFormat)
-})
+  exportOptions.value.format = newFormat;
+  const baseName = exportOptions.value.filename.replace(/\.(pdf|xlsx)$/, '');
+  exportOptions.value.filename = baseName + getFileExtension(newFormat);
+});
 
 watch(() => props.modelValue, (show) => {
   if (show) {
     nextTick(() => {
-      initializeOptions()
-      // Set first available format as default
-      if (props.formats.length > 0) {
-        selectedFormat.value = props.formats[0]
-      }
-    })
+      initializeOptions();
+      if (props.formats.length > 0 && props.formats[0]) selectedFormat.value = props.formats[0];
+    });
   }
-})
+});
 
 watch(() => props.defaultFilename, (newFilename) => {
-  if (newFilename && !exportOptions.value.filename) {
-    exportOptions.value.filename = newFilename
-  }
-})
+  if (newFilename && !exportOptions.value.filename) exportOptions.value.filename = newFilename;
+});
 </script>
 
 <style scoped>

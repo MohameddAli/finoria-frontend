@@ -203,32 +203,6 @@
             {{ $t("navigation.profile") }}
           </v-tooltip>
         </v-list-item>
-
-        <!-- Settings -->
-        <v-list-item
-          to="/settings"
-          class="nav-item mb-4"
-          rounded="lg"
-          :min-height="48"
-          :class="railMode ? 'd-flex justify-center align-center' : ''"
-          :style="railMode ? railItemVars : undefined"
-        >
-          <template v-if="railMode" #prepend>
-            <div class="w-100 d-flex justify-center">
-              <v-icon icon="mdi-cog-outline" size="20" />
-            </div>
-          </template>
-          <template v-else #prepend>
-            <v-icon icon="mdi-cog-outline" size="20" />
-          </template>
-          <v-list-item-title v-if="!railMode" class="nav-title">
-            {{ $t("navigation.settings") }}
-          </v-list-item-title>
-          <v-tooltip v-if="railMode" activator="parent" location="end">
-            {{ $t("navigation.settings") }}
-          </v-tooltip>
-        </v-list-item>
-
         <!-- Logout (always red) -->
         <v-list-item
           class="nav-item logout-item mb-4"
@@ -260,7 +234,7 @@
             <v-card-text class="pa-3">
               <div class="d-flex align-center">
                 <OptimizedAvatar
-                  :src="authStore.admin?.avatarUrl"
+                  :src="authStore.admin?.email"
                   :alt="authStore.admin?.name || 'User'"
                   size="40"
                   class="mr-3"
@@ -291,162 +265,65 @@
 </template>
 
 <script setup lang="ts">
-// @ts-nocheck
-/* eslint-disable */
-import { useDisplay } from "vuetify";
-import { useAppStore } from "~/stores/app";
-import { useAuthStore } from "~/stores/auth/storeAuth";
+import { useDisplay } from "vuetify"
+import { useAppStore } from "~/stores/app"
+import { useAuthStore } from "~/stores/auth/storeAuth"
+import { useAuthApi } from "~/composables/api/useAuthApi"
 
-// Composables
-const { mobile } = useDisplay();
-const appStore = useAppStore();
-const authStore = useAuthStore();
-const route = useRoute();
-const router = useRouter();
+interface NavigationItem {
+  title: string
+  icon: string
+  to?: string
+  value: string
+  children?: NavigationItem[]
+  badge?: string
+  badgeColor?: string
+  divider?: boolean
+}
 
-// RTL Support
-const { getDirectionalIcon } = useRTL();
+const { mobile } = useDisplay()
+const appStore = useAppStore()
+const authStore = useAuthStore()
+const route = useRoute()
+const router = useRouter()
+const { getDirectionalIcon } = useRTL()
 
-// Chevron icons that adapt to RTL
-const collapseIcon = getDirectionalIcon(
-  "mdi-chevron-left",
-  "mdi-chevron-right"
-);
-const expandIcon = getDirectionalIcon("mdi-chevron-right", "mdi-chevron-left");
+const collapseIcon = getDirectionalIcon("mdi-chevron-left", "mdi-chevron-right")
+const expandIcon = getDirectionalIcon("mdi-chevron-right", "mdi-chevron-left")
+const showUserMenu = ref(false)
 
-// State
-const showUserMenu = ref(false);
-// No manual left/right logic; Vuetify flips 'start' automatically with RTL
+const getChildren = (item: NavigationItem) => item.children || []
 
-// Helper function to get children safely
-// @ts-expect-error - item is any type
-const getChildren = (item) => {
-  return item.children || [];
-};
+const navigationItems = ref<NavigationItem[]>([
+  { title: "navigation.wallet", icon: "mdi-wallet", to: "/wallet", value: "wallet" },
+  { title: "navigation.customers", icon: "mdi-account-group-outline", to: "/customers", value: "customers" },
+  { title: "navigation.users", icon: "mdi-account-multiple-outline", to: "/users", value: "users" },
+  { title: "navigation.beneficiaries", icon: "mdi-account-heart-outline", to: "/beneficiaries", value: "beneficiaries" },
+  { title: "navigation.posLocations", icon: "mdi-map-marker-radius", to: "/pos-locations", value: "pos-locations" },
+  { title: "navigation.atmLocations", icon: "mdi-cash-multiple", to: "/atm-locations", value: "atm-locations" },
+  { title: "navigation.atm2Locations", icon: "mdi-atom", to: "/atm2-locations", value: "atm2-locations" },
+  { title: "navigation.cards", icon: "mdi-credit-card-outline", to: "/cards", value: "cards" },
+  { title: "navigation.charts", icon: "mdi-chart-line", to: "/charts", value: "charts" },
+  { title: "navigation.movies", icon: "mdi-movie-outline", to: "/movies", value: "movies" },
+  { title: "navigation.multiStepsForm", icon: "mdi-form-select", to: "/multi-steps-form", value: "multi-steps-form" },
+  { title: "navigation.otp", icon: "mdi-shield-key-outline", to: "/otp", value: "otp" },
+])
 
-// Navigation items matching the design
-const navigationItems = ref([
-  {
-    title: "navigation.wallet",
-    icon: "mdi-wallet",
-    to: "/wallet",
-    value: "wallet",
-  },
-  {
-    title: "navigation.customers",
-    icon: "mdi-account-group-outline",
-    to: "/customers",
-    value: "customers",
-  },
-  {
-    title: "navigation.users",
-    icon: "mdi-account-multiple-outline",
-    to: "/users",
-    value: "users",
-  },
-  {
-    title: "navigation.beneficiaries",
-    icon: "mdi-account-heart-outline",
-    to: "/beneficiaries",
-    value: "beneficiaries",
-  },
-  {
-    title: "navigation.posLocations",
-    icon: "mdi-map-marker-radius",
-    to: "/pos-locations",
-    value: "pos-locations",
-  },
-  {
-    title: "navigation.atmLocations",
-    icon: "mdi-cash-multiple",
-    to: "/atm-locations",
-    value: "atm-locations",
-  },
-  {
-    title: "navigation.atm2Locations",
-    icon: "mdi-atom",
-    to: "/atm2-locations",
-    value: "atm2-locations",
-  },
-  {
-    title: "navigation.cards",
-    icon: "mdi-credit-card-outline",
-    to: "/cards",
-    value: "cards",
-  },
-  {
-    title: "navigation.charts",
-    icon: "mdi-chart-line",
-    to: "/charts",
-    value: "charts",
-  },
-  {
-    title: "navigation.movies",
-    icon: "mdi-movie-outline",
-    to: "/movies",
-    value: "movies",
-  },
-  {
-    title: "navigation.multiStepsForm",
-    icon: "mdi-form-select",
-    to: "/multi-steps-form",
-    value: "multi-steps-form",
-  },
-  {
-    title: "navigation.otp",
-    icon: "mdi-shield-key-outline",
-    to: "/otp",
-    value: "otp",
-  },
-]);
+const railMode = computed(() => !mobile.value && appStore.sidebarMini)
+const railItemVars = { "--v-list-item-padding-start": "0", "--v-list-item-padding-end": "0", "--v-list-item-prepend-width": "100%", "--v-list-item-prepend-margin-after": "0" }
+const isActiveRoute = (path = "") => route.path === path
 
-// Computed
-const railMode = computed(() => !mobile.value && appStore.sidebarMini);
-
-// Vuetify-only centering using CSS variables and utility classes
-const railItemVars = {
-  "--v-list-item-padding-start": "0",
-  "--v-list-item-padding-end": "0",
-  "--v-list-item-prepend-width": "100%",
-  "--v-list-item-prepend-margin-after": "0",
-};
-
-// Methods
-const isActiveRoute = (path = "") => {
-  return route.path === path;
-};
-
-// const openSupport = () => {
-//   // Open support modal or navigate to support page
-//   console.log("Opening support...");
-// };
-
-// Logout handler - إنهاء الجلسة وإعادة التوجيه
 const Logout = async () => {
   try {
-    // 1. مسح بيانات المصادقة من store و localStorage
-    await useAuthApi().logout();
-    // 2. مسح Store state
-    authStore.clearAuth();
-
-    // 3. إعادة التوجيه لصفحة تسجيل الدخول
-    await router.push("/auth/login");
-
-    console.log("✅ تم تسجيل الخروج بنجاح");
+    await useAuthApi().logout()
+    authStore.clearAuth()
+    await router.push("/auth/login")
   } catch (error) {
-    console.error("❌ خطأ في تسجيل الخروج:", error);
+    console.error("❌ خطأ في تسجيل الخروج:", error)
   }
-};
+}
 
-// Watch for route changes to close mobile sidebar
-watch(
-  () => route.path,
-  () => {
-    if (mobile.value) {
-      appStore.sidebarOpen = false;
-    }
-  }
-);
+watch(() => route.path, () => { if (mobile.value) appStore.sidebarOpen = false })
 </script>
 
 <style scoped>

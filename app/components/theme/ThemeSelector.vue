@@ -30,16 +30,13 @@
 <script setup lang="ts">
 import { useAppTheme } from '~/composables/useAppTheme'
 
-const props = withDefaults(
-  defineProps<{
-    location?: 'bottom end' | 'bottom start' | 'top end' | 'top start'
-    offset?: [number, number]
-  }>(),
-  {
-    location: 'bottom end',
-    offset: () => [0, 8]
-  }
-)
+const props = withDefaults(defineProps<{
+  location?: 'bottom end' | 'bottom start' | 'top end' | 'top start'
+  offset?: [number, number]
+}>(), {
+  location: 'bottom end',
+  offset: () => [0, 8]
+})
 
 const { currentTheme, setTheme } = useAppTheme()
 
@@ -49,9 +46,7 @@ const availableThemes = computed(() => [
   { name: 'Red', value: 'red' }
 ])
 
-const selectTheme = (theme: string) => {
-  setTheme(theme as 'gold' | 'blue' | 'red')
-}
+const selectTheme = (theme: string) => setTheme(theme as 'gold' | 'blue' | 'red')
 </script>
 
 <style scoped>

@@ -78,28 +78,31 @@
 <script setup lang="ts">
 import { useAppStore } from '~/stores/app'
 
-// TS types removed to ensure ESLint parser compatibility; rely on runtime validation
+interface SearchItem {
+  id: string | number
+  title: string
+  subtitle?: string
+  icon?: string
+  to?: string
+  action?: () => void
+}
 
-// Array-based emits for parser compatibility
-const emit = defineEmits(['submit', 'select', 'change'])
+interface Props {
+  items?: SearchItem[]
+}
 
-// Object-based props with runtime validator
-const props = defineProps({
-  items: {
-    type: Array,
-    default: undefined,
-    validator: (arr) => !arr || (Array.isArray(arr) && arr.every(i => i && (typeof i.title === 'string') && (typeof i.id === 'string' || typeof i.id === 'number')))
-  }
+const props = withDefaults(defineProps<Props>(), {
+  items: () => []
 })
 
+const emit = defineEmits(['submit', 'select', 'change'])
 const appStore = useAppStore()
 const query = ref('')
 
 const filteredResults = computed(() => {
-  const list = (props.items ?? [])
   const q = query.value.trim().toLowerCase()
-  if (!q) return list.slice(0, 5)
-  return list.filter(i => String(i.title).toLowerCase().includes(q) || String(i.subtitle ?? '').toLowerCase().includes(q)).slice(0, 10)
+  if (!q) return props.items.slice(0, 5)
+  return props.items.filter(i => i.title.toLowerCase().includes(q) || (i.subtitle?.toLowerCase() || '').includes(q)).slice(0, 10)
 })
 
 const hasResults = computed(() => filteredResults.value.length > 0)
@@ -109,21 +112,19 @@ const handleClose = () => {
   query.value = ''
 }
 
-const handleSubmit = () => {
-  emit('submit', query.value)
-}
+const handleSubmit = () => emit('submit', query.value)
 
-const handleSelect = (item) => {
-  if (item && typeof item.action === 'function') item.action()
-  else if (item && item.to) navigateTo(item.to)
+const handleSelect = (item: SearchItem) => {
+  if (item.action) item.action()
+  else if (item.to) navigateTo(item.to)
   emit('select', item)
   handleClose()
 }
 
-const handleQueryChange = (val) => emit('change', val)
+const handleQueryChange = (val: string) => emit('change', val)
 
 onMounted(() => {
-  const handler = (e) => {
+  const handler = (e: KeyboardEvent) => {
     if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
       e.preventDefault()
       appStore.toggleSearch()

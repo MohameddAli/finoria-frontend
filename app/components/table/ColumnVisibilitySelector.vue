@@ -213,310 +213,136 @@
 </template>
 
 <script setup lang="ts">
-// @ts-nocheck
-/**
- * ColumnVisibilitySelector Component (Optimized)
- *
- * A high-performance, reusable component for controlling table column visibility
- * Designed for Nuxt 4 + Vuetify 3 with best practices
- *
- * Performance Optimizations:
- * - Computed properties for reactive filtering
- * - Debounced search to reduce re-renders
- * - Lazy rendering with v-show
- * - Minimal DOM updates
- *
- * Features:
- * - Toggle button similar to filter button
- * - Expandable menu with checkboxes
- * - Search/filter columns functionality
- * - Select All / Clear All actions
- * - Badge showing active columns count
- * - Full RTL support
- * - Keyboard accessible
- */
+interface Column {
+  title: string
+  key: string
+  sortable?: boolean
+  align?: string
+  width?: string | number
+}
 
-const props = defineProps({
-  // Required: All available columns
-  columns: {
-    type: Array,
-    required: true,
-    validator: (value) => {
-      return value.every((col) => col.title && col.key);
-    },
-  },
+interface Props {
+  columns: Column[]
+  defaultVisibleColumns?: string[]
+  modelValue?: (string | Column)[]
+  collapsible?: boolean
+  label?: string
+  toggleIcon?: string
+  buttonVariant?: string
+  buttonColor?: string
+  buttonSize?: string
+  checkboxColor?: string
+  showBadge?: boolean
+  badgeColor?: string
+  showSearch?: boolean
+  searchPlaceholder?: string
+  noResultsText?: string
+  showSelectAll?: boolean
+  showClearAll?: boolean
+  selectAllText?: string
+  clearAllText?: string
+  selectAllColor?: string
+  clearAllColor?: string
+  selectAllVariant?: string
+  clearAllVariant?: string
+  menuElevation?: number
+  initialOpen?: boolean
+}
 
-  // Initially visible column keys
-  defaultVisibleColumns: {
-    type: Array,
-    default: () => [],
-  },
+const props = withDefaults(defineProps<Props>(), {
+  defaultVisibleColumns: () => [],
+  modelValue: () => [],
+  collapsible: true,
+  label: 'Show Columns',
+  toggleIcon: 'mdi-table-column',
+  buttonVariant: 'outlined',
+  buttonColor: 'primary',
+  buttonSize: 'default',
+  checkboxColor: 'primary',
+  showBadge: true,
+  badgeColor: 'primary',
+  showSearch: true,
+  searchPlaceholder: 'Search columns...',
+  noResultsText: 'No columns found',
+  showSelectAll: true,
+  showClearAll: true,
+  selectAllText: 'Select All',
+  clearAllText: 'Clear All',
+  selectAllColor: 'success',
+  clearAllColor: 'default',
+  selectAllVariant: 'tonal',
+  clearAllVariant: 'outlined',
+  menuElevation: 2,
+  initialOpen: false,
+})
 
-  // v-model for selected columns
-  modelValue: {
-    type: Array,
-    default: () => [],
-  },
+const emit = defineEmits(['update:modelValue', 'change', 'toggle'])
+const { locale } = useI18n()
 
-  // Collapsible mode - if false, menu is always visible without toggle button
-  collapsible: {
-    type: Boolean,
-    default: true,
-  },
+const isRTL = computed(() => locale.value === 'ar')
+const isMenuOpen = ref(props.collapsible ? props.initialOpen : true)
+const searchQuery = ref('')
+const selectedColumnKeys = ref<string[]>([])
 
-  // UI Customization
-  label: {
-    type: String,
-    default: "Show Columns",
-  },
+const allColumns = computed(() => props.columns.map(col => ({
+  title: col.title,
+  key: col.key,
+  sortable: col.sortable ?? true,
+  align: col.align ?? 'start',
+  width: col.width,
+})))
 
-  toggleIcon: {
-    type: String,
-    default: "mdi-table-column",
-  },
-
-  buttonVariant: {
-    type: String,
-    default: "outlined",
-  },
-
-  buttonColor: {
-    type: String,
-    default: "primary",
-  },
-
-  buttonSize: {
-    type: String,
-    default: "default",
-  },
-
-  checkboxColor: {
-    type: String,
-    default: "primary",
-  },
-
-  // Badge
-  showBadge: {
-    type: Boolean,
-    default: true,
-  },
-
-  badgeColor: {
-    type: String,
-    default: "primary",
-  },
-
-  // Search functionality
-  showSearch: {
-    type: Boolean,
-    default: true,
-  },
-
-  searchPlaceholder: {
-    type: String,
-    default: "Search columns...",
-  },
-
-  noResultsText: {
-    type: String,
-    default: "No columns found",
-  },
-
-  // Select All / Clear All
-  showSelectAll: {
-    type: Boolean,
-    default: true,
-  },
-
-  showClearAll: {
-    type: Boolean,
-    default: true,
-  },
-
-  selectAllText: {
-    type: String,
-    default: "Select All",
-  },
-
-  clearAllText: {
-    type: String,
-    default: "Clear All",
-  },
-
-  selectAllColor: {
-    type: String,
-    default: "success",
-  },
-
-  clearAllColor: {
-    type: String,
-    default: "default",
-  },
-
-  selectAllVariant: {
-    type: String,
-    default: "tonal",
-  },
-
-  clearAllVariant: {
-    type: String,
-    default: "outlined",
-  },
-
-  // Menu styling
-  menuElevation: {
-    type: Number,
-    default: 2,
-  },
-
-  // Initial menu state
-  initialOpen: {
-    type: Boolean,
-    default: false,
-  },
-});
-
-const emit = defineEmits(["update:modelValue", "change", "toggle"]);
-
-// i18n for RTL detection
-const { locale } = useI18n();
-const isRTL = computed(() => locale.value === "ar");
-
-// Menu state (always true when not collapsible)
-const isMenuOpen = ref(props.collapsible ? props.initialOpen : true);
-
-// Search query (with debouncing for performance)
-const searchQuery = ref("");
-
-// Selected column keys (for performance - using keys instead of full objects)
-const selectedColumnKeys = ref([]);
-
-// Memoized columns list (prevent unnecessary recalculations)
-const allColumns = computed(() => {
-  return props.columns.map((col) => ({
-    title: col.title,
-    key: col.key,
-    sortable: col.sortable ?? true,
-    align: col.align ?? "start",
-    width: col.width,
-  }));
-});
-
-// Filtered columns based on search query (optimized with computed)
 const filteredColumns = computed(() => {
-  if (!searchQuery.value) return allColumns.value;
+  if (!searchQuery.value) return allColumns.value
+  const q = searchQuery.value.toLowerCase().trim()
+  return allColumns.value.filter(c => c.title.toLowerCase().includes(q) || c.key.toLowerCase().includes(q))
+})
 
-  const query = searchQuery.value.toLowerCase().trim();
-  return allColumns.value.filter(
-    (col) =>
-      col.title.toLowerCase().includes(query) ||
-      col.key.toLowerCase().includes(query)
-  );
-});
+const activeColumnsCount = computed(() => selectedColumnKeys.value.length)
+const selectedColumnsObjects = computed(() => allColumns.value.filter(c => selectedColumnKeys.value.includes(c.key)))
 
-// Active columns count for badge
-const activeColumnsCount = computed(() => selectedColumnKeys.value.length);
-
-// Selected columns as full objects (for emit)
-const selectedColumnsObjects = computed(() => {
-  return allColumns.value.filter((col) =>
-    selectedColumnKeys.value.includes(col.key)
-  );
-});
-
-// Initialize selected columns on mount
 const initializeColumns = () => {
-  if (props.modelValue && props.modelValue.length > 0) {
-    // Use provided modelValue
-    selectedColumnKeys.value = props.modelValue.map((col) =>
-      typeof col === "string" ? col : col.key
-    );
+  if (props.modelValue?.length > 0) {
+    selectedColumnKeys.value = props.modelValue.map(c => typeof c === 'string' ? c : c.key)
   } else if (props.defaultVisibleColumns.length > 0) {
-    // Use default visible columns
-    selectedColumnKeys.value = [...props.defaultVisibleColumns];
+    selectedColumnKeys.value = [...props.defaultVisibleColumns]
   } else {
-    // Show all columns by default
-    selectedColumnKeys.value = allColumns.value.map((col) => col.key);
+    selectedColumnKeys.value = allColumns.value.map(c => c.key)
   }
-};
+}
 
-// Initialize on mount
 onMounted(() => {
-  initializeColumns();
-  emitChange();
-});
+  initializeColumns()
+  emitChange()
+})
 
-// Watch for external changes to modelValue (optimized)
-watch(
-  () => props.modelValue,
-  (newValue) => {
-    if (newValue && Array.isArray(newValue) && newValue.length > 0) {
-      const newKeys = newValue.map((col) =>
-        typeof col === "string" ? col : col.key
-      );
-      // Only update if different (prevent unnecessary updates)
-      if (
-        JSON.stringify(newKeys.sort()) !==
-        JSON.stringify(selectedColumnKeys.value.sort())
-      ) {
-        selectedColumnKeys.value = newKeys;
-      }
+watch(() => props.modelValue, (n) => {
+  if (n && Array.isArray(n) && n.length > 0) {
+    const newKeys = n.map(c => typeof c === 'string' ? c : c.key)
+    if (JSON.stringify(newKeys.sort()) !== JSON.stringify(selectedColumnKeys.value.sort())) {
+      selectedColumnKeys.value = newKeys
     }
-  },
-  { deep: true }
-);
+  }
+}, { deep: true })
 
-// Watch for changes in selected columns (debounced for performance)
-watch(
-  selectedColumnKeys,
-  () => {
-    emitChange();
-  },
-  { deep: true }
-);
+watch(selectedColumnKeys, () => emitChange(), { deep: true })
 
-// Emit changes
 const emitChange = () => {
-  emit("update:modelValue", selectedColumnsObjects.value);
-  emit("change", selectedColumnsObjects.value);
-};
+  emit('update:modelValue', selectedColumnsObjects.value)
+  emit('change', selectedColumnsObjects.value)
+}
 
-// Toggle menu
 const toggleMenu = () => {
-  isMenuOpen.value = !isMenuOpen.value;
-  emit("toggle", isMenuOpen.value);
-};
+  isMenuOpen.value = !isMenuOpen.value
+  emit('toggle', isMenuOpen.value)
+}
 
-// Select all columns
-const selectAllColumns = () => {
-  selectedColumnKeys.value = allColumns.value.map((col) => col.key);
-};
+const selectAllColumns = () => { selectedColumnKeys.value = allColumns.value.map(c => c.key) }
+const clearAllColumns = () => { selectedColumnKeys.value = [] }
+const closeMenu = () => { isMenuOpen.value = false }
+const openMenu = () => { isMenuOpen.value = true }
 
-// Clear all columns
-const clearAllColumns = () => {
-  selectedColumnKeys.value = [];
-};
-
-// Close menu (can be called from parent)
-const closeMenu = () => {
-  isMenuOpen.value = false;
-};
-
-// Open menu (can be called from parent)
-const openMenu = () => {
-  isMenuOpen.value = true;
-};
-
-// Expose methods for parent component
-defineExpose({
-  selectAllColumns,
-  clearAllColumns,
-  closeMenu,
-  openMenu,
-  toggleMenu,
-  selectedColumns: selectedColumnsObjects,
-  isMenuOpen,
-});
+defineExpose({ selectAllColumns, clearAllColumns, closeMenu, openMenu, toggleMenu, selectedColumns: selectedColumnsObjects, isMenuOpen })
 </script>
 
 <style scoped>

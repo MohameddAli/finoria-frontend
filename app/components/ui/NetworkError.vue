@@ -23,18 +23,15 @@
   </v-alert>
 </template>
 
-<script setup>
-defineProps({
-  show: {
-    type: Boolean,
-    default: false
-  }
-})
-
-const emit = defineEmits(['retry'])
-
-const retry = () => {
-  emit('retry')
+<script setup lang="ts">
+interface Props {
+  show?: boolean;
 }
+
+defineProps<Props>();
+
+const emit = defineEmits<{ retry: [] }>();
+
+const retry = () => { emit('retry'); };
 </script>
 ```

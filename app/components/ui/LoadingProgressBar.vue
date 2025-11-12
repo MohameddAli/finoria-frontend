@@ -35,10 +35,9 @@
 </template>
 
 <script setup lang="ts">
-// الخصائص - Props
 interface Props {
-  showText?: boolean; // عرض النص
-  autoProgress?: boolean; // تقدم تلقائي
+  showText?: boolean;
+  autoProgress?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -46,49 +45,37 @@ const props = withDefaults(defineProps<Props>(), {
   autoProgress: true,
 });
 
-// استيراد متجر التحميل - Import loading store
 const loadingStore = useLoadingStore();
 
-// الحالة المحلية - Local state
 const progress = ref(0);
-const showBar = ref(false); // التحكم في ظهور/إخفاء الشريط
+const showBar = ref(false);
 let progressInterval: ReturnType<typeof setInterval> | null = null;
 let hideTimeout: ReturnType<typeof setTimeout> | null = null;
 
-// الخصائص المحسوبة - Computed properties
 const isLoading = computed(() => loadingStore.isLoading);
 const displayText = computed(() => loadingStore.loadingText);
 const spinnerColor = computed(() => loadingStore.spinnerColor);
 
-// دالة التقدم التلقائي - Auto progress function
 const startAutoProgress = () => {
   progress.value = 0;
-
   if (!props.autoProgress) {
     progress.value = 100;
     return;
   }
-
-  // تقدم سريع في البداية ثم يتباطأ - Fast start then slow down
   const speeds = [
-    { until: 30, increment: 3, delay: 50 }, // سريع: 0-30%
-    { until: 60, increment: 2, delay: 100 }, // متوسط: 30-60%
-    { until: 80, increment: 1, delay: 200 }, // بطيء: 60-80%
-    { until: 90, increment: 0.5, delay: 300 }, // بطيء جداً: 80-90%
+    { until: 30, increment: 3, delay: 50 },
+    { until: 60, increment: 2, delay: 100 },
+    { until: 80, increment: 1, delay: 200 },
+    { until: 90, increment: 0.5, delay: 300 },
   ];
-
   let currentSpeedIndex = 0;
-
   progressInterval = setInterval(() => {
     if (progress.value >= 90) {
-      // توقف عند 90% حتى ينتهي التحميل فعلياً
       if (progressInterval) clearInterval(progressInterval);
       return;
     }
-
     const currentSpeed = speeds[currentSpeedIndex];
     if (!currentSpeed) return;
-
     if (progress.value >= currentSpeed.until) {
       currentSpeedIndex++;
       if (progressInterval) clearInterval(progressInterval);
@@ -101,78 +88,52 @@ const startAutoProgress = () => {
         }
       }
     } else {
-      progress.value = Math.min(
-        progress.value + currentSpeed.increment,
-        currentSpeed.until
-      );
+      progress.value = Math.min(progress.value + currentSpeed.increment, currentSpeed.until);
     }
   }, speeds[0]!.delay);
 };
 
-// إتمام التقدم - Complete progress
 const completeProgress = () => {
-  // إيقاف التقدم التلقائي
   if (progressInterval) {
     clearInterval(progressInterval);
     progressInterval = null;
   }
-
-  // الوصول لـ 100% بسرعة
   const currentProgress = progress.value;
   const remaining = 100 - currentProgress;
-  const steps = 10; // عدد الخطوات للوصول لـ 100%
+  const steps = 10;
   const increment = remaining / steps;
   let step = 0;
-
   const completeInterval = setInterval(() => {
     step++;
     progress.value = Math.min(currentProgress + increment * step, 100);
-
     if (progress.value >= 100 || step >= steps) {
       clearInterval(completeInterval);
       progress.value = 100;
-
-      // إبقاء الشريط مرئياً لفترة قصيرة عند 100%
       hideTimeout = setTimeout(() => {
         showBar.value = false;
-        // إعادة تعيين progress بعد الإخفاء
-        setTimeout(() => {
-          progress.value = 0;
-        }, 300);
-      }, 400); // 400ms لعرض الـ 100%
+        setTimeout(() => (progress.value = 0), 300);
+      }, 400);
     }
-  }, 20); // 20ms بين كل خطوة = 200ms إجمالي
+  }, 20);
 };
 
-// مراقبة حالة التحميل - Watch loading state
-watch(
-  isLoading,
-  (loading) => {
-    // إلغاء أي timeout للإخفاء
-    if (hideTimeout) {
-      clearTimeout(hideTimeout);
-      hideTimeout = null;
-    }
-
-    if (loading) {
-      showBar.value = true;
-      progress.value = 0;
-      startAutoProgress();
-    } else {
-      completeProgress();
-    }
-  },
-  { immediate: true }
-);
-
-// التنظيف عند إلغاء التركيب - Cleanup on unmount
-onUnmounted(() => {
-  if (progressInterval) {
-    clearInterval(progressInterval);
-  }
+watch(isLoading, (loading) => {
   if (hideTimeout) {
     clearTimeout(hideTimeout);
+    hideTimeout = null;
   }
+  if (loading) {
+    showBar.value = true;
+    progress.value = 0;
+    startAutoProgress();
+  } else {
+    completeProgress();
+  }
+}, { immediate: true });
+
+onUnmounted(() => {
+  if (progressInterval) clearInterval(progressInterval);
+  if (hideTimeout) clearTimeout(hideTimeout);
 });
 </script>
 

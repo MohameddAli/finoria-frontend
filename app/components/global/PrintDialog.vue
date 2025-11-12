@@ -86,86 +86,48 @@
   </ClientOnly>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { format } from "date-fns";
 
-const props = defineProps({
-  modelValue: {
-    type: Boolean,
-    default: false,
-  },
-  title: {
-    type: String,
-    required: true,
-  },
-  search: {
-    type: Object,
-    default: () => ({}),
-  },
-  apiUrl: {
-    type: String,
-    required: false,
-    default: "",
-  },
-  headers: {
-    type: Array,
-    required: true,
-  },
-  bank: {
-    type: String,
-    default: "",
-  },
-  mockData: {
-    type: Array,
-    default: () => [],
-  },
+interface Props {
+  modelValue: boolean;
+  title: string;
+  search?: Record<string, any>;
+  apiUrl?: string;
+  headers: any[];
+  bank?: string;
+  mockData?: any[];
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  modelValue: false,
+  search: () => ({}),
+  apiUrl: "",
+  bank: "",
+  mockData: () => [],
 });
 
-defineEmits(["update:modelValue"]);
+const emit = defineEmits<{ 'update:modelValue': [value: boolean] }>();
 
-// Composables
 const { t } = useI18n();
-const { getAuthHeaders } = useApi();
 
-// State
-const data = ref([]);
-const selectedHeaders = ref([]);
+const data = ref<any[]>([]);
+const selectedHeaders = ref<any[]>([]);
 const loading = ref(false);
 
-// Computed
-const currentDate = computed(() => {
-  return format(new Date(), "dd-MM-yyyy");
-});
+const currentDate = computed(() => format(new Date(), "dd-MM-yyyy"));
 
-// Methods
 const fetchData = async () => {
-  // إذا كانت هناك بيانات تجريبية، استخدمها
-  if (props.mockData && props.mockData.length > 0) {
-    data.value = props.mockData.map((item, index) => ({
-      ...item,
-      sno: index + 1,
-    }));
+  if (props.mockData?.length) {
+    data.value = props.mockData.map((item, index) => ({ ...item, sno: index + 1 }));
     return;
   }
-
-  // إذا لم يكن هناك apiUrl، لا تفعل شيء
   if (!props.apiUrl) return;
-
   loading.value = true;
   try {
-    const headers = getAuthHeaders();
-    const response = await $fetch(props.apiUrl, {
-      method: "GET",
-      headers,
-      params: props.search,
-    });
-
-    // تعيين البيانات مع إضافة رقم تسلسلي
+    const response: any = await $fetch(props.apiUrl, { method: "GET", params: props.search });
     const rawData = response?.data || response || [];
-    data.value = rawData.map((item, index) => ({
-      ...item,
-      sno: index + 1,
-    }));
+    data.value = rawData.map((item: any, index: number) => ({ ...item, sno: index + 1 }));
   } catch (error) {
     console.error("Error fetching print data:", error);
     data.value = [];
@@ -177,90 +139,56 @@ const fetchData = async () => {
 const handlePrint = () => {
   const printElement = document.getElementById("printMe");
   if (!printElement) return;
-
-  // إخفاء جميع عناصر الصفحة ماعدا printMe
   const allElements = document.body.querySelectorAll("body > *:not(#__nuxt)");
   const nuxtApp = document.getElementById("__nuxt");
-
-  // حفظ الحالة الأصلية
-  const originalDisplay = [];
+  const originalDisplay: string[] = [];
   allElements.forEach((el, index) => {
-    originalDisplay[index] = el.style.display;
-    el.style.display = "none";
+    originalDisplay[index] = (el as HTMLElement).style.display;
+    (el as HTMLElement).style.display = "none";
   });
-
-  // إخفاء كل شيء في nuxt app ماعدا printMe
   if (nuxtApp) {
     const nuxtChildren = nuxtApp.querySelectorAll(":scope > *");
-    const originalNuxtDisplay = [];
+    const originalNuxtDisplay: string[] = [];
     nuxtChildren.forEach((el, index) => {
       if (!el.contains(printElement)) {
-        originalNuxtDisplay[index] = el.style.display;
-        el.style.display = "none";
+        originalNuxtDisplay[index] = (el as HTMLElement).style.display;
+        (el as HTMLElement).style.display = "none";
       }
     });
-
-    // إخفاء header والعناصر غير المطلوبة في الطباعة
-    const nonPrintElements = document.querySelectorAll(
-      '#header, .v-overlay__scrim, [role="dialog"] > .v-toolbar'
-    );
-    const originalNonPrintDisplay = [];
+    const nonPrintElements = document.querySelectorAll('#header, .v-overlay__scrim, [role="dialog"] > .v-toolbar');
+    const originalNonPrintDisplay: string[] = [];
     nonPrintElements.forEach((el, index) => {
-      originalNonPrintDisplay[index] = el.style.display;
-      el.style.display = "none";
+      originalNonPrintDisplay[index] = (el as HTMLElement).style.display;
+      (el as HTMLElement).style.display = "none";
     });
-
-    // طباعة
     window.print();
-
-    // استرجاع الحالة الأصلية
-    allElements.forEach((el, index) => {
-      el.style.display = originalDisplay[index];
-    });
-
+    allElements.forEach((el, index) => { (el as HTMLElement).style.display = originalDisplay[index] || ''; });
     nuxtChildren.forEach((el, index) => {
-      if (originalNuxtDisplay[index] !== undefined) {
-        el.style.display = originalNuxtDisplay[index];
-      }
+      if (originalNuxtDisplay[index] !== undefined) (el as HTMLElement).style.display = originalNuxtDisplay[index] || '';
     });
-
     nonPrintElements.forEach((el, index) => {
-      if (originalNonPrintDisplay[index] !== undefined) {
-        el.style.display = originalNonPrintDisplay[index];
-      }
+      if (originalNonPrintDisplay[index] !== undefined) (el as HTMLElement).style.display = originalNonPrintDisplay[index] || '';
     });
   }
 };
 
-const formatDate = (value) => {
+const formatDate = (value: string) => {
   if (!value) return "";
   try {
-    const dateStr = value.substring(0, 15);
-    return format(new Date(dateStr), "yyyy-MM-dd h:mm:ss");
+    return format(new Date(value.substring(0, 15)), "yyyy-MM-dd h:mm:ss");
   } catch {
     return value;
   }
 };
 
-// Watchers
-watch(
-  () => props.modelValue,
-  (newValue) => {
-    if (newValue) {
-      selectedHeaders.value = props.headers;
-      fetchData();
-    }
-  },
-  { immediate: true }
-);
+watch(() => props.modelValue, (newValue) => {
+  if (newValue) {
+    selectedHeaders.value = props.headers;
+    fetchData();
+  }
+}, { immediate: true });
 
-watch(
-  () => props.headers,
-  (newHeaders) => {
-    selectedHeaders.value = newHeaders;
-  },
-  { deep: true }
-);
+watch(() => props.headers, (newHeaders) => { selectedHeaders.value = newHeaders; }, { deep: true });
 </script>
 
 <style scoped>

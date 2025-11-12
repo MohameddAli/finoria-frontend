@@ -17,33 +17,14 @@
 </template>
 
 <script setup lang="ts">
-/**
- * OptimizedAvatar - مكون Avatar محسّن باستخدام NuxtImg
- *
- * @example
- * <OptimizedAvatar
- *   :src="user.avatarUrl"
- *   :alt="user.name"
- *   size="96"
- * />
- */
-
 interface Props {
-  /** مسار الصورة - يدعم مسارات محلية وخارجية */
   src?: string | null;
-  /** النص البديل للصورة (مهم للـ accessibility) */
   alt?: string;
-  /** حجم الـ Avatar - يقبل رقم أو string (مثل "96" أو "96px") */
   size?: string | number;
-  /** لون الخلفية عند عدم وجود صورة */
   color?: string;
-  /** أيقونة احتياطية عند عدم وجود صورة */
   fallbackIcon?: string;
-  /** تحميل الصورة: eager للصور المهمة أو lazy للصور أسفل الصفحة */
   loading?: "lazy" | "eager";
-  /** عرض placeholder أثناء التحميل */
   placeholder?: boolean;
-  /** استخدام preset محدد من nuxt.config (avatar, logo, thumbnail) */
   preset?: "avatar" | "logo" | "thumbnail";
 }
 
@@ -57,17 +38,7 @@ const props = withDefaults(defineProps<Props>(), {
   preset: "avatar",
 });
 
-/**
- * تحويل size إلى رقم صحيح
- */
-const parsedSize = computed(() => {
-  if (typeof props.size === "number") return props.size;
-  return parseInt(props.size.toString().replace(/\D/g, "")) || 48;
-});
-
-/**
- * حجم الأيقونة الاحتياطية (70% من حجم الـ Avatar)
- */
+const parsedSize = computed(() => typeof props.size === "number" ? props.size : parseInt(props.size.toString().replace(/\D/g, "")) || 48);
 const iconSize = computed(() => Math.round(parsedSize.value * 0.7));
 </script>
 

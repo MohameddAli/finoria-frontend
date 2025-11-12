@@ -65,25 +65,20 @@
 </template>
 
 <script setup lang="ts">
-// @ts-nocheck
-/* eslint-disable */
-const props = withDefaults(
-  defineProps<{
-    items?: any[];
-    count?: number;
-    location?: "bottom end" | "bottom start" | "top end" | "top start";
-    offset?: [number, number];
-    icon?: string;
-    badgeColor?: string;
-  }>(),
-  {
-    items: () => [],
-    location: "bottom end",
-    offset: () => [0, 8],
-    icon: "mdi-bell-outline",
-    badgeColor: "error",
-  }
-);
+const props = withDefaults(defineProps<{
+  items?: any[];
+  count?: number;
+  location?: "bottom end" | "bottom start" | "top end" | "top start";
+  offset?: [number, number];
+  icon?: string;
+  badgeColor?: string;
+}>(), {
+  items: () => [],
+  location: "bottom end",
+  offset: () => [0, 8],
+  icon: "mdi-bell-outline",
+  badgeColor: "error",
+});
 
 const emit = defineEmits<{
   (e: "open"): void;
@@ -93,14 +88,11 @@ const emit = defineEmits<{
 }>();
 
 const { t } = useI18n();
-
 const isOpen = ref(false);
-watch(isOpen, (val) => (val ? emit("open") : emit("close")));
 
-const badgeCount = computed(() =>
-  typeof props.count === "number" ? props.count : props.items?.length ?? 0
-);
+watch(isOpen, (val) => val ? emit("open") : emit("close"));
 
+const badgeCount = computed(() => typeof props.count === "number" ? props.count : props.items?.length ?? 0);
 const handleSelect = (item: any) => emit("select", item);
 </script>
 

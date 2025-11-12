@@ -1,42 +1,15 @@
 <script setup lang="ts">
-/**
- * 🍞 Toast Host Component - Global Toast Display
- * ────────────────────────────────────────────────────────────────────────────
- *
- * مكون عرض Toast مع دعم كامل لـ:
- * - Multi-line messages
- * - RTL/LTR automatic detection
- * - Vuetify 3 theming
- * - Smooth animations
- * - Icons for each variant
- * - Accessibility features
- *
- * @example
- * // Add to app.vue or layout:
- * <ToastHost />
- *
- * // Then anywhere in your app:
- * const toast = useToast()
- * toast.success('تم الحفظ بنجاح')
- */
-
-// Get toast state directly (writable refs, not readonly)
 const toastState = useToastState();
 const { locale } = useI18n();
 
-// Map variant to Vuetify color
 const snackbarColor = computed(() => {
   const colorMap: Record<typeof toastState.variant.value, string> = {
-    success: "success",
-    error: "error",
-    warning: "warning",
-    info: "info",
+    success: "success", error: "error", warning: "warning", info: "info"
   };
   return colorMap[toastState.variant.value] ?? "info";
 });
 
-// Text direction based on locale
-const textDirection = computed(() => (locale.value === "ar" ? "rtl" : "ltr"));
+const textDirection = computed(() => locale.value === "ar" ? "rtl" : "ltr");
 </script>
 
 <template>

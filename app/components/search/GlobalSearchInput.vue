@@ -3,8 +3,8 @@
     :model-value="inputValue"
     :placeholder="resolvedPlaceholder"
     :prepend-inner-icon="icon"
-    :variant="variant"
-    :density="density"
+    variant="outlined"
+    density="compact"
     :hide-details="true"
     :single-line="true"
     class="cursor-pointer"
@@ -26,16 +26,8 @@ const props = defineProps({
   placeholder: { type: String, default: undefined },
   ariaLabel: { type: String, default: undefined },
   icon: { type: String, default: 'mdi-magnify' },
-  density: {
-    type: String,
-    default: 'compact',
-    validator: (v) => ['compact', 'comfortable', 'default'].includes(String(v))
-  },
-  variant: {
-    type: String,
-    default: 'outlined',
-    validator: (v) => ['outlined', 'filled', 'solo', 'underlined', 'plain'].includes(String(v))
-  },
+  density: { type: String, default: 'compact' },
+  variant: { type: String, default: 'outlined' },
   maxWidth: { type: [String, Number], default: '400px' },
   readonly: { type: Boolean, default: true },
   openOnClick: { type: Boolean, default: true },
@@ -43,33 +35,30 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['update:modelValue', 'open'])
-
 const { t } = useI18n()
 const appStore = useAppStore()
 
 const localValue = ref(props.modelValue ?? '')
 watch(() => props.modelValue, (v) => {
-  if (v === undefined) return
-  localValue.value = v ?? ''
+  if (v !== undefined) localValue.value = v ?? ''
 })
 
 const inputValue = computed(() => props.modelValue ?? localValue.value)
 const resolvedPlaceholder = computed(() => props.placeholder ?? t('header.searchPlaceholder'))
 const resolvedAriaLabel = computed(() => props.ariaLabel ?? t('header.openSearch'))
-
 const maxWidthStyle = computed(() => ({ maxWidth: typeof props.maxWidth === 'number' ? `${props.maxWidth}px` : props.maxWidth }))
 
-const handleUpdate = (val) => {
+const handleUpdate = (val: string) => {
   localValue.value = val
   emit('update:modelValue', val)
 }
 
-const openLightbox = (source) => {
+const openLightbox = (source: string) => {
   appStore.openSearch()
   emit('open', source)
 }
 
-const handleOpenIfEnabled = (source) => {
+const handleOpenIfEnabled = (source: string) => {
   if (source === 'click' && !props.openOnClick) return
   if (source === 'enter' && !props.openOnEnter) return
   openLightbox(source)

@@ -3,7 +3,7 @@
     <!-- App Bar -->
     <v-app-bar flat color="transparent" density="comfortable" class="px-4 py-2">
       <v-app-bar-title class="text-h6 font-weight-bold"
-        >المستفيدون وجهات التحويل</v-app-bar-title
+        >دعم المشاريع</v-app-bar-title
       >
       <v-spacer />
       <v-btn
@@ -11,7 +11,7 @@
         variant="flat"
         prepend-icon="mdi-plus"
         @click="openCreate"
-        >إضافة مستفيد</v-btn
+        >إضافة مشروع</v-btn
       >
     </v-app-bar>
 
@@ -23,7 +23,7 @@
         density="comfortable"
         hide-details
         prepend-inner-icon="mdi-magnify"
-        placeholder="ابحث بالاسم، البنك، المدينة، الوسوم"
+        placeholder="ابحث بالاسم، المدينة، الوسوم"
         class="min-w-56"
       />
 
@@ -32,7 +32,7 @@
         :items="typeOptions"
         item-title="label"
         item-value="value"
-        label="النوع"
+        label="نوع المشروع"
         variant="outlined"
         density="comfortable"
         hide-details
@@ -41,9 +41,9 @@
       />
 
       <v-select
-        v-model="bankFilter"
-        :items="bankOptions"
-        label="البنك"
+        v-model="categoryFilter"
+        :items="categoryOptions"
+        label="الفئة"
         variant="outlined"
         density="comfortable"
         hide-details
@@ -63,10 +63,10 @@
       />
 
       <v-chip-group v-model="tagFilter" multiple selected-class="text-white">
-        <v-chip value="favorite" variant="elevated" size="small">مفضلة</v-chip>
-        <v-chip value="frequent" variant="elevated" size="small">متكرر</v-chip>
-        <v-chip value="business" variant="elevated" size="small">شركة</v-chip>
-        <v-chip value="individual" variant="elevated" size="small">فرد</v-chip>
+        <v-chip value="favorite" variant="elevated" size="small">مفضل</v-chip>
+        <v-chip value="urgent" variant="elevated" size="small">عاجل</v-chip>
+        <v-chip value="ongoing" variant="elevated" size="small">قيد التنفيذ</v-chip>
+        <v-chip value="completed" variant="elevated" size="small">مكتمل</v-chip>
       </v-chip-group>
 
       <v-spacer />
@@ -82,9 +82,9 @@
     </div>
 
     <!-- Content: Cards grid + optional table view toggle -->
-    <v-container fluid class="px-4 pb-8">
+    <v-container fluid class="px-4 py-0">
       <v-tabs v-model="viewMode" density="comfortable" class="mb-4">
-        <v-tab value="cards" prepend-icon="mdi-account-multiple-outline"
+        <v-tab value="cards" prepend-icon="mdi-view-grid-outline"
           >بطاقات</v-tab
         >
         <v-tab value="table" prepend-icon="mdi-table">جدول</v-tab>
@@ -93,7 +93,7 @@
       <v-window v-model="viewMode" class="mt-1">
         <!-- Cards Directory -->
         <v-window-item value="cards">
-          <v-row :dense="compact">
+          <v-row :dense="compact" class="cards-grid">
             <v-col
               v-for="b in paged"
               :key="b.id"
@@ -102,35 +102,34 @@
               md="4"
               lg="3"
             >
-              <v-hover v-slot="{ isHovering, props: hoverProps }">
-                <v-card 
-                  v-bind="hoverProps"
-                  rounded="lg" 
-                  :elevation="isHovering ? 12 : 2" 
-                  height="380" 
-                  class="bene-card d-flex flex-column"
-                >
-                  <!-- Card Image/Avatar Section -->
-                  <div class="card-image-wrapper position-relative">
-                    <v-img 
-                      :src="b.avatar || placeholder(b)" 
-                      height="140" 
-                      cover
-                      class="card-main-image"
+              <v-card 
+                rounded="lg" 
+                :elevation="2" 
+                height="380" 
+                class="bene-card d-flex flex-column"
+                @click="openProjectDetails(b)"
+              >
+                <!-- Card Image/Avatar Section -->
+                <div class="card-image-wrapper position-relative">
+                  <v-img 
+                    :src="b.avatar || placeholder(b)" 
+                    height="140" 
+                    cover
+                    class="card-main-image"
+                  />
+                  <v-btn 
+                    icon 
+                    variant="text" 
+                    size="small"
+                    class="fav-btn"
+                    @click.stop="toggleFav(b)"
+                  >
+                    <v-icon
+                      :icon="isFav(b.id) ? 'mdi-heart' : 'mdi-heart-outline'"
+                      :color="isFav(b.id) ? 'error' : 'white'"
                     />
-                    <v-btn 
-                      icon 
-                      variant="text" 
-                      size="small"
-                      class="fav-btn"
-                      @click.stop="toggleFav(b)"
-                    >
-                      <v-icon
-                        :icon="isFav(b.id) ? 'mdi-heart' : 'mdi-heart-outline'"
-                        :color="isFav(b.id) ? 'error' : 'white'"
-                      />
-                    </v-btn>
-                  </div>
+                  </v-btn>
+                </div>
 
                 <!-- Card Title -->
                 <v-card-title class="text-subtitle-1 pb-1">
@@ -139,13 +138,13 @@
 
                 <!-- Card Subtitle -->
                 <v-card-subtitle class="text-caption pb-2">
-                  {{ b.bank }} • {{ b.city }}
+                  {{ b.category || 'عام' }} • {{ b.city }}
                 </v-card-subtitle>
 
                 <!-- Card Content -->
                 <v-card-text class="flex-grow-1 pt-2">
                   <div class="info-block mb-2">
-                    <div class="text-caption text-medium-emphasis mb-1">IBAN</div>
+                    <div class="text-caption text-medium-emphasis mb-1">الهدف المالي</div>
                     <div class="text-body-2 mono text-truncate">
                       {{ formatIBAN(b.iban) }}
                     </div>
@@ -166,43 +165,46 @@
 
                 <!-- Card Actions -->
                 <v-card-actions class="mt-auto pt-0">
+                  <v-spacer />
                   <v-btn
                     size="small"
                     variant="text"
                     color="primary"
                     prepend-icon="mdi-hand-heart"
-                    @click="quickTransfer(b)"
+                    @click.stop="quickTransfer(b)"
                   >
                     دعم المشروع
                   </v-btn>
                   <v-spacer />
+                  <!-- Hidden action buttons (kept for functionality) -->
                   <v-btn 
+                    v-show="false"
                     icon 
                     size="small" 
                     variant="text" 
-                    @click="openEdit(b)"
+                    @click.stop="openEdit(b)"
                   >
                     <v-icon>mdi-pencil</v-icon>
                   </v-btn>
                   <v-btn
+                    v-show="false"
                     icon
                     size="small"
                     variant="text"
                     color="error"
-                    @click="confirmDelete(b)"
+                    @click.stop="confirmDelete(b)"
                   >
                     <v-icon>mdi-delete</v-icon>
                   </v-btn>
                 </v-card-actions>
               </v-card>
-              </v-hover>
             </v-col>
           </v-row>
 
           <div v-if="!filtered.length" class="text-center py-10">
-            <v-icon size="40" class="mb-2">mdi-account-search</v-icon>
+            <v-icon size="40" class="mb-2">mdi-folder-search</v-icon>
             <div class="text-subtitle-1 font-weight-medium mb-1">
-              لا توجد نتائج مطابقة
+              لا توجد مشاريع مطابقة
             </div>
             <div class="text-medium-emphasis mb-4">
               جرّب تعديل/إزالة بعض الفلاتر أو البحث بكلمة أوسع.
@@ -260,7 +262,7 @@
                     color="primary"
                     variant="flat"
                     @click="quickTransfer(item)"
-                    >تحويل</v-btn
+                    >دعم</v-btn
                   >
                   <v-btn
                     size="x-small"
@@ -294,7 +296,7 @@
     >
       <v-toolbar flat>
         <v-toolbar-title class="text-subtitle-1 font-weight-bold">{{
-          editing ? "تعديل مستفيد" : "إضافة مستفيد"
+          editing ? "تعديل مشروع" : "إضافة مشروع"
         }}</v-toolbar-title>
         <v-spacer />
         <v-btn icon variant="text" @click="drawer = false"
@@ -307,8 +309,8 @@
           <v-text-field
             v-model="form.name"
             :rules="[req]"
-            label="الاسم"
-            prepend-inner-icon="mdi-account"
+            label="اسم المشروع"
+            prepend-inner-icon="mdi-folder-star"
           />
           <v-select
             v-model="form.type"
@@ -316,14 +318,14 @@
             item-title="label"
             item-value="value"
             :rules="[req]"
-            label="النوع"
+            label="نوع المشروع"
             prepend-inner-icon="mdi-shape"
           />
           <v-text-field
-            v-model="form.bank"
+            v-model="form.category"
             :rules="[req]"
-            label="البنك"
-            prepend-inner-icon="mdi-bank"
+            label="الفئة"
+            prepend-inner-icon="mdi-tag"
           />
           <v-text-field
             v-model="form.city"
@@ -333,15 +335,15 @@
           <v-text-field
             v-model="form.iban"
             :rules="[req, ibanRule]"
-            label="IBAN"
+            label="حساب الاستقبال (IBAN)"
             prepend-inner-icon="mdi-card-bulleted-outline"
             hint="تحقق فوري من صحة الأرقام"
             persistent-hint
           />
           <v-text-field
             v-model="form.account"
-            label="رقم الحساب (اختياري)"
-            prepend-inner-icon="mdi-numeric"
+            label="معلومات إضافية (اختياري)"
+            prepend-inner-icon="mdi-information"
           />
           <v-combobox
             v-model="form.tags"
@@ -424,12 +426,220 @@
           ><v-icon color="error">mdi-alert</v-icon> تأكيد الحذف</v-card-title
         >
         <v-card-text
-          >سيتم حذف المستفيد <strong>{{ activeTarget?.name }}</strong
+          >سيتم حذف المشروع <strong>{{ activeTarget?.name }}</strong
           >. لا يمكن التراجع عن هذه العملية.</v-card-text
         >
         <v-card-actions class="justify-end">
           <v-btn variant="text" @click="confirmOpen = false">إلغاء</v-btn>
           <v-btn color="error" @click="doDelete" :loading="deleting">حذف</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <!-- Project Details Modal -->
+    <v-dialog v-model="detailsOpen" max-width="800" scrollable>
+      <v-card v-if="selectedProject">
+        <v-card-title class="d-flex align-center pa-4 bg-primary text-white">
+          <v-icon size="large" class="ml-2">mdi-folder-star</v-icon>
+          <span class="text-h6">{{ selectedProject.name }}</span>
+          <v-spacer />
+          <v-btn 
+            icon 
+            variant="text" 
+            color="white"
+            @click="detailsOpen = false"
+          >
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-card-title>
+
+        <v-divider />
+
+        <v-card-text class="pa-4" style="max-height: 600px">
+          <!-- Project Header Image -->
+          <v-img
+            :src="selectedProject.avatar || placeholder(selectedProject)"
+            height="200"
+            cover
+            class="rounded-lg mb-4"
+          />
+
+          <!-- Project Info Grid -->
+          <v-row dense class="mb-4">
+            <v-col cols="12" sm="6">
+              <div class="info-item">
+                <div class="text-caption text-medium-emphasis mb-1">
+                  <v-icon size="small" class="ml-1">mdi-shape</v-icon>
+                  نوع المشروع
+                </div>
+                <div class="text-body-1 font-weight-medium">
+                  {{ getTypeLabel(selectedProject.type) }}
+                </div>
+              </div>
+            </v-col>
+            <v-col cols="12" sm="6">
+              <div class="info-item">
+                <div class="text-caption text-medium-emphasis mb-1">
+                  <v-icon size="small" class="ml-1">mdi-tag</v-icon>
+                  الفئة
+                </div>
+                <div class="text-body-1 font-weight-medium">
+                  {{ selectedProject.category }}
+                </div>
+              </div>
+            </v-col>
+            <v-col cols="12" sm="6">
+              <div class="info-item">
+                <div class="text-caption text-medium-emphasis mb-1">
+                  <v-icon size="small" class="ml-1">mdi-map-marker</v-icon>
+                  المدينة
+                </div>
+                <div class="text-body-1 font-weight-medium">
+                  {{ selectedProject.city }}
+                </div>
+              </div>
+            </v-col>
+            <v-col cols="12" sm="6">
+              <div class="info-item">
+                <div class="text-caption text-medium-emphasis mb-1">
+                  <v-icon size="small" class="ml-1">mdi-calendar</v-icon>
+                  تاريخ البداية
+                </div>
+                <div class="text-body-1 font-weight-medium">
+                  {{ selectedProject.startDate }}
+                </div>
+              </div>
+            </v-col>
+          </v-row>
+
+          <!-- Description -->
+          <div class="mb-4">
+            <div class="text-subtitle-2 font-weight-bold mb-2">
+              <v-icon size="small" class="ml-1">mdi-text</v-icon>
+              وصف المشروع
+            </div>
+            <div class="text-body-2 text-medium-emphasis">
+              {{ selectedProject.description }}
+            </div>
+          </div>
+
+          <!-- Financial Progress -->
+          <v-card variant="tonal" class="mb-4">
+            <v-card-text>
+              <div class="text-subtitle-2 font-weight-bold mb-3">
+                <v-icon size="small" class="ml-1">mdi-cash-multiple</v-icon>
+                التقدم المالي
+              </div>
+              <v-row dense>
+                <v-col cols="12" sm="4">
+                  <div class="text-caption text-medium-emphasis">الهدف المالي</div>
+                  <div class="text-h6 font-weight-bold text-primary">
+                    {{ formatCurrency(selectedProject.targetAmount) }}
+                  </div>
+                </v-col>
+                <v-col cols="12" sm="4">
+                  <div class="text-caption text-medium-emphasis">المبلغ المحصل</div>
+                  <div class="text-h6 font-weight-bold text-success">
+                    {{ formatCurrency(selectedProject.collectedAmount) }}
+                  </div>
+                </v-col>
+                <v-col cols="12" sm="4">
+                  <div class="text-caption text-medium-emphasis">المتبقي</div>
+                  <div class="text-h6 font-weight-bold text-warning">
+                    {{ formatCurrency(selectedProject.targetAmount - selectedProject.collectedAmount) }}
+                  </div>
+                </v-col>
+              </v-row>
+              <v-progress-linear
+                :model-value="selectedProject.progress"
+                color="success"
+                height="12"
+                rounded
+                class="mt-3"
+              >
+                <template #default>
+                  <span class="text-caption font-weight-bold">{{ selectedProject.progress }}%</span>
+                </template>
+              </v-progress-linear>
+            </v-card-text>
+          </v-card>
+
+          <!-- Bank Account Info -->
+          <v-card variant="outlined" class="mb-4">
+            <v-card-text>
+              <div class="text-subtitle-2 font-weight-bold mb-2">
+                <v-icon size="small" class="ml-1">mdi-bank</v-icon>
+                معلومات الحساب البنكي
+              </div>
+              <div class="text-caption text-medium-emphasis mb-1">IBAN</div>
+              <code class="mono text-body-2 pa-2 bg-grey-lighten-4 rounded d-inline-block">
+                {{ formatIBAN(selectedProject.iban) }}
+              </code>
+            </v-card-text>
+          </v-card>
+
+          <!-- Tags -->
+          <div class="mb-4">
+            <div class="text-subtitle-2 font-weight-bold mb-2">
+              <v-icon size="small" class="ml-1">mdi-tag-multiple</v-icon>
+              الوسوم
+            </div>
+            <div class="d-flex ga-2 flex-wrap">
+              <v-chip
+                v-for="t in selectedProject.tags"
+                :key="t"
+                size="small"
+                variant="tonal"
+                :color="getTagColor(t)"
+              >
+                {{ tagLabel(t) }}
+              </v-chip>
+            </div>
+          </div>
+
+          <!-- Additional Info -->
+          <v-expansion-panels variant="accordion">
+            <v-expansion-panel>
+              <v-expansion-panel-title>
+                <v-icon size="small" class="ml-2">mdi-information</v-icon>
+                معلومات إضافية
+              </v-expansion-panel-title>
+              <v-expansion-panel-text>
+                <div class="text-body-2">
+                  <div class="mb-2">
+                    <strong>تاريخ النهاية المتوقع:</strong> {{ selectedProject.endDate }}
+                  </div>
+                  <div class="mb-2">
+                    <strong>عدد المساهمين:</strong> {{ selectedProject.contributors }}
+                  </div>
+                  <div class="mb-2" v-if="selectedProject.note">
+                    <strong>ملاحظات:</strong> {{ selectedProject.note }}
+                  </div>
+                </div>
+              </v-expansion-panel-text>
+            </v-expansion-panel>
+          </v-expansion-panels>
+        </v-card-text>
+
+        <v-divider />
+
+        <v-card-actions class="pa-4">
+          <v-btn
+            variant="text"
+            prepend-icon="mdi-heart"
+            @click="toggleFav(selectedProject)"
+          >
+            {{ isFav(selectedProject.id) ? 'إزالة من المفضلة' : 'إضافة للمفضلة' }}
+          </v-btn>
+          <v-spacer />
+          <v-btn
+            color="primary"
+            variant="flat"
+            prepend-icon="mdi-hand-heart"
+            @click="quickTransferFromDetails"
+          >
+            دعم المشروع
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -444,12 +654,12 @@ definePageMeta({
 });
 
 /** Types **/
-type BeneType = "individual" | "business";
+type BeneType = "charity" | "education" | "health" | "infrastructure";
 interface Beneficiary {
   id: string;
   name: string;
   type: BeneType;
-  bank: string;
+  category: string;
   city?: string;
   iban: string;
   account?: string;
@@ -457,6 +667,13 @@ interface Beneficiary {
   favorite?: boolean;
   avatar?: string;
   note?: string;
+  description?: string;
+  targetAmount?: number;
+  collectedAmount?: number;
+  progress?: number;
+  startDate?: string;
+  endDate?: string;
+  contributors?: number;
 }
 
 /** State **/
@@ -464,7 +681,7 @@ const viewMode = ref<"cards" | "table">("cards");
 const compact = ref(false);
 const search = ref("");
 const typeFilter = ref<BeneType | null>(null);
-const bankFilter = ref<string | null>(null);
+const categoryFilter = ref<string | null>(null);
 const cityFilter = ref<string | null>(null);
 const tagFilter = ref<string[]>([]);
 
@@ -473,82 +690,116 @@ const currencies = ["LYD", "USD", "EUR"];
 /** Sample Data **/
 const benes = ref<Beneficiary[]>([
   mk(
-    "أحمد عمر",
-    "individual",
-    "مصرف الجمهورية",
+    "مشروع تطوير التعليم الرقمي",
+    "education",
+    "تعليم وتدريب",
     "طرابلس",
     "LY22RIBL00000000000012345678",
-    ["frequent"]
+    ["urgent"],
+    "مشروع يهدف إلى توفير بنية تحتية رقمية متكاملة للمدارس والجامعات في ليبيا، مع تدريب المعلمين على استخدام التقنيات الحديثة في التعليم.",
+    500000,
+    325000,
+    "2024-01-15",
+    "2025-06-30",
+    156
   ),
   mk(
-    "شركة الرفاق",
-    "business",
-    "مصرف الوحدة",
+    "بناء مستشفى الأمل",
+    "health",
+    "صحة ورعاية",
     "بنغازي",
     "LY29WABA00000000001234567890",
-    ["business", "favorite"]
+    ["favorite", "ongoing"],
+    "إنشاء مستشفى حديث متخصص في علاج الأورام والأمراض المزمنة، مجهز بأحدث المعدات الطبية وطاقم طبي مؤهل.",
+    2000000,
+    1450000,
+    "2023-09-01",
+    "2025-12-31",
+    423
   ),
   mk(
-    "سالم الهادي",
-    "individual",
-    "التجاري الوطني",
+    "مبادرة الطرق الآمنة",
+    "infrastructure",
+    "بنية تحتية",
     "مصراتة",
     "LY12NCB00000000000098765432",
-    ["individual"]
+    ["ongoing"],
+    "مشروع لتطوير وتحسين شبكة الطرق الرئيسية والجسور، مع تركيب أنظمة إضاءة حديثة وكاميرات مراقبة لضمان سلامة المرور.",
+    1500000,
+    900000,
+    "2024-03-20",
+    "2025-09-15",
+    287
   ),
   mk(
-    "LibyTech LLC",
-    "business",
-    "مصرف الصحارى",
+    "دعم الأيتام والمحتاجين",
+    "charity",
+    "إنساني واجتماعي",
     "طرابلس",
     "LY53SARA00000000000012340001",
-    ["business"]
+    ["favorite", "urgent"],
+    "برنامج شامل لرعاية الأيتام والأسر المحتاجة، يشمل توفير المسكن، التعليم، الرعاية الصحية، والدعم النفسي والاجتماعي.",
+    750000,
+    620000,
+    "2024-01-01",
+    "2025-12-31",
+    534
   ),
 ]);
 
 function mk(
   name: string,
   type: BeneType,
-  bank: string,
+  category: string,
   city: string,
   iban: string,
-  tags: string[]
+  tags: string[],
+  description: string,
+  targetAmount: number,
+  collectedAmount: number,
+  startDate: string,
+  endDate: string,
+  contributors: number
 ): Beneficiary {
-  const projectImages = [
-    'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=400',
-    'https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=400',
-    'https://images.unsplash.com/photo-1552664730-d307ca884978?w=400',
-    'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=400',
-  ];
-  const randomImage = projectImages[Math.floor(Math.random() * projectImages.length)];
-  
+  const progress = Math.round((collectedAmount / targetAmount) * 100);
   return {
     id: Math.random().toString(36).slice(2),
     name,
     type,
-    bank,
+    category,
     city,
     iban,
     tags,
     favorite: tags.includes("favorite"),
-    avatar: randomImage,
+    avatar: `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(
+      name
+    )}`,
+    description,
+    targetAmount,
+    collectedAmount,
+    progress,
+    startDate,
+    endDate,
+    contributors,
   };
 }
 
 /** Options **/
 const typeOptions = [
-  { label: "فرد", value: "individual" },
-  { label: "شركة", value: "business" },
+  { label: "خيري", value: "charity" },
+  { label: "تعليمي", value: "education" },
+  { label: "صحي", value: "health" },
+  { label: "بنية تحتية", value: "infrastructure" },
 ];
-const bankOptions = computed(() =>
-  Array.from(new Set(benes.value.map((b) => b.bank)))
+const categoryOptions = computed(() =>
+  Array.from(new Set(benes.value.map((b) => b.category)))
 );
 const cityOptions = computed(() =>
   Array.from(
     new Set(benes.value.map((b) => b.city).filter(Boolean) as string[])
   )
 );
-const tagOptions = ["favorite", "frequent", "business", "individual"];
+const tagOptions = ["favorite", "urgent", "ongoing", "completed"];
 
 /** Filtering **/
 const filtered = computed(() => {
@@ -556,12 +807,12 @@ const filtered = computed(() => {
   const q = search.value.trim().toLowerCase();
   if (q)
     list = list.filter((b) =>
-      `${b.name} ${b.bank} ${b.city ?? ""} ${b.tags.join(" ")}`
+      `${b.name} ${b.category} ${b.city ?? ""} ${b.tags.join(" ")}`
         .toLowerCase()
         .includes(q)
     );
   if (typeFilter.value) list = list.filter((b) => b.type === typeFilter.value);
-  if (bankFilter.value) list = list.filter((b) => b.bank === bankFilter.value);
+  if (categoryFilter.value) list = list.filter((b) => b.category === categoryFilter.value);
   if (cityFilter.value) list = list.filter((b) => b.city === cityFilter.value);
   if (tagFilter.value.length)
     list = list.filter((b) => tagFilter.value.every((t) => b.tags.includes(t)));
@@ -586,11 +837,11 @@ const paged = computed(() => {
 
 /** Table headers **/
 const headers = [
-  { title: "الاسم", key: "name", sortable: true },
+  { title: "اسم المشروع", key: "name", sortable: true },
   { title: "النوع", key: "type", sortable: true },
-  { title: "البنك", key: "bank", sortable: true },
+  { title: "الفئة", key: "category", sortable: true },
   { title: "المدينة", key: "city", sortable: true },
-  { title: "IBAN", key: "iban", sortable: false },
+  { title: "حساب الاستقبال", key: "iban", sortable: false },
   { title: "وسوم", key: "tags", sortable: false },
   { title: "", key: "actions", sortable: false, width: 160 },
 ];
@@ -628,8 +879,8 @@ function openCreate() {
   editing.value = false;
   form.value = {
     name: "",
-    type: "individual",
-    bank: "",
+    type: "charity",
+    category: "",
     city: "",
     iban: "",
     account: "",
@@ -708,6 +959,22 @@ function doDelete() {
   }, 400);
 }
 
+/** Project Details Modal **/
+const detailsOpen = ref(false);
+const selectedProject = ref<Beneficiary | null>(null);
+
+function openProjectDetails(project: Beneficiary) {
+  selectedProject.value = project;
+  detailsOpen.value = true;
+}
+
+function quickTransferFromDetails() {
+  if (selectedProject.value) {
+    detailsOpen.value = false;
+    quickTransfer(selectedProject.value);
+  }
+}
+
 /** Validation rules (inline per NN/g) **/
 const req = (v: any) => !!v || v === 0 || "إلزامي";
 const positive = (v: any) => v > 0 || "أدخل مبلغًا صحيحًا";
@@ -740,12 +1007,12 @@ function validateIBAN(iban: string) {
 /** Helpers **/
 function tagLabel(t: string) {
   return t === "favorite"
-    ? "مفضلة"
-    : t === "frequent"
-    ? "متكرر"
-    : t === "business"
-    ? "شركة"
-    : "فرد";
+    ? "مفضل"
+    : t === "urgent"
+    ? "عاجل"
+    : t === "ongoing"
+    ? "قيد التنفيذ"
+    : "مكتمل";
 }
 function placeholder(b: Beneficiary) {
   return `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(
@@ -755,9 +1022,34 @@ function placeholder(b: Beneficiary) {
 function resetFilters() {
   search.value = "";
   typeFilter.value = null;
-  bankFilter.value = null;
+  categoryFilter.value = null;
   cityFilter.value = null;
   tagFilter.value = [];
+}
+
+function getTypeLabel(type: BeneType) {
+  const option = typeOptions.find(opt => opt.value === type);
+  return option ? option.label : type;
+}
+
+function formatCurrency(amount?: number) {
+  if (!amount) return '0 LYD';
+  return new Intl.NumberFormat('ar-LY', {
+    style: 'currency',
+    currency: 'LYD',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(amount);
+}
+
+function getTagColor(tag: string) {
+  switch (tag) {
+    case 'favorite': return 'error';
+    case 'urgent': return 'warning';
+    case 'ongoing': return 'info';
+    case 'completed': return 'success';
+    default: return 'default';
+  }
 }
 
 onMounted(() => {
@@ -769,6 +1061,19 @@ onMounted(() => {
 .bene-page {
   direction: rtl;
 }
+
+/* Fix container spacing */
+.bene-page :deep(.v-container) {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+/* Cards grid proper spacing */
+.cards-grid {
+  padding-top: 8px;
+  padding-bottom: 24px;
+}
+
 .min-w-56 {
   min-width: 320px;
 }
@@ -777,48 +1082,32 @@ onMounted(() => {
     "Liberation Mono", "Courier New", monospace;
 }
 
-/* Card Styling - Same as cards page with hover effects */
+/* Card Styling - hover aligned with customers page feel */
 .bene-card {
-  position: relative;
   overflow: hidden;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.bene-card::before,
-.bene-card::after {
-  content: '';
-  position: absolute;
-  width: 0;
-  height: 2px;
-  background-color: rgb(var(--v-theme-primary));
-  transition: width 0.3s ease-out;
-  z-index: 1;
-}
-
-.bene-card::before {
-  top: 0;
-  left: 0;
-}
-
-.bene-card::after {
-  bottom: 0;
-  right: 0;
+  height: 100%;
+  cursor: pointer;
+  border: 1px solid transparent;
+  background-color: rgb(var(--v-theme-surface));
+  transition:
+    transform 0.18s var(--transition-fast, ease),
+    box-shadow 0.18s var(--transition-fast, ease),
+    border-color 0.18s var(--transition-fast, ease),
+    background-color 0.18s var(--transition-fast, ease);
 }
 
 .bene-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08) !important;
-}
-
-.bene-card:hover::before,
-.bene-card:hover::after {
-  width: 100%;
+  transform: translateY(-2px);
+  box-shadow: 0 14px 32px rgba(15, 23, 42, 0.14) !important;
+  border-color: rgba(var(--v-theme-primary), 0.35) !important;
+  background-color: rgba(var(--v-theme-primary-hover), 0.08) !important;
 }
 
 /* Image Wrapper */
 .card-image-wrapper {
   position: relative;
   overflow: hidden;
+  height: 140px;
 }
 
 .card-main-image {
@@ -850,9 +1139,38 @@ onMounted(() => {
   border-radius: 8px;
 }
 
+/* Empty state spacing */
+.text-center.py-10 {
+  padding-top: 2.5rem !important;
+  padding-bottom: 2.5rem !important;
+}
+
+/* Pagination spacing */
+.d-flex.justify-center.mt-6 {
+  margin-top: 1.5rem !important;
+  margin-bottom: 1.5rem !important;
+}
+
 /* Table Styling */
 .bene-table :deep(thead th) {
   background: #fafafa;
+}
+
+/* Modal Info Items */
+.info-item {
+  padding: 12px;
+  background: rgba(var(--v-theme-surface-variant), 0.3);
+  border-radius: 8px;
+  min-height: 70px;
+}
+
+/* Modal styling */
+.bg-primary {
+  background-color: rgb(var(--v-theme-primary)) !important;
+}
+
+.bg-grey-lighten-4 {
+  background-color: #f5f5f5;
 }
 </style>
 
@@ -860,6 +1178,7 @@ onMounted(() => {
 USAGE
 - احفظ الملف باسم: pages/beneficiaries.vue
 - افتح: /beneficiaries
-- الميزات: شبكة بطاقات + جدول، بحث/فلاتر، إنشاء/تعديل في درج، تحويل سريع، تحقق IBAN (mod97) وتنسيق، مفضلة/وسوم، حوار حذف مؤكد.
+- الميزات: صفحة دعم المشاريع مع شبكة بطاقات + جدول، بحث/فلاتر، إنشاء/تعديل في درج، دعم المشروع، تحقق IBAN (mod97) وتنسيق، مفضلة/وسوم، حوار حذف مؤكد.
+- تأثير hover: zoom على الصورة فقط بدون تأثيرات على الكارد.
 - للتكامل مع API: استبدل benes[] بنداءات CRUD (GET/POST/PATCH/DELETE)، وفعّل server-side data-table عند الحاجة.
 -->

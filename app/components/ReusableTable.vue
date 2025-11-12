@@ -35,14 +35,14 @@
       :multi-sort="multiSort"
       :density="dense ? 'compact' : 'default'"
       hide-default-footer
-      @click:row="row => $emit('row:click', row)"
+      @click:row="(row: any) => $emit('row:click', row)"
       @update:page="$emit('update:page', $event)"
       @update:sort-by="$emit('update:sortBy', $event)"
     >
       <!-- Custom cell slots -->
       <template v-for="col in processedHeaders" v-slot:[`item.${col.value}`]="{ item }">
-        <slot :name="`cell-${col.value}`" :item="item" :value="item[col.value]">
-          <span class="text-body-2">{{ item[col.value] }}</span>
+        <slot :name="`cell-${col.value}`" :item="item" :value="item[col.value!]">
+          <span class="text-body-2">{{ item[col.value!] }}</span>
         </slot>
       </template>
     </v-data-table>
@@ -62,70 +62,78 @@
   </v-card>
 </template>
 
-<script setup>
-import AppPagination from '~/components/pagination/AppPagination.vue';
+<script setup lang="ts">
+interface Column {
+  title?: string
+  value?: string
+  key?: string
+  sortable?: boolean
+  align?: 'start' | 'center' | 'end'
+  width?: string | number
+}
 
-// تعريف الخصائص - Props definition
-const props = defineProps({
-  // البيانات الأساسية - Core data props
-  title: String,
-  items: { type: Array, default: () => [] },
-  columns: { type: Array, default: () => [] },
-  dense: { type: Boolean, default: false },
+interface PaginationOptions {
+  length?: number
+  totalVisible?: number
+  pageSizes?: number[]
+  showPageSize?: boolean
+  showRange?: boolean
+  showFirstLast?: boolean
+  size?: string
+  variant?: 'flat' | 'text' | 'elevated' | 'outlined' | 'plain' | 'tonal'
+  disabled?: boolean
+  align?: 'start' | 'center' | 'end'
+}
 
-  // خصائص الترتيب - Sorting props
-  sortBy: { type: Array, default: () => [] },
-  multiSort: { type: Boolean, default: false },
+interface Props {
+  title?: string
+  items?: any[]
+  columns?: Column[]
+  dense?: boolean
+  sortBy?: any[]
+  multiSort?: boolean
+  actionLabel?: string
+  page?: number
+  pageSize?: number
+  totalItems?: number
+  showPagination?: boolean
+  paginationOptions?: PaginationOptions
+}
 
-  // الإجراءات - Actions
-  actionLabel: { type: String, default: '' },
-
-  // خصائص الباجينيشن الأساسية فقط - Essential pagination props only
-  page: { type: Number, default: 1 },
-  pageSize: { type: Number, default: 10 },
-  totalItems: { type: Number, default: 0 },
-  showPagination: { type: Boolean, default: true },
-
-  // خيارات الباجينيشن (اختيارية) - Pagination options (optional)
-  paginationOptions: {
-    type: Object,
-    default: () => ({
-      length: undefined,
-      totalVisible: 5,
-      pageSizes: [5, 10, 20, 50, 100],
-      showPageSize: true,
-      showRange: true,
-      showFirstLast: true,
-      size: 'small',
-      variant: 'outlined',
-      disabled: false,
-      align: 'center'
-    })
-  },
+const props = withDefaults(defineProps<Props>(), {
+  items: () => [],
+  columns: () => [],
+  dense: false,
+  sortBy: () => [],
+  multiSort: false,
+  actionLabel: '',
+  page: 1,
+  pageSize: 10,
+  totalItems: 0,
+  showPagination: true,
+  paginationOptions: () => ({
+    length: undefined,
+    totalVisible: 5,
+    pageSizes: [5, 10, 20, 50, 100],
+    showPageSize: true,
+    showRange: true,
+    showFirstLast: true,
+    size: 'small',
+    variant: 'outlined',
+    disabled: false,
+    align: 'center'
+  }),
 })
 
-// معالجة الأعمدة لضمان التوافق مع Vuetify 3
-// Process headers to ensure Vuetify 3 compatibility
-const processedHeaders = computed(() => {
-  return props.columns.map(col => ({
-    ...col,
-    value: col.value || col.key, // استخدام value أو key كبديل
-    sortable: col.sortable !== false, // تفعيل الترتيب افتراضياً
-    align: col.align || 'start',
-    width: col.width
-  }))
-})
+defineEmits(['update:page', 'update:pageSize', 'change', 'row:click', 'action:click', 'update:sortBy'])
 
-defineEmits([
-  'update:page',
-  'update:pageSize',
-  'change',
-  'row:click',
-  'action:click',
-  'update:sortBy',
-])
-
-// منطق بسيط ونظيف - Clean and simple logic
+const processedHeaders = computed(() => props.columns.map(col => ({
+  ...col,
+  value: col.value || col.key,
+  sortable: col.sortable !== false,
+  align: col.align || 'start',
+  width: col.width
+})))
 </script>
 
 <style scoped>
