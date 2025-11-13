@@ -265,65 +265,114 @@
 </template>
 
 <script setup lang="ts">
-import { useDisplay } from "vuetify"
-import { useAppStore } from "~/stores/app"
-import { useAuthStore } from "~/stores/auth/storeAuth"
-import { useAuthApi } from "~/composables/api/useAuthApi"
+import { useDisplay } from "vuetify";
+import { useAppStore } from "~/stores/app";
+import { useAuthStore } from "~/stores/auth/storeAuth";
+import { useAuthApi } from "~/composables/api/useAuthApi";
 
 interface NavigationItem {
-  title: string
-  icon: string
-  to?: string
-  value: string
-  children?: NavigationItem[]
-  badge?: string
-  badgeColor?: string
-  divider?: boolean
+  title: string;
+  icon: string;
+  to?: string;
+  value: string;
+  children?: NavigationItem[];
+  badge?: string;
+  badgeColor?: string;
+  divider?: boolean;
 }
 
-const { mobile } = useDisplay()
-const appStore = useAppStore()
-const authStore = useAuthStore()
-const route = useRoute()
-const router = useRouter()
-const { getDirectionalIcon } = useRTL()
+const { mobile } = useDisplay();
+const appStore = useAppStore();
+const authStore = useAuthStore();
+const route = useRoute();
+const router = useRouter();
+const { getDirectionalIcon } = useRTL();
 
-const collapseIcon = getDirectionalIcon("mdi-chevron-left", "mdi-chevron-right")
-const expandIcon = getDirectionalIcon("mdi-chevron-right", "mdi-chevron-left")
-const showUserMenu = ref(false)
+const collapseIcon = getDirectionalIcon(
+  "mdi-chevron-left",
+  "mdi-chevron-right"
+);
+const expandIcon = getDirectionalIcon("mdi-chevron-right", "mdi-chevron-left");
+const showUserMenu = ref(false);
 
-const getChildren = (item: NavigationItem) => item.children || []
+const getChildren = (item: NavigationItem) => item.children || [];
 
 const navigationItems = ref<NavigationItem[]>([
-  { title: "navigation.wallet", icon: "mdi-wallet", to: "/wallet", value: "wallet" },
-  { title: "navigation.customers", icon: "mdi-account-group-outline", to: "/customers", value: "customers" },
-  { title: "navigation.users", icon: "mdi-account-multiple-outline", to: "/users", value: "users" },
-  { title: "navigation.beneficiaries", icon: "mdi-account-heart-outline", to: "/beneficiaries", value: "beneficiaries" },
-  { title: "navigation.posLocations", icon: "mdi-map-marker-radius", to: "/pos-locations", value: "pos-locations" },
-  { title: "navigation.atmLocations", icon: "mdi-cash-multiple", to: "/atm-locations", value: "atm-locations" },
-  { title: "navigation.atm2Locations", icon: "mdi-atom", to: "/atm2-locations", value: "atm2-locations" },
-  { title: "navigation.cards", icon: "mdi-credit-card-outline", to: "/cards", value: "cards" },
-  { title: "navigation.charts", icon: "mdi-chart-line", to: "/charts", value: "charts" },
-  { title: "navigation.movies", icon: "mdi-movie-outline", to: "/movies", value: "movies" },
-  { title: "navigation.multiStepsForm", icon: "mdi-form-select", to: "/multi-steps-form", value: "multi-steps-form" },
-  { title: "navigation.otp", icon: "mdi-shield-key-outline", to: "/otp", value: "otp" },
-])
+  {
+    title: "navigation.wallet",
+    icon: "mdi-wallet",
+    to: "/wallet",
+    value: "wallet",
+  },
+  {
+    title: "navigation.customers",
+    icon: "mdi-account-group-outline",
+    to: "/customers",
+    value: "customers",
+  },
+  {
+    title: "navigation.users",
+    icon: "mdi-account-multiple-outline",
+    to: "/users",
+    value: "users",
+  },
+  {
+    title: "navigation.beneficiaries",
+    icon: "mdi-account-heart-outline",
+    to: "/beneficiaries",
+    value: "beneficiaries",
+  },
+  {
+    title: "navigation.posLocations",
+    icon: "mdi-map-marker-radius",
+    to: "/pos-locations",
+    value: "pos-locations",
+  },
+  {
+    title: "navigation.atmLocations",
+    icon: "mdi-cash-multiple",
+    to: "/atm-locations",
+    value: "atm-locations",
+  },
+  {
+    title: "navigation.cards",
+    icon: "mdi-credit-card-outline",
+    to: "/cards",
+    value: "cards",
+  },
+  {
+    title: "navigation.multiStepsForm",
+    icon: "mdi-form-select",
+    to: "/multi-steps-form",
+    value: "multi-steps-form",
+  },
+]);
 
-const railMode = computed(() => !mobile.value && appStore.sidebarMini)
-const railItemVars = { "--v-list-item-padding-start": "0", "--v-list-item-padding-end": "0", "--v-list-item-prepend-width": "100%", "--v-list-item-prepend-margin-after": "0" }
-const isActiveRoute = (path = "") => route.path === path
+const railMode = computed(() => !mobile.value && appStore.sidebarMini);
+const railItemVars = {
+  "--v-list-item-padding-start": "0",
+  "--v-list-item-padding-end": "0",
+  "--v-list-item-prepend-width": "100%",
+  "--v-list-item-prepend-margin-after": "0",
+};
+const isActiveRoute = (path = "") => route.path === path;
 
 const Logout = async () => {
   try {
-    await useAuthApi().logout()
-    authStore.clearAuth()
-    await router.push("/auth/login")
+    await useAuthApi().logout();
+    authStore.clearAuth();
+    await router.push("/auth/login");
   } catch (error) {
-    console.error("❌ خطأ في تسجيل الخروج:", error)
+    console.error("❌ خطأ في تسجيل الخروج:", error);
   }
-}
+};
 
-watch(() => route.path, () => { if (mobile.value) appStore.sidebarOpen = false })
+watch(
+  () => route.path,
+  () => {
+    if (mobile.value) appStore.sidebarOpen = false;
+  }
+);
 </script>
 
 <style scoped>
