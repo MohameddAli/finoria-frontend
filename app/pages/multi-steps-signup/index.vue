@@ -139,7 +139,7 @@ import StepEmployment from '~/components/signup/StepEmployment.vue';
 import StepBranchAddress from '~/components/signup/StepBranchAddress.vue';
 
 definePageMeta({
-  // Keep register public – do not wrap with dashboard layout to avoid auth redirect
+  // Registration should be accessible without dashboard shell/auth guard
   layout: 'empty',
 });
 

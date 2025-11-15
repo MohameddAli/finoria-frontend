@@ -71,6 +71,7 @@
     "active": "نشط",
     "inactive": "غير نشط",
     "next": "التالي",
+    "previous": "السابق",
     "back": "السابق",
     "exportToPdf": "تصدير إلى PDF",
     "exportToExcel": "تصدير إلى Excel",
@@ -84,7 +85,10 @@
     "loading": "جاري التحميل...",
     "add_new": "إضافة جديد",
     "confirm_delete": "تأكيد الحذف",
-    "delete_confirmation": "هل أنت متأكد أنك تريد حذف هذا العنصر؟"
+    "delete_confirmation": "هل أنت متأكد أنك تريد حذف هذا العنصر؟",
+    "submit": "إرسال",
+    "upload": "رفع",
+    "change": "تغيير"
   },
   "direction": {
     "next": "التالي",
@@ -184,7 +188,8 @@
     "exportDemo": "عرض التصدير",
     "printDemo": "عرض الطباعة",
     "print-demo": "عرض الطباعة",
-    "printDialogDemo": "عرض مكون الطباعة الحديث"
+    "printDialogDemo": "عرض مكون الطباعة الحديث",
+    "wallet": "الرئيسية"
   },
   "table": {
     "id": "المعرف",
@@ -994,9 +999,12 @@
   "validation": {
     "required": "هذا الحقل مطلوب",
     "invalidEmail": "البريد الإلكتروني غير صحيح",
+    "invalidPhone": "رقم الهاتف غير صحيح",
     "mustBePositive": "يجب أن تكون القيمة موجبة",
     "mustBeNumber": "يجب أن تكون القيمة رقماً",
-    "positive_number": "يجب أن تكون القيمة موجبة"
+    "positive_number": "يجب أن تكون القيمة موجبة",
+    "fileTooLarge": "حجم الملف كبير جداً. الحد الأقصى {size} ميجابايت",
+    "invalidFileType": "نوع الملف غير مدعوم"
   },
   "jsonBody": {
     "title": "عارض JSON",
@@ -1069,5 +1077,105 @@
     },
     "viewCode": "عرض الكود"
   },
-  "charts": {}
+  "charts": {},
+  "signup": {
+    "title": "تسجيل حساب جديد في المصرف",
+    "step1": {
+      "title": "المعلومات الأساسية",
+      "subtitle": "أدخل معلوماتك الأساسية",
+      "description": "يرجى إدخال رقمك الوطني ورقم جواز السفر ورقم الهاتف"
+    },
+    "step2": {
+      "title": "رفع المستندات",
+      "subtitle": "رفع المستندات المطلوبة",
+      "documentsTitle": "رفع المستندات المطلوبة",
+      "documentsSubtitle": "يرجى رفع جميع المستندات بصيغة واضحة"
+    },
+    "step3": {
+      "title": "معلومات التوظيف",
+      "subtitle": "الجنسية ومعلومات العمل",
+      "nationalityTitle": "معلومات الجنسية",
+      "employmentTitle": "معلومات التوظيف"
+    },
+    "step4": {
+      "title": "الفرع والعنوان",
+      "subtitle": "اختر الفرع وأدخل معلومات العنوان"
+    }
+  },
+  "form": {
+    "nationalId": "الرقم الوطني",
+    "passportNumber": "رقم جواز السفر",
+    "phoneNumber": "رقم الهاتف",
+    "email": "البريد الإلكتروني",
+    "personalPhoto": "الصورة الشخصية",
+    "passportPhoto": "صورة جواز السفر",
+    "signaturePhoto": "صورة التوقيع",
+    "employmentLetter": "رسالة من جهة العمل",
+    "libyan": "ليبي",
+    "foreign": "أجنبي",
+    "idType": "نوع الهوية",
+    "nationalIdNumber": "رقم الهوية الوطنية",
+    "administrativeId": "الرقم الإداري",
+    "administrativeIdNumber": "رقم الهوية الإدارية",
+    "workSector": "قطاع العمل",
+    "educationLevel": "المستوى التعليمي",
+    "averageIncome": "متوسط الدخل",
+    "yearsOfWork": "سنوات العمل",
+    "employerName": "اسم صاحب العمل",
+    "employerPhone": "رقم هاتف صاحب العمل",
+    "jobTitle": "المسمى الوظيفي",
+    "maritalStatus": "الحالة الاجتماعية",
+    "branch": "الفرع",
+    "birthPlace": "مكان الولادة",
+    "passportIssuePlace": "مكان إصدار جواز السفر",
+    "address": "عنوان السكن",
+    "noFileSelected": "لم يتم اختيار ملف",
+    "upload": "رفع",
+    "change": "تغيير",
+    "sectors": {
+      "public": "القطاع العام",
+      "private": "القطاع الخاص",
+      "selfEmployed": "عمل حر"
+    },
+    "education": {
+      "highSchool": "ثانوية عامة",
+      "bachelor": "بكالوريوس",
+      "master": "ماجستير",
+      "phd": "دكتوراه"
+    },
+    "income": {
+      "low": "أقل من 1000 دينار",
+      "medium": "1000 - 3000 دينار",
+      "high": "أكثر من 3000 دينار"
+    },
+    "marital": {
+      "single": "أعزب",
+      "married": "متزوج",
+      "divorced": "مطلق",
+      "widowed": "أرمل"
+    },
+    "branches": {
+      "tripoli": "فرع طرابلس",
+      "benghazi": "فرع بنغازي",
+      "misrata": "فرع مصراتة",
+      "zawiya": "فرع الزاوية"
+    }
+  },
+  "chatbot": {
+    "title": "المساعد الذكي",
+    "inputPlaceholder": "اكتب رسالتك...",
+    "thinking": "الذكاء الاصطناعي يفكر...",
+    "send": "إرسال",
+    "close": "إغلاق",
+    "clearChat": "مسح المحادثة",
+    "welcome": "مرحباً! كيف يمكنني مساعدتك اليوم؟",
+    "noMessages": "لا توجد رسائل بعد. ابدأ محادثة!",
+    "errors": {
+      "networkError": "خطأ في الشبكة. يرجى التحقق من اتصالك.",
+      "apiError": "فشل الحصول على رد. يرجى المحاولة مرة أخرى.",
+      "emptyMessage": "يرجى إدخال رسالة.",
+      "timeout": "انتهت مهلة الطلب. يرجى المحاولة مرة أخرى.",
+      "configError": "المساعد الذكي غير متاح مؤقتاً."
+    }
+  }
 }

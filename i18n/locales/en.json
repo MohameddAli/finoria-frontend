@@ -1076,5 +1076,99 @@
       "description": "Description"
     },
     "viewCode": "View Code"
+  },
+  "signup": {
+    "title": "New Bank Account Registration",
+    "step1": {
+      "title": "Basic Information",
+      "subtitle": "Enter your basic information"
+    },
+    "step2": {
+      "title": "Documents & Employment",
+      "subtitle": "Upload documents and employment information",
+      "documentsTitle": "Upload Required Documents",
+      "documentsSubtitle": "Please upload all documents in clear format",
+      "nationalityTitle": "Nationality Information",
+      "employmentTitle": "Employment Information"
+    },
+    "step3": {
+      "title": "Branch & Address",
+      "subtitle": "Select branch and enter address information"
+    }
+  },
+  "form": {
+    "nationalId": "National ID",
+    "passportNumber": "Passport Number",
+    "phoneNumber": "Phone Number",
+    "personalPhoto": "Personal Photo",
+    "passportPhoto": "Passport Photo",
+    "signaturePhoto": "Signature Photo",
+    "employmentLetter": "Employment Letter",
+    "libyan": "Libyan",
+    "foreign": "Foreign",
+    "idType": "ID Type",
+    "nationalIdNumber": "National ID Number",
+    "administrativeId": "Administrative ID",
+    "administrativeIdNumber": "Administrative ID Number",
+    "workSector": "Work Sector",
+    "educationLevel": "Education Level",
+    "averageIncome": "Average Income",
+    "yearsOfWork": "Years of Work",
+    "employerName": "Employer Name",
+    "employerPhone": "Employer Phone",
+    "jobTitle": "Job Title",
+    "maritalStatus": "Marital Status",
+    "branch": "Branch",
+    "birthPlace": "Birth Place",
+    "passportIssuePlace": "Passport Issue Place",
+    "address": "Address",
+    "noFileSelected": "No file selected",
+    "upload": "Upload",
+    "change": "Change",
+    "sectors": {
+      "public": "Public Sector",
+      "private": "Private Sector",
+      "selfEmployed": "Self Employed"
+    },
+    "education": {
+      "highSchool": "High School",
+      "bachelor": "Bachelor",
+      "master": "Master",
+      "phd": "PhD"
+    },
+    "income": {
+      "low": "Less than 1000 LYD",
+      "medium": "1000 - 3000 LYD",
+      "high": "More than 3000 LYD"
+    },
+    "marital": {
+      "single": "Single",
+      "married": "Married",
+      "divorced": "Divorced",
+      "widowed": "Widowed"
+    },
+    "branches": {
+      "tripoli": "Tripoli Branch",
+      "benghazi": "Benghazi Branch",
+      "misrata": "Misrata Branch",
+      "zawiya": "Zawiya Branch"
+    }
+  },
+  "chatbot": {
+    "title": "AI Assistant",
+    "inputPlaceholder": "Type your message...",
+    "thinking": "AI is thinking...",
+    "send": "Send",
+    "close": "Close",
+    "clearChat": "Clear Chat",
+    "welcome": "Hello! How can I help you today?",
+    "noMessages": "No messages yet. Start a conversation!",
+    "errors": {
+      "networkError": "Network error. Please check your connection.",
+      "apiError": "Failed to get response. Please try again.",
+      "emptyMessage": "Please enter a message.",
+      "timeout": "Request timed out. Please try again.",
+      "configError": "Chatbot is temporarily unavailable."
+    }
   }
 }

@@ -49,7 +49,7 @@
       <!-- Right Section: Actions and Profile -->
       <div class="header-right d-flex align-center">
         <!-- Download Button -->
-        <v-btn
+        <!-- <v-btn
           variant="outlined"
           size="small"
           class="me-3 download-btn"
@@ -57,12 +57,12 @@
           aria-label="تحميل البيانات"
         >
           {{ $t("common.download") }}
-        </v-btn>
+        </v-btn> -->
 
         <!-- Date Range Picker -->
-        <div class="me-4">
+        <!-- <div class="me-4">
           <DateRangePicker />
-        </div>
+        </div> -->
 
         <!-- Notifications -->
         <NotificationsMenu
@@ -157,10 +157,29 @@ const userMenuItems = computed(() => [
 ])
 
 const notifications = ref([
-  { id: 1, title: "New transaction received", time: "2 minutes ago", icon: "mdi-currency-btc", color: "success" },
-  { id: 2, title: "Wallet backup completed", time: "1 hour ago", icon: "mdi-shield-check", color: "info" },
-  { id: 3, title: "Security alert", time: "3 hours ago", icon: "mdi-alert", color: "warning" },
+  { 
+    id: 1, 
+    title: "تم استلام طلب دعم مشروع جديد", 
+    time: "منذ دقيقتين", 
+    icon: "mdi-briefcase-check", 
+    color: "success" 
+  },
+  { 
+    id: 2, 
+    title: "اكتمل تحديث ملف المشروع", 
+    time: "منذ ساعة", 
+    icon: "mdi-file-document-check", 
+    color: "info" 
+  },
+  { 
+    id: 3, 
+    title: "تنبيه: يحتاج المشروع إلى مراجعة", 
+    time: "منذ 3 ساعات", 
+    icon: "mdi-alert", 
+    color: "warning" 
+  },
 ])
+
 
 const userName = computed(() => authStore.admin?.name || "Guest")
 const userRole = computed(() => authStore.admin?.email || "User")

@@ -42,16 +42,7 @@
                 </template>
               </v-select>
 
-              <v-select
-                v-model="bankFilter"
-                :items="bankOptions"
-                label="البنك"
-                dense
-                hide-details
-                variant="outlined"
-                style="min-width: 160px"
-                clearable
-              />
+
 
               <v-menu>
                 <template #activator="{ props }">
@@ -115,18 +106,12 @@
                 prepend-icon="mdi-filter-off"
                 >إعادة</v-btn
               >
-              <v-btn
-                variant="tonal"
-                color="success"
-                @click="exportCsv"
-                prepend-icon="mdi-download"
-                >تصدير</v-btn
-              >
+
             </div>
           </div>
 
           <!-- Stats Cards -->
-          <v-row class="mt-4">
+          <!-- <v-row class="mt-4">
             <v-col cols="12" sm="3">
               <v-card class="stat-card available-card" variant="tonal">
                 <v-card-text class="pa-3">
@@ -179,7 +164,7 @@
                 </v-card-text>
               </v-card>
             </v-col>
-          </v-row>
+          </v-row> -->
         </v-card>
 
         <!-- Split View: List + 3D Map -->
@@ -544,8 +529,8 @@ const userLocation = ref<{ lat: number; lng: number } | null>(null);
 const atms = ref<ATM[]>([
   {
     id: '1',
-    name: 'صراف الجمهورية - الفرع الرئيسي',
-    bank: 'مصرف الجمهورية',
+    name: 'صراف اليقين - الفرع الرئيسي',
+    bank: 'مصرف اليقين',
     address: 'شارع عمر المختار',
     city: 'طرابلس',
     lat: 32.8872,
@@ -558,21 +543,21 @@ const atms = ref<ATM[]>([
   },
   {
     id: '2',
-    name: 'ATM الوحدة - سوق الجمعة',
-    bank: 'مصرف الوحدة',
+    name: 'صراف اليقين - سوق الجمعة',
+    bank: 'مصرف اليقين',
     address: 'سوق الجمعة',
     city: 'طرابلس',
     lat: 32.8651,
     lng: 13.1876,
-    status: 'unavailable',
+    status: 'available',
     available24h: false,
     accessible: false,
     image: ATM_IMAGE_URL
   },
   {
     id: '3',
-    name: 'صراف التجاري الوطني - فرع الظهرة',
-    bank: 'المصرف التجاري الوطني',
+    name: 'صراف اليقين - فرع الظهرة',
+    bank: 'مصرف اليقين',
     address: 'شارع الظهرة',
     city: 'بنغازي',
     lat: 32.1165,
@@ -584,8 +569,8 @@ const atms = ref<ATM[]>([
   },
   {
     id: '4',
-    name: 'ATM الصحارى - وسط المدينة',
-    bank: 'مصرف الصحارى',
+    name: 'صراف اليقين - وسط المدينة',
+    bank: 'مصرف اليقين',
     address: 'شارع جمال عبد الناصر',
     city: 'بنغازي',
     lat: 32.1190,
@@ -597,8 +582,8 @@ const atms = ref<ATM[]>([
   },
   {
     id: '5',
-    name: 'صراف الأمان - المطار الدولي',
-    bank: 'مصرف الأمان',
+    name: 'صراف اليقين - المطار الدولي',
+    bank: 'مصرف اليقين',
     address: 'مطار طرابلس الدولي',
     city: 'طرابلس',
     lat: 32.6635,
@@ -610,8 +595,8 @@ const atms = ref<ATM[]>([
   },
   {
     id: '6',
-    name: 'ATM الواحة - شارع الفاتح',
-    bank: 'مصرف الواحة',
+    name: 'صراف اليقين - شارع الفاتح',
+    bank: 'مصرف اليقين',
     address: 'شارع الفاتح',
     city: 'مصراتة',
     lat: 32.3754,
@@ -623,8 +608,8 @@ const atms = ref<ATM[]>([
   },
   {
     id: '7',
-    name: 'صراف المتوسط - كورنيش بنغازي',
-    bank: 'مصرف المتوسط',
+    name: 'صراف اليقين - كورنيش بنغازي',
+    bank: 'مصرف اليقين',
     address: 'كورنيش بنغازي',
     city: 'بنغازي',
     lat: 32.1074,
@@ -636,8 +621,8 @@ const atms = ref<ATM[]>([
   },
   {
     id: '8',
-    name: 'ATM النهر - مدينة سبها',
-    bank: 'مصرف النهر',
+    name: 'صراف اليقين - مدينة سبها',
+    bank: 'مصرف اليقين',
     address: 'وسط مدينة سبها',
     city: 'سبها',
     lat: 27.0377,

@@ -112,6 +112,10 @@
 
     <!-- Global Search Lightbox -->
     <SearchLightbox :items="globalSearchItems" @submit="handleGlobalSearch" />
+
+    <!-- AI Chatbot Components -->
+    <AIChatbotFAB />
+    <AIChatbotDialog v-model="chatStore.isOpen" />
   </v-app>
 </template>
 
@@ -120,8 +124,11 @@ import { useDisplay, useLocale } from "vuetify";
 import SearchLightbox from "~/components/SearchLightbox.vue";
 import LoadingProgressBar from "~/components/ui/LoadingProgressBar.vue";
 import LoadingOverlay from "~/components/ui/LoadingOverlay.vue";
+import AIChatbotFAB from "~/components/chatbot/AIChatbotFAB.vue";
+import AIChatbotDialog from "~/components/chatbot/AIChatbotDialog.vue";
 import { useAppStore } from "~/stores/app";
 import { useLoadingStore } from "~/stores/loading";
+import { useChatStore } from "~/stores/chat";
 
 /**
  * 🔒 Dashboard Layout
@@ -140,6 +147,7 @@ import { useLoadingStore } from "~/stores/loading";
 const { mobile } = useDisplay();
 const appStore = useAppStore();
 const loadingStore = useLoadingStore();
+const chatStore = useChatStore();
 const route = useRoute();
 const { t, locale } = useI18n();
 const { current } = useLocale();

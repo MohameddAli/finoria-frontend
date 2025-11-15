@@ -3,6 +3,7 @@ import "vuetify/styles";
 import { createVuetify, type ThemeDefinition } from "vuetify";
 import { en, ar as arLocale } from "vuetify/locale";
 import { aliases, mdi } from "vuetify/iconsets/mdi";
+import { VStepperVertical } from "vuetify/labs/VStepperVertical";
 import { themes } from "../theme/themes";
 
 const ALLOWED_THEMES = ["gold", "blue", "red"] as const;
@@ -28,6 +29,9 @@ export default defineNuxtPlugin((nuxtApp) => {
   });
 
   const vuetify = createVuetify({
+    components: {
+      VStepperVertical,
+    },
     locale: { locale: "ar", fallback: "en", messages: { en, ar: arLocale }, rtl: { ar: true } },
     theme: { defaultTheme: getInitialTheme(), themes: allThemes },
     icons: { defaultSet: "mdi", aliases, sets: { mdi } },

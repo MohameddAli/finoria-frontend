@@ -300,27 +300,33 @@ const getChildren = (item: NavigationItem) => item.children || [];
 const navigationItems = ref<NavigationItem[]>([
   {
     title: "navigation.wallet",
-    icon: "mdi-wallet",
+    icon: "mdi-home",
     to: "/wallet",
     value: "wallet",
   },
-  {
-    title: "navigation.customers",
-    icon: "mdi-account-group-outline",
-    to: "/customers",
-    value: "customers",
-  },
-  {
-    title: "navigation.users",
-    icon: "mdi-account-multiple-outline",
-    to: "/users",
-    value: "users",
-  },
+  // {
+  //   title: "navigation.customers",
+  //   icon: "mdi-account-group-outline",
+  //   to: "/customers",
+  //   value: "customers",
+  // },
+  // {
+  //   title: "navigation.users",
+  //   icon: "mdi-account-multiple-outline",
+  //   to: "/users",
+  //   value: "users",
+  // },
   {
     title: "navigation.beneficiaries",
     icon: "mdi-account-heart-outline",
     to: "/beneficiaries",
     value: "beneficiaries",
+  },
+  {
+    title: "navigation.projectSupportRequest",
+    icon: "mdi-hand-heart-outline",
+    to: "/project-support-request",
+    value: "project-support-request",
   },
   {
     title: "navigation.posLocations",
@@ -335,17 +341,29 @@ const navigationItems = ref<NavigationItem[]>([
     value: "atm-locations",
   },
   {
-    title: "navigation.cards",
-    icon: "mdi-credit-card-outline",
-    to: "/cards",
-    value: "cards",
+    title: "navigation.installmentPaymentLink",
+    icon: "mdi-credit-card-clock-outline",
+    to: "/installment-payment-link",
+    value: "installment-payment-link",
   },
-  {
-    title: "navigation.multiStepsForm",
-    icon: "mdi-form-select",
-    to: "/multi-steps-form",
-    value: "multi-steps-form",
-  },
+  // {
+  //   title: "navigation.cards",
+  //   icon: "mdi-credit-card-outline",
+  //   to: "/cards",
+  //   value: "cards",
+  // },
+  // {
+  //   title: "navigation.multiStepsForm",
+  //   icon: "mdi-form-select",
+  //   to: "/multi-steps-form",
+  //   value: "multi-steps-form",
+  // },
+  //   {
+  //   title: "navigation.new",
+  //   icon: "mdi-form-select",
+  //   to: "/multi-steps-signup",
+  //   value: "multi-steps-form",
+  // },
 ]);
 
 const railMode = computed(() => !mobile.value && appStore.sidebarMini);

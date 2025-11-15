@@ -2,6 +2,9 @@
 
 /* Import Material Design Icons */
 
+/* Import Chatbot Styles */
+@import './chatbot.css';
+
 /* ==========================================================================
    LAYOUT & STRUCTURE VARIABLES
    ========================================================================== */
