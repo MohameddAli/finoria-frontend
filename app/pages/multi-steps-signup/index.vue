@@ -45,7 +45,7 @@
             >
               <div class="step-indicator">
                 <v-avatar
-                  :color="currentStep > 2 ? 'success' : currentStep === 2 ? 'primary' : 'grey-lighten-1'"
+                 :color="currentStep > 2 ? 'success' : currentStep === 2 ? 'primary' : 'grey-lighten-1'"
                   size="40"
                 >
                   <v-icon v-if="currentStep > 2" color="white">mdi-check</v-icon>

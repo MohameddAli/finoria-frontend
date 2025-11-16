@@ -12,6 +12,8 @@
     border="e"
     :location="'start'"
   >
+    <!-- تبيع للمصرف بيانات مثلا هذه المنطقة فارغة من الماكينات ولكنها فيها حركات وتجار  في هذه الدائرة -->
+    <!-- امكانية تسويق عروض التجار والمتاجر -->
     <!-- Sidebar Header -->
     <div class="sidebar-header pa-4">
       <div v-if="!railMode" class="d-flex align-center justify-space-between">
@@ -19,14 +21,15 @@
           class="logo-section d-flex align-center"
           :aria-label="$t('navigation.overview')"
         >
-          <div class="logo-icon">
+          <!-- <div class="logo-icon">
             <v-icon size="28" color="primary">mdi-shield-check</v-icon>
-          </div>
-          <h3 class="logo-text ms-2 text-h6 font-weight-bold">Prime</h3>
+          </div> -->
+          <!-- <h3 class="logo-text ms-2 text-h6 font-weight-bold"></h3> -->
         </div>
         <v-btn
           v-if="!mobile"
           icon
+
           variant="text"
           size="small"
           @click="appStore.toggleSidebarMini"
@@ -322,12 +325,12 @@ const navigationItems = ref<NavigationItem[]>([
     to: "/beneficiaries",
     value: "beneficiaries",
   },
-  {
-    title: "navigation.projectSupportRequest",
-    icon: "mdi-hand-heart-outline",
-    to: "/project-support-request",
-    value: "project-support-request",
-  },
+  // {
+  //   title: "navigation.projectSupportRequest",
+  //   icon: "mdi-hand-heart-outline",
+  //   to: "/project-support-request",
+  //   value: "project-support-request",
+  // },
   {
     title: "navigation.posLocations",
     icon: "mdi-map-marker-radius",
@@ -340,12 +343,12 @@ const navigationItems = ref<NavigationItem[]>([
     to: "/atm-locations",
     value: "atm-locations",
   },
-  {
-    title: "navigation.installmentPaymentLink",
-    icon: "mdi-credit-card-clock-outline",
-    to: "/installment-payment-link",
-    value: "installment-payment-link",
-  },
+  // {
+  //   title: "navigation.installmentPaymentLink",
+  //   icon: "mdi-credit-card-clock-outline",
+  //   to: "/installment-payment-link",
+  //   value: "installment-payment-link",
+  // },
   // {
   //   title: "navigation.cards",
   //   icon: "mdi-credit-card-outline",

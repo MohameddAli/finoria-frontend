@@ -24,18 +24,15 @@
         >
           <v-icon>mdi-menu</v-icon>
         </v-btn>
-
+<!-- atm from bank branches -->
         <!-- Logo -->
-        <div class="logo-container d-flex align-center" role="banner">
+        <div class="logo-container d-flex align-center" role="banner" >
           <div class="logo-icon">
-            <v-icon size="32" color="primary" aria-hidden="true"
-              >mdi-shield-check</v-icon
-            >
+            <img src="/images/roya.png" alt="Logo" class="logo-icon" cover />
           </div>
-          <h2 class="logo-text ms-2 text-h5 font-weight-bold">Prime</h2>
+          <h2 class="logo-text ms-2 text-h5 font-weight-bold">Ruya</h2>
         </div>
       </div>
-
       <!-- Center Section: Search (opens lightbox) -->
       <div class="header-center flex-grow-1 mx-4" style="max-width: 500px">
         <GlobalSearchInput
@@ -242,8 +239,8 @@ const Logout = async () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 64px;
+  height: 64px;
   background: #ffffff;
   border-radius: 8px;
 }

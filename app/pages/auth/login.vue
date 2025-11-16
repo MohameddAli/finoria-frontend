@@ -9,7 +9,7 @@
           <!-- Logo Section -->
           <div class="text-center mb-8">
             <v-avatar size="80" class="logo-avatar mb-4">
-              <v-img src="/images/moamalatLogo.png" alt="Logo" cover />
+              <v-img src="/images/roya.png" alt="Logo" cover />
             </v-avatar>
             <h1 class="text-h4 font-weight-bold mb-2">
               {{ $t("auth.login.welcome") }}
