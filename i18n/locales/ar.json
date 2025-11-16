@@ -996,6 +996,230 @@
       }
     }
   },
+  "projectSupportRequest": {
+    "title": "طلب دعم مشروع",
+    "subtitle": "قدّم تفاصيل التمويل المطلوبة ليتمكن الفريق من إعطاء مشروعك الأولوية.",
+    "heroAction": "عرض الطلبات القائمة",
+    "formCard": {
+      "title": "بيانات الطلب",
+      "subtitle": "املأ جميع الأقسام لتوفير صورة واضحة للجنة التقييم."
+    },
+    "sections": {
+      "projectInfo": "معلومات المشروع",
+      "organizationInfo": "بيانات الجهة",
+      "fundingInfo": "التمويل والأثر",
+      "attachments": "المرفقات الداعمة"
+    },
+    "fields": {
+      "projectName": "اسم المشروع",
+      "projectCategory": "فئة المشروع",
+      "projectType": "نوع المبادرة",
+      "city": "المدينة",
+      "targetAmount": "قيمة التمويل المطلوبة",
+      "currentFunding": "التمويل الحالي",
+      "startDate": "تاريخ البدء",
+      "endDate": "تاريخ الانتهاء",
+      "goals": "أهداف المشروع",
+      "tags": "وسوم المشروع",
+      "organizationName": "اسم الجهة",
+      "licenseNumber": "رقم الترخيص",
+      "contactPerson": "مسؤول التواصل",
+      "contactPhone": "هاتف التواصل",
+      "contactEmail": "البريد الإلكتروني",
+      "website": "الموقع الإلكتروني",
+      "experienceYears": "سنوات الخبرة",
+      "payChannel": "قناة الصرف",
+      "iban": "رقم IBAN",
+      "disbursementPlan": "خطة الصرف",
+      "monitoringPlan": "خطة المتابعة",
+      "impactMetrics": "مؤشرات الأثر",
+      "reportingFrequency": "دورية التقارير",
+      "notes": "ملاحظات",
+      "proposal": "مقترح المشروع (PDF)",
+      "budget": "الميزانية التفصيلية",
+      "media": "وسائط داعمة"
+    },
+    "projectTypes": {
+      "charity": "أعمال خيرية",
+      "education": "تعليم",
+      "health": "صحة",
+      "infrastructure": "بنية تحتية",
+      "innovation": "ابتكار"
+    },
+    "categories": {
+      "orphan": "رعاية الأيتام",
+      "community": "تنمية مجتمعية",
+      "medical": "دعم طبي",
+      "education": "تعليمية",
+      "environment": "بيئية"
+    },
+    "cities": {
+      "tripoli": "طرابلس",
+      "benghazi": "بنغازي",
+      "misrata": "مصراتة",
+      "sabha": "سبها",
+      "derna": "درنة"
+    },
+    "reportingOptions": {
+      "monthly": "شهرياً",
+      "quarterly": "ربع سنوي",
+      "milestones": "عند الإنجاز"
+    },
+    "payChannels": {
+      "bank": "تحويل بنكي",
+      "pos": "نقاط بيع",
+      "online": "بوابة إلكترونية",
+      "cash": "نقدي"
+    },
+    "tagOptions": {
+      "urgent": "طارئ",
+      "strategic": "استراتيجي",
+      "community": "مجتمعي",
+      "awareness": "توعوي"
+    },
+    "stats": {
+      "pending": "طلبات قيد المراجعة",
+      "pendingHint": "بانتظار رد لجنة التقييم",
+      "approved": "طلبات معتمدة",
+      "approvedHint": "تم اعتمادها خلال آخر 30 يوماً",
+      "funding": "تمويل جارٍ",
+      "fundingHint": "إجمالي الالتزامات الحالية"
+    },
+    "guidelinesCard": {
+      "title": "إرشادات التقديم",
+      "subtitle": "راجع دليل التقديم لتجنب أي تأخير.",
+      "cta": "تحميل دليل المتطلبات"
+    },
+    "guidelines": {
+      "item1": "أرفق القوائم المالية المدققة لآخر عامين.",
+      "item2": "وضح الأثر المتوقع والفئات المستهدفة.",
+      "item3": "أرسل التراخيص وخطابات الالتزام.",
+      "item4": "قدّم خطة المتابعة والتقارير."
+    },
+    "checklist": {
+      "impact": "تم توثيق الأثر بوضوح",
+      "transparency": "خطة صرف شفافة",
+      "compliance": "اكتمال مستندات الالتزام"
+    },
+    "actions": {
+      "saveDraft": "حفظ كمسودة",
+      "reset": "إعادة تعيين النموذج",
+      "submit": "إرسال الطلب"
+    },
+    "helpCard": {
+      "title": "هل تحتاج للمساعدة؟",
+      "description": "فريق المراجعة جاهز لمساعدتك في الموازنات والمرفقات.",
+      "availability": "الأحد - الخميس | 09:00 - 17:00",
+      "progressLabel": "{value}% من الطلبات أجيبت هذا الأسبوع"
+    },
+    "success": {
+      "title": "تم إرسال الطلب",
+      "message": "سنتواصل معك خلال 48 ساعة بعد مراجعة التفاصيل.",
+      "cta": "إغلاق"
+    },
+    "feedback": {
+      "draftSaved": "تم حفظ المسودة محلياً"
+    }
+  },
+  "installmentLink": {
+    "title": "رابط دفع الأقساط",
+    "subtitle": "أنشئ روابط أقساط مخصصة وتابع كل خطة لحظياً.",
+    "heroAction": "فتح أداة بناء الروابط",
+    "form": {
+      "title": "إعداد الرابط",
+      "subtitle": "أدخل بيانات العميل وخطة السداد.",
+      "linkSection": "معلومات الرابط",
+      "planSection": "إعداد الخطة",
+      "notificationSection": "الإشعارات والملاحظات"
+    },
+    "fields": {
+      "planName": "اسم الخطة",
+      "currency": "العملة",
+      "customerName": "اسم العميل",
+      "customerPhone": "هاتف العميل",
+      "customerEmail": "بريد العميل",
+      "amount": "المبلغ الإجمالي",
+      "description": "الوصف",
+      "installmentsCount": "عدد الأقساط",
+      "frequency": "دورية الدفع",
+      "firstPaymentDate": "تاريخ أول دفعة",
+      "collectionChannel": "قناة التحصيل",
+      "gracePeriod": "فترة السماح (أيام)",
+      "reminderDays": "أيام التذكير",
+      "autoNotify": "إرسال التذكيرات تلقائياً",
+      "notes": "ملاحظات داخلية"
+    },
+    "actions": {
+      "reset": "إعادة تعيين",
+      "copy": "نسخ الرابط",
+      "generate": "إنشاء الرابط"
+    },
+    "summary": {
+      "title": "ملخص الدفع",
+      "installmentAmount": "قيمة كل قسط",
+      "scheduleTitle": "جدول الدفعات",
+      "status": "الحالة",
+      "progressLabel": "القسط رقم {current} من {total}",
+      "statusUpcoming": "قادمة",
+      "statusPlanned": "مخطط لها"
+    },
+    "timeline": {
+      "title": "تسلسل العمل",
+      "steps": {
+        "setup": "إعداد الخطة",
+        "share": "مشاركة الرابط",
+        "collect": "تحصيل الأقساط",
+        "reconcile": "تسوية الدفعات"
+      },
+      "subtitles": {
+        "setup": "إدخال تفاصيل الخطة والحصول على الموافقات",
+        "share": "إرسال الرابط إلى العميل",
+        "collect": "تحصيل الأقساط تلقائياً",
+        "reconcile": "مراقبة الدفعات وتسويتها"
+      }
+    },
+    "success": {
+      "title": "تم إنشاء الرابط",
+      "message": "شارك الرابط الآمن مع العميل لبدء التحصيل.",
+      "cta": "تم"
+    },
+    "frequencies": {
+      "weekly": "أسبوعي",
+      "biweekly": "كل أسبوعين",
+      "monthly": "شهري",
+      "quarterly": "ربع سنوي"
+    },
+    "collectionChannels": {
+      "pos": "نقاط بيع",
+      "online": "دفع إلكتروني",
+      "bank": "تحويل بنكي",
+      "salary": "استقطاع من الراتب"
+    },
+    "stats": {
+      "activePlans": "خطط نشطة",
+      "activePlansHint": "+5 هذا الشهر",
+      "collectionRate": "نسبة الالتزام",
+      "collectionRateHint": "آخر 90 يوماً"
+    },
+    "feedback": {
+      "copied": "تم نسخ الرابط"
+    },
+    "simulation": {
+      "title": "محاكاة عملية الدفع",
+      "description": "شاهد تجربة العميل منذ فتح الرابط وحتى تأكيد الدفعة قبل مشاركة الرابط.",
+      "cta": "محاكاة الدفع",
+      "ctaProcessing": "جاري المحاكاة...",
+      "successTitle": "تم تأكيد الدفعة",
+      "successMessage": "تم تحصيل الدفعة وإرسال الإيصال إلى العميل.",
+      "generateHint": "أنشئ رابطاً أولاً لتفعيل المحاكي.",
+      "steps": {
+        "linkOpened": "العميل يفتح الرابط الآمن",
+        "details": "العميل يعبئ بيانات الفوترة والأقساط",
+        "otp": "العميل يعتمد رمز التحقق / 3DS",
+        "confirmation": "البوابة تؤكد نجاح عملية الدفع"
+      }
+    }
+  },
   "validation": {
     "required": "هذا الحقل مطلوب",
     "invalidEmail": "البريد الإلكتروني غير صحيح",

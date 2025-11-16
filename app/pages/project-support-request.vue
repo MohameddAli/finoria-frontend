@@ -4,13 +4,17 @@
       <div class="d-flex flex-wrap align-start justify-space-between ga-4">
         <div class="flex-grow-1">
           <div class="text-h5 font-weight-bold mb-2">
-            {{ t('projectSupportRequest.title') }}
+            {{ t("projectSupportRequest.title") }}
           </div>
           <p class="text-body-2 text-medium-emphasis mb-4">
-            {{ t('projectSupportRequest.subtitle') }}
+            {{ t("projectSupportRequest.subtitle") }}
           </p>
-          <v-btn color="primary" variant="flat" prepend-icon="mdi-file-eye-outline">
-            {{ t('projectSupportRequest.heroAction') }}
+          <v-btn
+            color="primary"
+            variant="flat"
+            prepend-icon="mdi-file-eye-outline"
+          >
+            {{ t("projectSupportRequest.heroAction") }}
           </v-btn>
         </div>
         <div class="d-flex flex-column ga-3 stats-wrapper">
@@ -40,10 +44,10 @@
         <v-card elevation="2">
           <v-card-title class="d-flex flex-column align-start">
             <div class="text-subtitle-1 font-weight-bold">
-              {{ t('projectSupportRequest.formCard.title') }}
+              {{ t("projectSupportRequest.formCard.title") }}
             </div>
             <div class="text-body-2 text-medium-emphasis">
-              {{ t('projectSupportRequest.formCard.subtitle') }}
+              {{ t("projectSupportRequest.formCard.subtitle") }}
             </div>
           </v-card-title>
           <v-divider />
@@ -51,7 +55,7 @@
             <v-form ref="formRef" @submit.prevent="handleSubmit">
               <!-- Project information -->
               <div class="section-heading">
-                {{ t('projectSupportRequest.sections.projectInfo') }}
+                {{ t("projectSupportRequest.sections.projectInfo") }}
               </div>
               <v-row dense>
                 <v-col cols="12" md="6">
@@ -131,7 +135,7 @@
                 </v-col>
                 <v-col cols="12">
                   <div class="text-caption mb-2">
-                    {{ t('projectSupportRequest.fields.tags') }}
+                    {{ t("projectSupportRequest.fields.tags") }}
                   </div>
                   <v-chip-group
                     v-model="requestForm.tags"
@@ -157,7 +161,7 @@
 
               <!-- Organization info -->
               <div class="section-heading">
-                {{ t('projectSupportRequest.sections.organizationInfo') }}
+                {{ t("projectSupportRequest.sections.organizationInfo") }}
               </div>
               <v-row dense>
                 <v-col cols="12" md="6">
@@ -217,7 +221,7 @@
 
               <!-- Funding & impact -->
               <div class="section-heading">
-                {{ t('projectSupportRequest.sections.fundingInfo') }}
+                {{ t("projectSupportRequest.sections.fundingInfo") }}
               </div>
               <v-row dense>
                 <v-col cols="12" md="6">
@@ -263,7 +267,9 @@
                     :items="reportingOptions"
                     item-value="value"
                     item-title="label"
-                    :label="t('projectSupportRequest.fields.reportingFrequency')"
+                    :label="
+                      t('projectSupportRequest.fields.reportingFrequency')
+                    "
                   />
                 </v-col>
                 <v-col cols="12">
@@ -279,7 +285,7 @@
 
               <!-- Attachments -->
               <div class="section-heading">
-                {{ t('projectSupportRequest.sections.attachments') }}
+                {{ t("projectSupportRequest.sections.attachments") }}
               </div>
               <v-row dense>
                 <v-col cols="12" md="4">
@@ -310,7 +316,7 @@
 
               <div class="d-flex flex-wrap ga-3 justify-space-between mt-6">
                 <div class="text-caption text-medium-emphasis">
-                  {{ t('projectSupportRequest.guidelinesCard.subtitle') }}
+                  {{ t("projectSupportRequest.guidelinesCard.subtitle") }}
                 </div>
                 <div class="d-flex ga-2">
                   <v-btn
@@ -320,10 +326,10 @@
                     :loading="savingDraft"
                     @click.prevent="saveDraft"
                   >
-                    {{ t('projectSupportRequest.actions.saveDraft') }}
+                    {{ t("projectSupportRequest.actions.saveDraft") }}
                   </v-btn>
                   <v-btn variant="text" @click.prevent="resetForm">
-                    {{ t('projectSupportRequest.actions.reset') }}
+                    {{ t("projectSupportRequest.actions.reset") }}
                   </v-btn>
                   <v-btn
                     type="submit"
@@ -332,7 +338,7 @@
                     prepend-icon="mdi-send"
                     :loading="submitting"
                   >
-                    {{ t('projectSupportRequest.actions.submit') }}
+                    {{ t("projectSupportRequest.actions.submit") }}
                   </v-btn>
                 </div>
               </div>
@@ -344,7 +350,7 @@
       <v-col cols="12" lg="4">
         <v-card class="mb-4" elevation="2">
           <v-card-title class="text-subtitle-1 font-weight-bold">
-            {{ t('projectSupportRequest.guidelinesCard.title') }}
+            {{ t("projectSupportRequest.guidelinesCard.title") }}
           </v-card-title>
           <v-card-text>
             <v-alert
@@ -353,7 +359,7 @@
               class="mb-4"
               prepend-icon="mdi-information-outline"
             >
-              {{ t('projectSupportRequest.guidelinesCard.subtitle') }}
+              {{ t("projectSupportRequest.guidelinesCard.subtitle") }}
             </v-alert>
             <v-list density="compact" nav>
               <v-list-item
@@ -363,7 +369,9 @@
               >
                 <template #prepend>
                   <v-avatar size="28" color="primary" variant="tonal">
-                    <span class="text-caption font-weight-bold">{{ index + 1 }}</span>
+                    <span class="text-caption font-weight-bold">{{
+                      index + 1
+                    }}</span>
                   </v-avatar>
                 </template>
               </v-list-item>
@@ -374,21 +382,18 @@
               variant="outlined"
               prepend-icon="mdi-download-box"
             >
-              {{ t('projectSupportRequest.guidelinesCard.cta') }}
+              {{ t("projectSupportRequest.guidelinesCard.cta") }}
             </v-btn>
           </v-card-text>
         </v-card>
 
         <v-card class="mb-4" elevation="2">
           <v-card-title class="text-subtitle-1 font-weight-bold">
-            {{ t('projectSupportRequest.checklist.title') }}
+            {{ t("projectSupportRequest.checklist.title") }}
           </v-card-title>
           <v-card-text>
             <v-list density="compact">
-              <v-list-item
-                v-for="check in checklistItems"
-                :key="check.label"
-              >
+              <v-list-item v-for="check in checklistItems" :key="check.label">
                 <template #prepend>
                   <v-icon color="success">mdi-check-decagram</v-icon>
                 </template>
@@ -402,20 +407,24 @@
           <v-card-title class="d-flex align-center ga-2">
             <v-icon color="primary">mdi-headset</v-icon>
             <span class="text-subtitle-1 font-weight-bold">
-              {{ t('projectSupportRequest.helpCard.title') }}
+              {{ t("projectSupportRequest.helpCard.title") }}
             </span>
           </v-card-title>
           <v-card-text>
             <p class="text-body-2 mb-4">
-              {{ t('projectSupportRequest.helpCard.description') }}
+              {{ t("projectSupportRequest.helpCard.description") }}
             </p>
             <div class="d-flex align-center ga-2 mb-2">
               <v-icon size="18">mdi-email-outline</v-icon>
-              <span class="font-weight-medium">{{ t('projectSupportRequest.helpCard.contact') }}</span>
+              <span class="font-weight-medium">{{
+                t("projectSupportRequest.helpCard.contact")
+              }}</span>
             </div>
             <div class="d-flex align-center ga-2 mb-4">
               <v-icon size="18">mdi-clock-outline</v-icon>
-              <span class="text-body-2">{{ t('projectSupportRequest.helpCard.availability') }}</span>
+              <span class="text-body-2">{{
+                t("projectSupportRequest.helpCard.availability")
+              }}</span>
             </div>
             <v-progress-linear
               :model-value="reviewProgress"
@@ -424,7 +433,7 @@
               height="6"
             />
             <div class="text-caption text-medium-emphasis mt-2">
-              {{ reviewProgress }}% {{ locale.value === 'ar' ? 'من الطلبات أجيبت هذا الأسبوع' : 'of requests resolved this week' }}
+              {{ reviewProgressLabel }}
             </div>
           </v-card-text>
         </v-card>
@@ -434,15 +443,19 @@
     <v-dialog v-model="submissionDialog" max-width="500">
       <v-card>
         <v-card-title class="text-h6">
-          {{ t('projectSupportRequest.success.title') }}
+          {{ t("projectSupportRequest.success.title") }}
         </v-card-title>
         <v-card-text>
-          {{ t('projectSupportRequest.success.message') }}
+          {{ t("projectSupportRequest.success.message") }}
         </v-card-text>
         <v-card-actions>
           <v-spacer />
-          <v-btn color="primary" variant="flat" @click="submissionDialog = false">
-            {{ t('projectSupportRequest.success.cta') }}
+          <v-btn
+            color="primary"
+            variant="flat"
+            @click="submissionDialog = false"
+          >
+            {{ t("projectSupportRequest.success.cta") }}
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -454,17 +467,17 @@
       timeout="3000"
       location="bottom"
     >
-      {{ locale.value === 'ar' ? 'تم حفظ المسودة مؤقتاً' : 'Draft saved locally' }}
+      {{ t("projectSupportRequest.feedback.draftSaved") }}
     </v-snackbar>
   </v-container>
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, ref } from "vue";
 
 definePageMeta({
-  layout: 'dashboard',
-  title: 'projectSupportRequest.title',
+  layout: "dashboard",
+  title: "projectSupportRequest.title",
 });
 
 const { t, locale } = useI18n();
@@ -475,36 +488,33 @@ const submitting = ref(false);
 const savingDraft = ref(false);
 const draftSaved = ref(false);
 
-const requiredRule = (value: unknown) => {
-  const message = locale.value === 'ar' ? 'هذا الحقل مطلوب' : 'This field is required';
-  return !!value || message;
-};
+const requiredRule = (value: unknown) => !!value || t("validation.required");
 
 const getDefaultForm = () => ({
-  projectName: '',
-  projectCategory: '',
-  projectType: '',
-  city: '',
-  targetAmount: '',
-  currentFunding: '',
-  startDate: '',
-  endDate: '',
-  goals: '',
+  projectName: "",
+  projectCategory: "",
+  projectType: "",
+  city: "",
+  targetAmount: "",
+  currentFunding: "",
+  startDate: "",
+  endDate: "",
+  goals: "",
   tags: [] as string[],
-  organizationName: '',
-  licenseNumber: '',
-  contactPerson: '',
-  contactPhone: '',
-  contactEmail: '',
-  website: '',
-  experienceYears: '',
-  payChannel: '',
-  disbursementPlan: '',
-  iban: '',
-  monitoringPlan: '',
-  impactMetrics: '',
-  reportingFrequency: '',
-  notes: '',
+  organizationName: "",
+  licenseNumber: "",
+  contactPerson: "",
+  contactPhone: "",
+  contactEmail: "",
+  website: "",
+  experienceYears: "",
+  payChannel: "",
+  disbursementPlan: "",
+  iban: "",
+  monitoringPlan: "",
+  impactMetrics: "",
+  reportingFrequency: "",
+  notes: "",
   proposal: null as File | null,
   budget: null as File | null,
   media: null as File | null,
@@ -514,79 +524,118 @@ const requestForm = ref(getDefaultForm());
 
 const heroMetrics = computed(() => [
   {
-    label: t('projectSupportRequest.stats.pending'),
-    value: '18',
-    hint: t('projectSupportRequest.stats.pendingHint'),
+    label: t("projectSupportRequest.stats.pending"),
+    value: "18",
+    hint: t("projectSupportRequest.stats.pendingHint"),
   },
   {
-    label: t('projectSupportRequest.stats.approved'),
-    value: '46',
-    hint: t('projectSupportRequest.stats.approvedHint'),
+    label: t("projectSupportRequest.stats.approved"),
+    value: "46",
+    hint: t("projectSupportRequest.stats.approvedHint"),
   },
   {
-    label: t('projectSupportRequest.stats.funding'),
-    value: '12.4M',
-    hint: t('projectSupportRequest.stats.fundingHint'),
+    label: t("projectSupportRequest.stats.funding"),
+    value: "12.4M",
+    hint: t("projectSupportRequest.stats.fundingHint"),
   },
 ]);
 
 const projectTypeOptions = computed(() => [
-  { value: 'charity', label: t('projectSupportRequest.projectTypes.charity') },
-  { value: 'education', label: t('projectSupportRequest.projectTypes.education') },
-  { value: 'health', label: t('projectSupportRequest.projectTypes.health') },
-  { value: 'infrastructure', label: t('projectSupportRequest.projectTypes.infrastructure') },
-  { value: 'innovation', label: t('projectSupportRequest.projectTypes.innovation') },
+  { value: "charity", label: t("projectSupportRequest.projectTypes.charity") },
+  {
+    value: "education",
+    label: t("projectSupportRequest.projectTypes.education"),
+  },
+  { value: "health", label: t("projectSupportRequest.projectTypes.health") },
+  {
+    value: "infrastructure",
+    label: t("projectSupportRequest.projectTypes.infrastructure"),
+  },
+  {
+    value: "innovation",
+    label: t("projectSupportRequest.projectTypes.innovation"),
+  },
 ]);
 
 const categoryOptions = computed(() => [
-  { value: 'orphan', label: t('projectSupportRequest.categories.orphan') },
-  { value: 'community', label: t('projectSupportRequest.categories.community') },
-  { value: 'medical', label: t('projectSupportRequest.categories.medical') },
-  { value: 'education', label: t('projectSupportRequest.categories.education') },
-  { value: 'environment', label: t('projectSupportRequest.categories.environment') },
+  { value: "orphan", label: t("projectSupportRequest.categories.orphan") },
+  {
+    value: "community",
+    label: t("projectSupportRequest.categories.community"),
+  },
+  { value: "medical", label: t("projectSupportRequest.categories.medical") },
+  {
+    value: "education",
+    label: t("projectSupportRequest.categories.education"),
+  },
+  {
+    value: "environment",
+    label: t("projectSupportRequest.categories.environment"),
+  },
 ]);
 
 const cityOptions = computed(() => [
-  { value: 'tripoli', label: t('projectSupportRequest.cities.tripoli') },
-  { value: 'benghazi', label: t('projectSupportRequest.cities.benghazi') },
-  { value: 'misrata', label: t('projectSupportRequest.cities.misrata') },
-  { value: 'sabha', label: t('projectSupportRequest.cities.sabha') },
-  { value: 'derna', label: t('projectSupportRequest.cities.derna') },
+  { value: "tripoli", label: t("projectSupportRequest.cities.tripoli") },
+  { value: "benghazi", label: t("projectSupportRequest.cities.benghazi") },
+  { value: "misrata", label: t("projectSupportRequest.cities.misrata") },
+  { value: "sabha", label: t("projectSupportRequest.cities.sabha") },
+  { value: "derna", label: t("projectSupportRequest.cities.derna") },
 ]);
 
 const reportingOptions = computed(() => [
-  { value: 'monthly', label: t('projectSupportRequest.reportingOptions.monthly') },
-  { value: 'quarterly', label: t('projectSupportRequest.reportingOptions.quarterly') },
-  { value: 'milestones', label: t('projectSupportRequest.reportingOptions.milestones') },
+  {
+    value: "monthly",
+    label: t("projectSupportRequest.reportingOptions.monthly"),
+  },
+  {
+    value: "quarterly",
+    label: t("projectSupportRequest.reportingOptions.quarterly"),
+  },
+  {
+    value: "milestones",
+    label: t("projectSupportRequest.reportingOptions.milestones"),
+  },
 ]);
 
 const payChannelOptions = computed(() => [
-  { value: 'bank', label: t('projectSupportRequest.payChannels.bank') },
-  { value: 'pos', label: t('projectSupportRequest.payChannels.pos') },
-  { value: 'online', label: t('projectSupportRequest.payChannels.online') },
-  { value: 'cash', label: t('projectSupportRequest.payChannels.cash') },
+  { value: "bank", label: t("projectSupportRequest.payChannels.bank") },
+  { value: "pos", label: t("projectSupportRequest.payChannels.pos") },
+  { value: "online", label: t("projectSupportRequest.payChannels.online") },
+  { value: "cash", label: t("projectSupportRequest.payChannels.cash") },
 ]);
 
 const tagOptions = computed(() => [
-  { value: 'urgent', label: t('projectSupportRequest.tagOptions.urgent') },
-  { value: 'strategic', label: t('projectSupportRequest.tagOptions.strategic') },
-  { value: 'community', label: t('projectSupportRequest.tagOptions.community') },
-  { value: 'awareness', label: t('projectSupportRequest.tagOptions.awareness') },
+  { value: "urgent", label: t("projectSupportRequest.tagOptions.urgent") },
+  {
+    value: "strategic",
+    label: t("projectSupportRequest.tagOptions.strategic"),
+  },
+  {
+    value: "community",
+    label: t("projectSupportRequest.tagOptions.community"),
+  },
+  {
+    value: "awareness",
+    label: t("projectSupportRequest.tagOptions.awareness"),
+  },
 ]);
 
 const reviewProgress = 78;
+const reviewProgressLabel = computed(() =>
+  t("projectSupportRequest.helpCard.progressLabel", { value: reviewProgress })
+);
 
 const guidelineItems = computed(() => [
-  t('projectSupportRequest.guidelines.item1'),
-  t('projectSupportRequest.guidelines.item2'),
-  t('projectSupportRequest.guidelines.item3'),
-  t('projectSupportRequest.guidelines.item4'),
+  t("projectSupportRequest.guidelines.item1"),
+  t("projectSupportRequest.guidelines.item2"),
+  t("projectSupportRequest.guidelines.item3"),
+  t("projectSupportRequest.guidelines.item4"),
 ]);
 
 const checklistItems = computed(() => [
-  { label: t('projectSupportRequest.checklist.impact') },
-  { label: t('projectSupportRequest.checklist.transparency') },
-  { label: t('projectSupportRequest.checklist.compliance') },
+  { label: t("projectSupportRequest.checklist.impact") },
+  { label: t("projectSupportRequest.checklist.transparency") },
+  { label: t("projectSupportRequest.checklist.compliance") },
 ]);
 
 const resetForm = () => {
@@ -645,7 +694,7 @@ const handleSubmit = async () => {
 }
 
 .section-heading::before {
-  content: '';
+  content: "";
   width: 6px;
   height: 18px;
   border-radius: 99px;

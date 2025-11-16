@@ -391,6 +391,230 @@
           "editor": "Editor",
           "viewer": "Viewer"
         },
+        "projectSupportRequest": {
+          "title": "Project Support Request",
+          "subtitle": "Share detailed funding needs so our reviewers can prioritize your project.",
+          "heroAction": "View Existing Requests",
+          "formCard": {
+            "title": "Application Details",
+            "subtitle": "Complete every section to give the committee full visibility."
+          },
+          "sections": {
+            "projectInfo": "Project information",
+            "organizationInfo": "Organization details",
+            "fundingInfo": "Funding & impact",
+            "attachments": "Supporting documents"
+          },
+          "fields": {
+            "projectName": "Project name",
+            "projectCategory": "Project category",
+            "projectType": "Project type",
+            "city": "City",
+            "targetAmount": "Target amount",
+            "currentFunding": "Current funding",
+            "startDate": "Start date",
+            "endDate": "End date",
+            "goals": "Project goals",
+            "tags": "Project tags",
+            "organizationName": "Organization name",
+            "licenseNumber": "License number",
+            "contactPerson": "Contact person",
+            "contactPhone": "Contact phone",
+            "contactEmail": "Contact email",
+            "website": "Website",
+            "experienceYears": "Years of experience",
+            "payChannel": "Disbursement channel",
+            "iban": "IBAN",
+            "disbursementPlan": "Disbursement plan",
+            "monitoringPlan": "Monitoring plan",
+            "impactMetrics": "Impact metrics",
+            "reportingFrequency": "Reporting frequency",
+            "notes": "Notes",
+            "proposal": "Project proposal (PDF)",
+            "budget": "Budget sheet",
+            "media": "Media assets"
+          },
+          "projectTypes": {
+            "charity": "Charity",
+            "education": "Education",
+            "health": "Health",
+            "infrastructure": "Infrastructure",
+            "innovation": "Innovation"
+          },
+          "categories": {
+            "orphan": "Orphan care",
+            "community": "Community development",
+            "medical": "Medical relief",
+            "education": "Education",
+            "environment": "Environment"
+          },
+          "cities": {
+            "tripoli": "Tripoli",
+            "benghazi": "Benghazi",
+            "misrata": "Misrata",
+            "sabha": "Sabha",
+            "derna": "Derna"
+          },
+          "reportingOptions": {
+            "monthly": "Monthly",
+            "quarterly": "Quarterly",
+            "milestones": "At milestones"
+          },
+          "payChannels": {
+            "bank": "Bank transfer",
+            "pos": "POS network",
+            "online": "Online gateway",
+            "cash": "Cash"
+          },
+          "tagOptions": {
+            "urgent": "Urgent",
+            "strategic": "Strategic",
+            "community": "Community",
+            "awareness": "Awareness"
+          },
+          "stats": {
+            "pending": "Pending reviews",
+            "pendingHint": "Awaiting committee response",
+            "approved": "Approved projects",
+            "approvedHint": "Cleared in the last 30 days",
+            "funding": "Active funding",
+            "fundingHint": "Total live commitments"
+          },
+          "guidelinesCard": {
+            "title": "Submission guidelines",
+            "subtitle": "Review the submission guide to avoid delays.",
+            "cta": "Download requirements guide"
+          },
+          "guidelines": {
+            "item1": "Attach audited financial statements for the last two years.",
+            "item2": "Explain the projected impact and beneficiary segments.",
+            "item3": "Provide licenses and compliance letters.",
+            "item4": "Describe monitoring and reporting practices."
+          },
+          "checklist": {
+            "impact": "Impact clearly defined",
+            "transparency": "Transparent disbursement plan",
+            "compliance": "Compliance documents attached"
+          },
+          "actions": {
+            "saveDraft": "Save as draft",
+            "reset": "Reset form",
+            "submit": "Submit request"
+          },
+          "helpCard": {
+            "title": "Need assistance?",
+            "description": "Our review team can help refine your budgets and attachments.",
+            "availability": "Sun - Thu | 09:00 - 17:00",
+            "progressLabel": "{value}% of requests resolved this week"
+          },
+          "success": {
+            "title": "Request submitted",
+            "message": "We will contact you within 48 hours after reviewing the details.",
+            "cta": "Close"
+          },
+          "feedback": {
+            "draftSaved": "Draft saved locally"
+          }
+        },
+        "installmentLink": {
+          "title": "Installment Payment Link",
+          "subtitle": "Create personalized installment links and track every commitment in real time.",
+          "heroAction": "Open Link Builder",
+          "form": {
+            "title": "Link configuration",
+            "subtitle": "Capture customer and payment plan information.",
+            "linkSection": "Link information",
+            "planSection": "Plan setup",
+            "notificationSection": "Notifications & notes"
+          },
+          "fields": {
+            "planName": "Plan title",
+            "currency": "Currency",
+            "customerName": "Customer name",
+            "customerPhone": "Customer phone",
+            "customerEmail": "Customer email",
+            "amount": "Total amount",
+            "description": "Description",
+            "installmentsCount": "Number of installments",
+            "frequency": "Payment frequency",
+            "firstPaymentDate": "First payment date",
+            "collectionChannel": "Collection channel",
+            "gracePeriod": "Grace period (days)",
+            "reminderDays": "Reminder days",
+            "autoNotify": "Send automatic reminders",
+            "notes": "Internal notes"
+          },
+          "actions": {
+            "reset": "Reset form",
+            "copy": "Copy link",
+            "generate": "Generate link"
+          },
+          "summary": {
+            "title": "Payment summary",
+            "installmentAmount": "Each installment",
+            "scheduleTitle": "Schedule overview",
+            "status": "Status",
+            "progressLabel": "{current} of {total} installments",
+            "statusUpcoming": "Upcoming",
+            "statusPlanned": "Planned"
+          },
+          "timeline": {
+            "title": "Workflow",
+            "steps": {
+              "setup": "Set up plan",
+              "share": "Share link",
+              "collect": "Collect payments",
+              "reconcile": "Reconcile"
+            },
+            "subtitles": {
+              "setup": "Enter plan details and approvals",
+              "share": "Send the link to the customer",
+              "collect": "Collect installments automatically",
+              "reconcile": "Reconcile and monitor payments"
+            }
+          },
+          "success": {
+            "title": "Link generated",
+            "message": "Share the secure link with the customer to start collecting installments.",
+            "cta": "Done"
+          },
+          "frequencies": {
+            "weekly": "Weekly",
+            "biweekly": "Bi-weekly",
+            "monthly": "Monthly",
+            "quarterly": "Quarterly"
+          },
+          "collectionChannels": {
+            "pos": "POS",
+            "online": "Online",
+            "bank": "Bank",
+            "salary": "Salary deduction"
+          },
+          "stats": {
+            "activePlans": "Active plans",
+            "activePlansHint": "+5 this month",
+            "collectionRate": "Collection rate",
+            "collectionRateHint": "Last 90 days"
+          },
+          "feedback": {
+            "copied": "Link copied to clipboard"
+          },
+          "simulation": {
+            "title": "Payment simulation",
+            "description": "Preview the customer journey from opening the link to final confirmation before sharing it.",
+            "cta": "Simulate payment",
+            "ctaProcessing": "Simulating...",
+            "successTitle": "Payment confirmed",
+            "successMessage": "The payment was captured successfully and the customer received a receipt.",
+            "generateHint": "Generate a link first to unlock the simulator.",
+            "steps": {
+              "linkOpened": "Customer opens secure link",
+              "details": "Customer fills billing & installment details",
+              "otp": "Customer approves OTP / 3DS challenge",
+              "confirmation": "Gateway confirms payment"
+            }
+          }
+        },
         "validation": {
           "nameRequired": "Name is required",
           "emailRequired": "Email is required",

@@ -4,13 +4,17 @@
       <div class="d-flex flex-wrap align-start justify-space-between ga-4">
         <div class="flex-grow-1">
           <div class="text-h5 font-weight-bold mb-2">
-            {{ t('installmentLink.title') }}
+            {{ t("installmentLink.title") }}
           </div>
           <p class="text-body-2 text-medium-emphasis mb-4">
-            {{ t('installmentLink.subtitle') }}
+            {{ t("installmentLink.subtitle") }}
           </p>
-          <v-btn color="primary" variant="flat" prepend-icon="mdi-view-dashboard-edit">
-            {{ t('installmentLink.heroAction') }}
+          <v-btn
+            color="primary"
+            variant="flat"
+            prepend-icon="mdi-view-dashboard-edit"
+          >
+            {{ t("installmentLink.heroAction") }}
           </v-btn>
         </div>
         <div class="d-flex ga-4 flex-wrap">
@@ -40,17 +44,17 @@
         <v-card elevation="2">
           <v-card-title class="d-flex flex-column align-start">
             <div class="text-subtitle-1 font-weight-bold">
-              {{ t('installmentLink.form.title') }}
+              {{ t("installmentLink.form.title") }}
             </div>
             <div class="text-body-2 text-medium-emphasis">
-              {{ t('installmentLink.form.subtitle') }}
+              {{ t("installmentLink.form.subtitle") }}
             </div>
           </v-card-title>
           <v-divider />
           <v-card-text>
             <v-form ref="linkFormRef" @submit.prevent="generateLink">
               <div class="section-heading">
-                {{ t('installmentLink.form.linkSection') }}
+                {{ t("installmentLink.form.linkSection") }}
               </div>
               <v-row dense>
                 <v-col cols="12" md="6">
@@ -113,7 +117,7 @@
               <v-divider class="my-6" />
 
               <div class="section-heading">
-                {{ t('installmentLink.form.planSection') }}
+                {{ t("installmentLink.form.planSection") }}
               </div>
               <v-row dense>
                 <v-col cols="12" md="6">
@@ -172,7 +176,7 @@
               <v-divider class="my-6" />
 
               <div class="section-heading">
-                {{ t('installmentLink.form.notificationSection') }}
+                {{ t("installmentLink.form.notificationSection") }}
               </div>
               <v-row dense>
                 <v-col cols="12" md="6">
@@ -193,7 +197,7 @@
 
               <div class="d-flex flex-wrap ga-2 justify-end mt-6">
                 <v-btn variant="text" @click.prevent="resetForm">
-                  {{ t('installmentLink.actions.reset') }}
+                  {{ t("installmentLink.actions.reset") }}
                 </v-btn>
                 <v-btn
                   variant="tonal"
@@ -202,7 +206,7 @@
                   :disabled="!generatedLink"
                   @click.prevent="copyLink"
                 >
-                  {{ t('installmentLink.actions.copy') }}
+                  {{ t("installmentLink.actions.copy") }}
                 </v-btn>
                 <v-btn
                   type="submit"
@@ -211,7 +215,7 @@
                   prepend-icon="mdi-link-variant-plus"
                   :loading="generating"
                 >
-                  {{ t('installmentLink.actions.generate') }}
+                  {{ t("installmentLink.actions.generate") }}
                 </v-btn>
               </div>
             </v-form>
@@ -221,14 +225,16 @@
 
       <v-col cols="12" lg="4">
         <v-card class="mb-4" elevation="2">
-          <v-card-title class="text-subtitle-1 font-weight-bold d-flex align-center ga-2">
+          <v-card-title
+            class="text-subtitle-1 font-weight-bold d-flex align-center ga-2"
+          >
             <v-icon color="primary">mdi-chart-areaspline</v-icon>
-            <span>{{ t('installmentLink.summary.title') }}</span>
+            <span>{{ t("installmentLink.summary.title") }}</span>
           </v-card-title>
           <v-card-text>
             <div class="d-flex align-center justify-space-between mb-4">
               <div class="text-caption text-medium-emphasis">
-                {{ t('installmentLink.summary.installmentAmount') }}
+                {{ t("installmentLink.summary.installmentAmount") }}
               </div>
               <div class="text-h5 font-weight-bold">
                 {{ formattedInstallmentAmount }}
@@ -248,15 +254,15 @@
 
         <v-card class="mb-4" elevation="2">
           <v-card-title class="text-subtitle-1 font-weight-bold">
-            {{ t('installmentLink.summary.scheduleTitle') }}
+            {{ t("installmentLink.summary.scheduleTitle") }}
           </v-card-title>
           <v-card-text>
             <v-table density="compact" class="schedule-table">
               <thead>
                 <tr>
-                  <th>{{ t('table.date') }}</th>
-                  <th>{{ t('table.amount') }}</th>
-                  <th>{{ t('installmentLink.summary.status') }}</th>
+                  <th>{{ t("table.date") }}</th>
+                  <th>{{ t("table.amount") }}</th>
+                  <th>{{ t("installmentLink.summary.status") }}</th>
                 </tr>
               </thead>
               <tbody>
@@ -265,11 +271,15 @@
                   <td>{{ payment.amount }}</td>
                   <td>
                     <v-chip
-                      :color="payment.status === 'upcoming' ? 'primary' : 'grey'"
+                      :color="
+                        payment.status === 'upcoming' ? 'primary' : 'grey'
+                      "
                       size="x-small"
                       variant="tonal"
                     >
-                      {{ payment.status === 'upcoming' ? (locale.value === 'ar' ? 'قادمة' : 'Upcoming') : (locale.value === 'ar' ? 'مخطط لها' : 'Planned') }}
+                      {{
+                        paymentStatusLabels[payment.status] || payment.status
+                      }}
                     </v-chip>
                   </td>
                 </tr>
@@ -280,7 +290,7 @@
 
         <v-card elevation="2">
           <v-card-title class="text-subtitle-1 font-weight-bold">
-            {{ t('installmentLink.timeline.title') }}
+            {{ t("installmentLink.timeline.title") }}
           </v-card-title>
           <v-card-text>
             <v-timeline side="end" density="compact">
@@ -290,10 +300,91 @@
                 :dot-color="step.color"
                 :icon="step.icon"
               >
-                <div class="text-body-2 font-weight-medium">{{ step.title }}</div>
-                <div class="text-caption text-medium-emphasis">{{ step.subtitle }}</div>
+                <div class="text-body-2 font-weight-medium">
+                  {{ step.title }}
+                </div>
+                <div class="text-caption text-medium-emphasis">
+                  {{ step.subtitle }}
+                </div>
               </v-timeline-item>
             </v-timeline>
+          </v-card-text>
+        </v-card>
+
+        <v-card elevation="2" class="mt-4">
+          <v-card-title
+            class="text-subtitle-1 font-weight-bold d-flex align-center ga-2"
+          >
+            <v-icon color="primary">mdi-credit-card-check</v-icon>
+            <span>{{ t("installmentLink.simulation.title") }}</span>
+          </v-card-title>
+          <v-card-text>
+            <p class="text-body-2 text-medium-emphasis mb-4">
+              {{ t("installmentLink.simulation.description") }}
+            </p>
+            <v-progress-linear
+              :model-value="simulationProgress"
+              color="secondary"
+              height="6"
+              rounded
+              class="mb-4"
+            />
+            <v-list density="compact">
+              <v-list-item
+                v-for="step in simulationSteps"
+                :key="step.key"
+                :class="['simulation-step', step.status]"
+              >
+                <template #prepend>
+                  <v-avatar
+                    size="30"
+                    :color="
+                      step.status === 'completed'
+                        ? 'success'
+                        : step.status === 'active'
+                        ? 'primary'
+                        : 'grey-darken-1'
+                    "
+                    variant="tonal"
+                  >
+                    <v-icon :icon="step.icon" :size="18" />
+                  </v-avatar>
+                </template>
+                <v-list-item-title>{{ step.label }}</v-list-item-title>
+              </v-list-item>
+            </v-list>
+            <v-alert
+              v-if="simulationState === 'success'"
+              type="success"
+              variant="tonal"
+              class="mt-4"
+              :title="t('installmentLink.simulation.successTitle')"
+            >
+              {{ t("installmentLink.simulation.successMessage") }}
+            </v-alert>
+            <v-alert
+              v-else-if="!generatedLink"
+              type="info"
+              variant="tonal"
+              class="mt-4"
+            >
+              {{ t("installmentLink.simulation.generateHint") }}
+            </v-alert>
+            <v-btn
+              class="mt-4"
+              block
+              color="primary"
+              variant="flat"
+              :loading="simulationState === 'running'"
+              :disabled="!generatedLink || simulationState === 'running'"
+              @click="simulatePayment"
+            >
+              {{
+                simulationState === "running"
+                  ? t("installmentLink.simulation.ctaProcessing")
+                  : t("installmentLink.simulation.cta")
+              }}
+            </v-btn>
           </v-card-text>
         </v-card>
       </v-col>
@@ -302,10 +393,10 @@
     <v-dialog v-model="successDialog" max-width="520">
       <v-card>
         <v-card-title class="text-h6 font-weight-bold">
-          {{ t('installmentLink.success.title') }}
+          {{ t("installmentLink.success.title") }}
         </v-card-title>
         <v-card-text>
-          <p class="mb-4">{{ t('installmentLink.success.message') }}</p>
+          <p class="mb-4">{{ t("installmentLink.success.message") }}</p>
           <v-text-field
             v-model="generatedLink"
             readonly
@@ -317,7 +408,7 @@
         <v-card-actions>
           <v-spacer />
           <v-btn color="primary" variant="flat" @click="successDialog = false">
-            {{ t('installmentLink.success.cta') }}
+            {{ t("installmentLink.success.cta") }}
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -329,17 +420,17 @@
       timeout="2500"
       location="bottom"
     >
-      {{ locale.value === 'ar' ? 'تم نسخ الرابط' : 'Link copied to clipboard' }}
+      {{ t("installmentLink.feedback.copied") }}
     </v-snackbar>
   </v-container>
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, ref } from "vue";
 
 definePageMeta({
-  layout: 'dashboard',
-  title: 'installmentLink.title',
+  layout: "dashboard",
+  title: "installmentLink.title",
 });
 
 const { t, locale } = useI18n();
@@ -347,29 +438,29 @@ const { t, locale } = useI18n();
 const linkFormRef = ref();
 const successDialog = ref(false);
 const generating = ref(false);
-const generatedLink = ref('');
+const generatedLink = ref("");
 const copied = ref(false);
+const simulationState = ref<"idle" | "running" | "success">("idle");
+const simulationProgress = ref(0);
+const simulationStepIndex = ref(-1);
 
-const requiredRule = (value: unknown) => {
-  const message = locale.value === 'ar' ? 'هذا الحقل مطلوب' : 'This field is required';
-  return !!value || message;
-};
+const requiredRule = (value: unknown) => !!value || t("validation.required");
 
 const today = new Date().toISOString().slice(0, 10);
 
 const getDefaultInstallmentForm = () => ({
-  planName: '',
-  customerName: '',
-  customerPhone: '',
-  customerEmail: '',
-  amount: '',
-  currency: 'LYD',
+  planName: "",
+  customerName: "",
+  customerPhone: "",
+  customerEmail: "",
+  amount: "",
+  currency: "LYD",
   installmentsCount: 6,
-  frequency: 'monthly',
+  frequency: "monthly",
   firstPaymentDate: today,
-  description: '',
-  notes: '',
-  collectionChannel: 'online',
+  description: "",
+  notes: "",
+  collectionChannel: "online",
   gracePeriod: 3,
   reminderDays: 2,
   autoNotify: true,
@@ -378,30 +469,30 @@ const getDefaultInstallmentForm = () => ({
 const installmentForm = ref(getDefaultInstallmentForm());
 
 const currencyOptions = [
-  { value: 'LYD', label: 'LYD' },
-  { value: 'USD', label: 'USD' },
-  { value: 'EUR', label: 'EUR' },
+  { value: "LYD", label: "LYD" },
+  { value: "USD", label: "USD" },
+  { value: "EUR", label: "EUR" },
 ];
 
 const frequencyOptions = computed(() => [
-  { value: 'weekly', label: t('installmentLink.frequencies.weekly') },
-  { value: 'biweekly', label: t('installmentLink.frequencies.biweekly') },
-  { value: 'monthly', label: t('installmentLink.frequencies.monthly') },
-  { value: 'quarterly', label: t('installmentLink.frequencies.quarterly') },
+  { value: "weekly", label: t("installmentLink.frequencies.weekly") },
+  { value: "biweekly", label: t("installmentLink.frequencies.biweekly") },
+  { value: "monthly", label: t("installmentLink.frequencies.monthly") },
+  { value: "quarterly", label: t("installmentLink.frequencies.quarterly") },
 ]);
 
 const collectionChannels = computed(() => [
-  { value: 'pos', label: t('installmentLink.collectionChannels.pos') },
-  { value: 'online', label: t('installmentLink.collectionChannels.online') },
-  { value: 'bank', label: t('installmentLink.collectionChannels.bank') },
-  { value: 'salary', label: t('installmentLink.collectionChannels.salary') },
+  { value: "pos", label: t("installmentLink.collectionChannels.pos") },
+  { value: "online", label: t("installmentLink.collectionChannels.online") },
+  { value: "bank", label: t("installmentLink.collectionChannels.bank") },
+  { value: "salary", label: t("installmentLink.collectionChannels.salary") },
 ]);
 
 const formatCurrency = (value: number) => {
-  const localeId = locale.value === 'ar' ? 'ar-LY' : 'en-GB';
+  const localeId = locale.value === "ar" ? "ar-LY" : "en-GB";
   return new Intl.NumberFormat(localeId, {
-    style: 'currency',
-    currency: installmentForm.value.currency || 'LYD',
+    style: "currency",
+    currency: installmentForm.value.currency || "LYD",
     minimumFractionDigits: 2,
   }).format(value);
 };
@@ -413,7 +504,7 @@ const installmentAmount = computed(() => {
 });
 
 const formattedInstallmentAmount = computed(() =>
-  formatCurrency(installmentAmount.value || 0),
+  formatCurrency(installmentAmount.value || 0)
 );
 
 const progressValue = computed(() => {
@@ -421,15 +512,18 @@ const progressValue = computed(() => {
   return Math.min((1 / total) * 100, 100);
 });
 
-const progressLabel = computed(() => {
-  if (locale.value === 'ar') {
-    return `القسط الأول من ${installmentForm.value.installmentsCount}`;
-  }
-  return `1 of ${installmentForm.value.installmentsCount} installments`;
-});
+const progressLabel = computed(() =>
+  t("installmentLink.summary.progressLabel", {
+    current: 1,
+    total: installmentForm.value.installmentsCount || 0,
+  })
+);
 
 const dateFormatter = computed(
-  () => new Intl.DateTimeFormat(locale.value === 'ar' ? 'ar-LY' : 'en-GB', { dateStyle: 'medium' }),
+  () =>
+    new Intl.DateTimeFormat(locale.value === "ar" ? "ar-LY" : "en-GB", {
+      dateStyle: "medium",
+    })
 );
 
 const paymentSchedule = computed(() => {
@@ -455,50 +549,89 @@ const paymentSchedule = computed(() => {
       index,
       date: dateFormatter.value.format(dueDate),
       amount: formatCurrency(installmentAmount.value || 0),
-      status: index === 0 ? 'upcoming' : 'planned',
+      status: index === 0 ? "upcoming" : "planned",
     };
   });
 });
 
 const workflowSteps = computed(() => [
   {
-    icon: 'mdi-form-select',
-    color: 'primary',
-    title: t('installmentLink.timeline.steps.setup'),
-    subtitle: locale.value === 'ar' ? 'إدخال تفاصيل الخطة والموافقة' : 'Enter plan details & approvals',
+    icon: "mdi-form-select",
+    color: "primary",
+    title: t("installmentLink.timeline.steps.setup"),
+    subtitle: t("installmentLink.timeline.subtitles.setup"),
   },
   {
-    icon: 'mdi-share-variant',
-    color: 'secondary',
-    title: t('installmentLink.timeline.steps.share'),
-    subtitle: locale.value === 'ar' ? 'إرسال الرابط للعميل' : 'Send the link to the customer',
+    icon: "mdi-share-variant",
+    color: "secondary",
+    title: t("installmentLink.timeline.steps.share"),
+    subtitle: t("installmentLink.timeline.subtitles.share"),
   },
   {
-    icon: 'mdi-cash-plus',
-    color: 'success',
-    title: t('installmentLink.timeline.steps.collect'),
-    subtitle: locale.value === 'ar' ? 'تحصيل الأقساط تلقائياً' : 'Collect installments automatically',
+    icon: "mdi-cash-plus",
+    color: "success",
+    title: t("installmentLink.timeline.steps.collect"),
+    subtitle: t("installmentLink.timeline.subtitles.collect"),
   },
   {
-    icon: 'mdi-finance',
-    color: 'info',
-    title: t('installmentLink.timeline.steps.reconcile'),
-    subtitle: locale.value === 'ar' ? 'تسوية ومتابعة الدفعات' : 'Reconcile and monitor payments',
+    icon: "mdi-finance",
+    color: "info",
+    title: t("installmentLink.timeline.steps.reconcile"),
+    subtitle: t("installmentLink.timeline.subtitles.reconcile"),
   },
 ]);
 
 const linkStats = computed(() => [
   {
-    label: locale.value === 'ar' ? 'خطط نشطة' : 'Active plans',
-    value: '32',
-    hint: locale.value === 'ar' ? '+5 هذا الشهر' : '+5 this month',
+    label: t("installmentLink.stats.activePlans"),
+    value: "32",
+    hint: t("installmentLink.stats.activePlansHint"),
   },
   {
-    label: locale.value === 'ar' ? 'نسبة الالتزام' : 'Collection rate',
-    value: '94%',
-    hint: locale.value === 'ar' ? 'آخر 90 يوماً' : 'Last 90 days',
+    label: t("installmentLink.stats.collectionRate"),
+    value: "94%",
+    hint: t("installmentLink.stats.collectionRateHint"),
   },
 ]);
+
+const paymentStatusLabels = computed(() => ({
+  upcoming: t("installmentLink.summary.statusUpcoming"),
+  planned: t("installmentLink.summary.statusPlanned"),
+}));
+
+const simulationStepConfig = [
+  { key: "linkOpened", icon: "mdi-link-variant" },
+  { key: "details", icon: "mdi-form-textbox" },
+  { key: "otp", icon: "mdi-shield-key" },
+  { key: "confirmation", icon: "mdi-check-decagram" },
+];
+
+const simulationSteps = computed(() =>
+  simulationStepConfig.map((step, index) => {
+    let status: "pending" | "active" | "completed" = "pending";
+    if (index < simulationStepIndex.value) {
+      status = "completed";
+    } else if (index === simulationStepIndex.value) {
+      status =
+        simulationState.value === "success"
+          ? "completed"
+          : simulationState.value === "idle"
+          ? "pending"
+          : "active";
+    }
+    if (
+      simulationState.value === "success" &&
+      index === simulationStepConfig.length - 1
+    ) {
+      status = "completed";
+    }
+    return {
+      ...step,
+      label: t(`installmentLink.simulation.steps.${step.key}`),
+      status,
+    };
+  })
+);
 
 const resetForm = () => {
   Object.assign(installmentForm.value, getDefaultInstallmentForm());
@@ -513,15 +646,23 @@ const generateLink = async () => {
   generating.value = true;
   await new Promise((resolve) => setTimeout(resolve, 900));
   generating.value = false;
-  generatedLink.value = `https://finoria.ly/installments/${Date.now().toString(36)}`;
+  generatedLink.value = `https://finoria.ly/installments/${Date.now().toString(
+    36
+  )}`;
   successDialog.value = true;
+  simulationState.value = "idle";
+  simulationProgress.value = 0;
+  simulationStepIndex.value = -1;
+  if (typeof window !== "undefined") {
+    window.open(generatedLink.value, "_blank", "noopener");
+  }
 };
 
 const copyLink = async () => {
   if (!generatedLink.value) {
     return;
   }
-  if (typeof navigator !== 'undefined' && navigator?.clipboard) {
+  if (typeof navigator !== "undefined" && navigator?.clipboard) {
     try {
       await navigator.clipboard.writeText(generatedLink.value);
     } catch {
@@ -529,6 +670,26 @@ const copyLink = async () => {
     }
   }
   copied.value = true;
+};
+
+const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const simulatePayment = async () => {
+  if (!generatedLink.value || simulationState.value === "running") {
+    return;
+  }
+  simulationState.value = "running";
+  simulationProgress.value = 0;
+  simulationStepIndex.value = 0;
+  const durations = [500, 650, 800, 600];
+  for (let index = 0; index < simulationStepConfig.length; index += 1) {
+    simulationStepIndex.value = index;
+    simulationProgress.value = Math.round(
+      ((index + 1) / simulationStepConfig.length) * 100
+    );
+    await wait(durations[index]);
+  }
+  simulationState.value = "success";
 };
 </script>
 
@@ -562,7 +723,7 @@ const copyLink = async () => {
 }
 
 .section-heading::before {
-  content: '';
+  content: "";
   width: 6px;
   height: 20px;
   border-radius: 99px;
@@ -578,5 +739,15 @@ const copyLink = async () => {
 
 .schedule-table td {
   font-size: 0.9rem;
+}
+
+.simulation-step.completed .v-list-item-title {
+  color: rgb(var(--v-theme-success));
+  font-weight: 600;
+}
+
+.simulation-step.active .v-list-item-title {
+  color: rgb(var(--v-theme-primary));
+  font-weight: 600;
 }
 </style>
