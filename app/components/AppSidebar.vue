@@ -326,6 +326,12 @@ const navigationItems = ref<NavigationItem[]>([
     value: "atm-locations",
   },
   {
+    title: "navigation.news",
+    icon: "mdi-newspaper-variant-outline",
+    to: "/news",
+    value: "news",
+  },
+  {
     title: "navigation.beneficiaries",
     icon: "mdi-account-heart-outline",
     to: "/beneficiaries",
