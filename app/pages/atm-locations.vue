@@ -9,8 +9,8 @@
                 <v-icon size="28" color="primary">mdi-cash-multiple</v-icon>
               </v-avatar>
               <div>
-                <h2 class="text-h5 font-weight-bold mb-1">مواقع ماكينات الصراف الآلي (ATM)</h2>
-                <p class="text-caption text-medium-emphasis mb-0">اكتشف أقرب ماكينة صراف آلي متاحة</p>
+                <h2 class="text-h5 font-weight-bold mb-1">مواقع الصراف الآلي ونقاط البيع (ATM & POS)</h2>
+                <p class="text-caption text-medium-emphasis mb-0">اكتشف ماكينات السحب ونقاط الدفع الأقرب لك والعروض المتاحة</p>
               </div>
             </div>
 
@@ -39,6 +39,22 @@
               >
                 <template #prepend-inner>
                   <v-icon :color="statusFilterColor">mdi-circle</v-icon>
+                </template>
+              </v-select>
+
+              <v-select
+                v-model="typeFilter"
+                :items="typeOptions"
+                item-title="label"
+                item-value="value"
+                label="نوع الموقع"
+                dense
+                hide-details
+                variant="outlined"
+                style="min-width: 200px"
+              >
+                <template #prepend-inner>
+                  <v-icon color="deep-purple">mdi-lan-connect</v-icon>
                 </template>
               </v-select>
 
@@ -210,7 +226,8 @@
                     :class="{
                       'active-item': selectedAtm && selectedAtm.id === atm.id,
                       'available-item': atm.status === 'available',
-                      'unavailable-item': atm.status === 'unavailable'
+                      'unavailable-item': atm.status === 'unavailable',
+                      'pos-item': atm.type === 'pos'
                     }"
                     @click="focusAtm(atm)"
                   >
@@ -221,7 +238,7 @@
                         :class="atm.status === 'available' ? 'pulse-success' : 'pulse-error'"
                       >
                         <v-img v-if="atm.image" :src="atm.image" cover />
-                        <v-icon v-else size="32">mdi-cash-multiple</v-icon>
+                        <v-icon v-else size="32">{{ atm.type === 'pos' ? 'mdi-credit-card-wireless' : 'mdi-cash-multiple' }}</v-icon>
                       </v-avatar>
                       <div class="status-indicator" :class="atm.status" />
                     </template>
@@ -240,6 +257,15 @@
 
                     <template #append>
                       <div class="d-flex flex-column align-end ga-2">
+                        <v-chip
+                          size="x-small"
+                          :color="atm.type === 'pos' ? 'deep-purple' : 'primary'"
+                          variant="tonal"
+                          class="type-chip"
+                        >
+                          <v-icon start size="10">{{ atm.type === 'pos' ? 'mdi-credit-card-outline' : 'mdi-cash-multiple' }}</v-icon>
+                          {{ atm.type === 'pos' ? 'POS' : 'ATM' }}
+                        </v-chip>
                         <v-chip
                           size="x-small"
                           :color="atm.status === 'available' ? 'success' : 'error'"
@@ -265,6 +291,16 @@
                           variant="tonal"
                         >
                           {{ atm.distanceKm.toFixed(1) }} كم
+                        </v-chip>
+                        <v-chip
+                          v-if="atm.type === 'pos' && atm.promo"
+                          size="x-small"
+                          color="warning"
+                          variant="flat"
+                          class="promo-chip"
+                        >
+                          <v-icon start size="12">mdi-star-shooting</v-icon>
+                          {{ atm.promo.badge || 'عرض حصري' }}
                         </v-chip>
                       </div>
                     </template>
@@ -330,9 +366,17 @@
                   <div class="legend-indicator error-indicator mr-2" />
                   <span class="text-caption">غير متاحة (لا سيولة)</span>
                 </div>
+                <div class="d-flex align-center mb-2">
+                  <div class="legend-indicator pos-indicator mr-2" />
+                  <span class="text-caption">نقطة بيع POS</span>
+                </div>
                 <div class="d-flex align-center">
                   <v-icon size="16" color="error" class="mr-2">mdi-account</v-icon>
                   <span class="text-caption">موقعك الحالي</span>
+                </div>
+                <div class="d-flex align-center mt-2">
+                  <v-icon size="16" color="warning" class="mr-2">mdi-star-shooting</v-icon>
+                  <span class="text-caption">عرض ترويجي نشط</span>
                 </div>
               </v-card>
 
@@ -374,12 +418,21 @@
 
             <v-card-title class="d-flex align-center ga-3 pt-4">
               <v-avatar size="48" :color="selectedAtm.status === 'available' ? 'success' : 'error'">
-                <v-icon>mdi-cash-multiple</v-icon>
+                <v-icon>{{ selectedAtm.type === 'pos' ? 'mdi-credit-card-wireless' : 'mdi-cash-multiple' }}</v-icon>
               </v-avatar>
               <div>
                 <div class="text-h6 font-weight-bold">{{ selectedAtm.name }}</div>
                 <div class="text-caption text-medium-emphasis">{{ selectedAtm.bank }}</div>
               </div>
+              <v-chip
+                size="small"
+                :color="selectedAtm.type === 'pos' ? 'deep-purple' : 'primary'"
+                variant="tonal"
+                class="ml-auto"
+              >
+                <v-icon start size="16">{{ selectedAtm.type === 'pos' ? 'mdi-credit-card-outline' : 'mdi-cash-multiple' }}</v-icon>
+                {{ selectedAtm.type === 'pos' ? 'POS' : 'ATM' }}
+              </v-chip>
             </v-card-title>
 
             <v-card-text class="pb-2">
@@ -427,6 +480,22 @@
                   </v-list-item-title>
                 </v-list-item>
               </v-list>
+
+              <v-alert
+                v-if="selectedAtm.type === 'pos' && selectedAtm.promo"
+                type="warning"
+                variant="tonal"
+                class="mb-4 pos-promo-alert"
+                border="start"
+                elevation="0"
+              >
+                <div class="text-subtitle-2 font-weight-bold mb-1">
+                  {{ selectedAtm.promo.badge || 'عرض خاص' }}
+                </div>
+                <div class="text-body-2">
+                  {{ selectedAtm.promo.title }} — {{ selectedAtm.promo.description }}
+                </div>
+              </v-alert>
 
               <v-divider class="my-3" />
 
@@ -481,8 +550,16 @@ const ATM_IMAGE_URL = 'https://images.unsplash.com/photo-1565084888279-aca607ecc
 /**
  * Types
  */
+interface PromoHighlight {
+  title: string;
+  description?: string;
+  badge?: string;
+  accent?: string;
+}
+
 interface ATM {
   id: string;
+  type: 'atm' | 'pos';
   name: string;
   bank: string;
   address: string;
@@ -495,6 +572,8 @@ interface ATM {
   image?: string;
   phone?: string;
   distanceKm?: number | null;
+  promo?: PromoHighlight;
+  merchant?: string;
 }
 
 /**
@@ -502,6 +581,7 @@ interface ATM {
  */
 const search = ref('');
 const statusFilter = ref<'all' | 'available' | 'unavailable'>('all');
+const typeFilter = ref<'all' | 'atm' | 'pos'>('all');
 const bankFilter = ref<string | null>(null);
 const nearMe = ref(false);
 const radiusKm = ref(10);
@@ -529,6 +609,7 @@ const userLocation = ref<{ lat: number; lng: number } | null>(null);
 const atms = ref<ATM[]>([
   {
     id: '1',
+    type: 'atm',
     name: 'صراف اليقين - الفرع الرئيسي',
     bank: 'مصرف اليقين',
     address: 'شارع عمر المختار',
@@ -543,6 +624,7 @@ const atms = ref<ATM[]>([
   },
   {
     id: '2',
+    type: 'atm',
     name: 'صراف اليقين - سوق الجمعة',
     bank: 'مصرف اليقين',
     address: 'سوق الجمعة',
@@ -556,6 +638,7 @@ const atms = ref<ATM[]>([
   },
   {
     id: '3',
+    type: 'atm',
     name: 'صراف اليقين - فرع الظهرة',
     bank: 'مصرف اليقين',
     address: 'شارع الظهرة',
@@ -569,6 +652,7 @@ const atms = ref<ATM[]>([
   },
   {
     id: '4',
+    type: 'atm',
     name: 'صراف اليقين - وسط المدينة',
     bank: 'مصرف اليقين',
     address: 'شارع جمال عبد الناصر',
@@ -582,6 +666,7 @@ const atms = ref<ATM[]>([
   },
   {
     id: '5',
+    type: 'atm',
     name: 'صراف اليقين - المطار الدولي',
     bank: 'مصرف اليقين',
     address: 'مطار طرابلس الدولي',
@@ -595,6 +680,7 @@ const atms = ref<ATM[]>([
   },
   {
     id: '6',
+    type: 'atm',
     name: 'صراف اليقين - شارع الفاتح',
     bank: 'مصرف اليقين',
     address: 'شارع الفاتح',
@@ -608,6 +694,7 @@ const atms = ref<ATM[]>([
   },
   {
     id: '7',
+    type: 'atm',
     name: 'صراف اليقين - كورنيش بنغازي',
     bank: 'مصرف اليقين',
     address: 'كورنيش بنغازي',
@@ -621,6 +708,7 @@ const atms = ref<ATM[]>([
   },
   {
     id: '8',
+    type: 'atm',
     name: 'صراف اليقين - مدينة سبها',
     bank: 'مصرف اليقين',
     address: 'وسط مدينة سبها',
@@ -631,6 +719,80 @@ const atms = ref<ATM[]>([
     available24h: false,
     accessible: false,
     image: ATM_IMAGE_URL
+  },
+  {
+    id: 'pos-101',
+    type: 'pos',
+    name: 'نقطة بيع - مول ليبيا',
+    bank: 'شبكة Ruya Pay',
+    address: 'مول ليبيا - طريق عين زارة',
+    city: 'طرابلس',
+    lat: 32.8583,
+    lng: 13.1885,
+    status: 'available',
+    available24h: true,
+    accessible: true,
+    merchant: 'متاجر الإلكترونيات المتحدة',
+    promo: {
+      badge: 'عرض الأسبوع',
+      title: 'خصم 15%',
+      description: 'على الإلكترونيات الذكية والدفع عبر Ruya Pay',
+      accent: '#ff9800'
+    }
+  },
+  {
+    id: 'pos-102',
+    type: 'pos',
+    name: 'نقطة بيع - سوق زمزم',
+    bank: 'شبكة Ruya Pay',
+    address: 'شارع جمال - بنغازي',
+    city: 'بنغازي',
+    lat: 32.1158,
+    lng: 20.0681,
+    status: 'available',
+    available24h: false,
+    accessible: true,
+    merchant: 'أزياء زمزم',
+    promo: {
+      badge: 'تخفيض 10%',
+      title: 'أزياء جديدة',
+      description: 'خصومات على الملابس النسائية عند الدفع بالبطاقة',
+      accent: '#00acc1'
+    }
+  },
+  {
+    id: 'pos-103',
+    type: 'pos',
+    name: 'نقطة بيع - كافية الواحة',
+    bank: 'شبكة Ruya Pay',
+    address: 'وسط سبها',
+    city: 'سبها',
+    lat: 27.0462,
+    lng: 14.4299,
+    status: 'available',
+    available24h: false,
+    accessible: true,
+    merchant: 'كافية الواحة'
+  },
+  {
+    id: 'pos-104',
+    type: 'pos',
+    name: 'نقطة بيع - مجمع الزاوية',
+    bank: 'شبكة Ruya Pay',
+    address: 'طريق الساحل - الزاوية',
+    city: 'الزاوية',
+    lat: 32.7571,
+    lng: 12.7275,
+    status: 'unavailable',
+    available24h: false,
+    accessible: false,
+    merchant: 'مجمع الزاوية التجاري',
+    promo: {
+      badge: 'قسيمة 20 د.ل',
+      title: 'قسائم فورية',
+      description: 'قسيمة مجانية عند الشراء بأكثر من 200 د.ل',
+      accent: '#ab47bc'
+    }
   }
 ]) as Ref<ATM[]>;
 
@@ -641,6 +803,12 @@ const statusOptions = [
   { label: 'الكل', value: 'all' },
   { label: 'متاحة', value: 'available' },
   { label: 'غير متاحة', value: 'unavailable' }
+] as const;
+
+const typeOptions = [
+  { label: 'كل المواقع (ATM + POS)', value: 'all' },
+  { label: 'ماكينات الصراف الآلي ATM', value: 'atm' },
+  { label: 'نقاط البيع POS', value: 'pos' }
 ] as const;
 
 const bankOptions = computed(() => {
@@ -683,6 +851,11 @@ const filteredAtms = computed<ATM[]>(() => {
   // Status
   if (statusFilter.value !== 'all') {
     list = list.filter(a => a.status === statusFilter.value);
+  }
+
+  // Type
+  if (typeFilter.value !== 'all') {
+    list = list.filter(a => a.type === typeFilter.value);
   }
 
   // Bank
@@ -830,12 +1003,13 @@ async function refreshMarkers() {
     let marker = markers.get(atm.id);
     
     if (!marker) {
-      const iconHtml = createPulseIcon(atm);
+      const iconHtml = createLocationIcon(atm);
       const icon = L.divIcon({
         className: 'custom-marker',
         html: iconHtml,
         iconSize: [40, 40],
-        iconAnchor: [20, 40]
+        iconAnchor: [20, 40],
+        tooltipAnchor: [0, -32]
       });
 
       marker = L.marker([atm.lat, atm.lng], { icon })
@@ -849,17 +1023,20 @@ async function refreshMarkers() {
           <div class="tooltip-content">
             <div class="tooltip-title">${atm.name}</div>
             <div class="tooltip-bank">${atm.bank}</div>
+            <div class="tooltip-type">${atm.type === 'pos' ? 'نقطة بيع POS' : 'ماكينة ATM'}</div>
             <div class="tooltip-status ${atm.status}">
               ${atm.status === 'available' ? '✓ متاحة' : '✗ غير متاحة'}
             </div>
+            ${atm.type === 'pos' && atm.promo ? `<div class="tooltip-promo">${atm.promo.title} — ${atm.promo.description ?? ''}</div>` : ''}
           </div>
         </div>
       `;
 
       marker.bindTooltip(tooltipContent, {
         direction: 'top',
-        offset: [0, -40],
-        className: 'custom-tooltip'
+        offset: [0, -48],
+        className: 'custom-tooltip',
+        sticky: false
       });
 
       markers.set(atm.id, marker);
@@ -867,7 +1044,28 @@ async function refreshMarkers() {
   }
 }
 
-function createPulseIcon(atm: ATM): string {
+function createLocationIcon(atm: ATM): string {
+  if (atm.type === 'pos') {
+    const accent = atm.promo?.accent ?? '#5E35B1';
+    const badge = atm.promo?.badge ?? 'POS';
+    const title = atm.promo?.title ?? atm.name;
+    const description = atm.promo?.description ?? '';
+    return `
+      <div class="pos-marker" style="--pos-accent: ${accent}">
+        ${atm.promo ? `
+          <div class="promo-card">
+            <div class="promo-badge">${badge}</div>
+            <div class="promo-title">${title}</div>
+            ${description ? `<div class="promo-desc">${description}</div>` : ''}
+          </div>
+        ` : ''}
+        <div class="pos-pin">
+          <span class="pos-icon">${atm.promo ? '%' : 'POS'}</span>
+        </div>
+      </div>
+    `;
+  }
+
   const color = atm.status === 'available' ? '#4CAF50' : '#F44336';
   return `
     <div class="pulse-marker" style="--pulse-color: ${color}">
@@ -959,6 +1157,7 @@ watch(radiusKm, value => {
 function resetFilters() {
   search.value = '';
   statusFilter.value = 'all';
+  typeFilter.value = 'all';
   bankFilter.value = null;
   nearMe.value = false;
   radiusKm.value = 10;
@@ -972,9 +1171,10 @@ function directionsUrl(atm: ATM) {
 
 function exportCsv() {
   const rows = [
-    ['id', 'name', 'bank', 'address', 'city', 'lat', 'lng', 'status', '24h', 'accessible', 'distanceKm'],
+    ['id', 'type', 'name', 'bank', 'address', 'city', 'lat', 'lng', 'status', '24h', 'accessible', 'distanceKm'],
     ...filteredAtms.value.map(a => [
       a.id,
+      a.type,
       a.name,
       a.bank,
       a.address,
@@ -1136,6 +1336,10 @@ onMounted(() => {
   border-left: 4px solid #F44336;
 }
 
+.atm-list-item.pos-item {
+  border-right: 4px solid #5E35B1;
+}
+
 .atm-avatar {
   position: relative;
 }
@@ -1186,6 +1390,15 @@ onMounted(() => {
 
 .status-chip {
   font-weight: 600;
+}
+
+.type-chip,
+.promo-chip {
+  font-weight: 600;
+}
+
+.pos-promo-alert {
+  border-color: #ffb300 !important;
 }
 
 .map-wrapper {
@@ -1254,6 +1467,11 @@ onMounted(() => {
   animation: pulse-legend-error 2s ease-out infinite;
 }
 
+.pos-indicator {
+  background: #5E35B1;
+  animation: pulse-legend-pos 2.4s ease-out infinite;
+}
+
 @keyframes pulse-legend-success {
   0%, 100% {
     box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7);
@@ -1269,6 +1487,15 @@ onMounted(() => {
   }
   50% {
     box-shadow: 0 0 0 6px rgba(244, 67, 54, 0);
+  }
+}
+
+@keyframes pulse-legend-pos {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(94, 53, 177, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(94, 53, 177, 0);
   }
 }
 
@@ -1333,6 +1560,82 @@ onMounted(() => {
   z-index: 10;
 }
 
+:deep(.pos-marker) {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 40px;
+}
+
+:deep(.promo-card) {
+  position: absolute;
+  bottom: 52px;
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: 150px;
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 10px 12px;
+  box-shadow: 0 18px 40px rgba(0,0,0,0.16);
+  border: 1px solid var(--pos-accent, #5E35B1);
+  text-align: center;
+}
+
+:deep(.promo-card::after) {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%) rotate(45deg);
+  width: 14px;
+  height: 14px;
+  background: #ffffff;
+  border-left: 1px solid var(--pos-accent, #5E35B1);
+  border-bottom: 1px solid var(--pos-accent, #5E35B1);
+}
+
+:deep(.promo-badge) {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #ffffff;
+  background: var(--pos-accent, #5E35B1);
+}
+
+:deep(.promo-title) {
+  font-weight: 700;
+  font-size: 14px;
+  margin-top: 6px;
+}
+
+:deep(.promo-desc) {
+  font-size: 12px;
+  color: #606060;
+  margin-top: 2px;
+}
+
+:deep(.pos-pin) {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: var(--pos-accent, #5E35B1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 700;
+  font-size: 13px;
+  box-shadow: 0 10px 20px rgba(94,53,177,0.3);
+}
+
+:deep(.pos-icon) {
+  font-family: inherit;
+  letter-spacing: 0.5px;
+}
+
 :deep(.custom-tooltip) {
   background: transparent !important;
   border: none !important;
@@ -1370,12 +1673,26 @@ onMounted(() => {
   margin-bottom: 8px;
 }
 
+:deep(.tooltip-type) {
+  font-size: 11px;
+  font-weight: 600;
+  color: #5E35B1;
+  margin-bottom: 6px;
+}
+
 :deep(.tooltip-status) {
   font-size: 12px;
   font-weight: 600;
   padding: 4px 8px;
   border-radius: 6px;
   display: inline-block;
+}
+
+:deep(.tooltip-promo) {
+  margin-top: 8px;
+  font-size: 12px;
+  color: #444;
+  font-weight: 600;
 }
 
 :deep(.tooltip-status.available) {

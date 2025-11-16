@@ -232,7 +232,7 @@
         </v-list-item>
 
         <!-- User Profile Card -->
-        <div v-if="!railMode" class="user-profile-card">
+        <!-- <div v-if="!railMode" class="user-profile-card">
           <v-card class="user-card" variant="tonal" rounded="lg">
             <v-card-text class="pa-3">
               <div class="d-flex align-center">
@@ -261,7 +261,7 @@
               </div>
             </v-card-text>
           </v-card>
-        </div>
+        </div> -->
       </div>
     </template>
   </v-navigation-drawer>
