@@ -1380,6 +1380,8 @@
   },
   "chatbot": {
     "title": "AI Assistant",
+    "assistantLabel": "Chat assistant",
+    "minimizeLabel": "Minimize chat",
     "inputPlaceholder": "Type your message...",
     "thinking": "AI is thinking...",
     "send": "Send",
@@ -1387,6 +1389,14 @@
     "clearChat": "Clear Chat",
     "welcome": "Hello! How can I help you today?",
     "noMessages": "No messages yet. Start a conversation!",
+    "shortcuts": {
+      "title": "Navigate quickly",
+      "beneficiaries": "Projects",
+      "wallet": "Wallets",
+      "cards": "Cards",
+      "support": "Support",
+      "settings": "Settings"
+    },
     "errors": {
       "networkError": "Network error. Please check your connection.",
       "apiError": "Failed to get response. Please try again.",
