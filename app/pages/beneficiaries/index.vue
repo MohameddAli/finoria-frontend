@@ -718,7 +718,8 @@ const benes = ref<Beneficiary[]>([
     325000,
     "2024-01-15",
     "2025-06-30",
-    156
+    156,
+    "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=1200&q=80"
   ),
   mk(
     "بناء مستشفى الأمل",
@@ -732,7 +733,8 @@ const benes = ref<Beneficiary[]>([
     1450000,
     "2023-09-01",
     "2025-12-31",
-    423
+    423,
+    "https://images.unsplash.com/photo-1586773860418-d37222d8fce3?auto=format&fit=crop&w=1200&q=80"
   ),
   mk(
     "مبادرة الطرق الآمنة",
@@ -746,7 +748,8 @@ const benes = ref<Beneficiary[]>([
     900000,
     "2024-03-20",
     "2025-09-15",
-    287
+    287,
+    "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80"
   ),
   mk(
     "دعم الأيتام والمحتاجين",
@@ -760,7 +763,128 @@ const benes = ref<Beneficiary[]>([
     620000,
     "2024-01-01",
     "2025-12-31",
-    534
+    534,
+    "https://images.unsplash.com/photo-1509099836639-18ba1795216d?auto=format&fit=crop&w=1200&q=80"
+  ),
+  mk(
+    "محطة الطاقة الشمسية في أوباري",
+    "infrastructure",
+    "طاقة متجددة",
+    "أوباري",
+    "LY75RIBL00000000000044556677",
+    ["ongoing", "urgent"],
+    "تركيب مصفوفات شمسية بقدرة 50 ميغاواط مع أنظمة تخزين لضمان استقرار الكهرباء للمدن الجنوبية وتقليل الاعتماد على الوقود المستورد.",
+    1100000,
+    540000,
+    "2024-02-10",
+    "2025-08-30",
+    189,
+    "https://images.unsplash.com/photo-1509395176047-4a66953fd231?auto=format&fit=crop&w=1200&q=80"
+  ),
+  mk(
+    "مركز ليبيا الإقليمي للأبحاث الطبية",
+    "health",
+    "مراكز تخصصية",
+    "طرابلس",
+    "LY41WABA00000000000022334455",
+    ["favorite"],
+    "مركز متكامل للأبحاث السريرية وعلاج الأمراض المزمنة مجهز بمختبرات حديثة وبرامج تدريب للأطقم الطبية.",
+    1650000,
+    1180000,
+    "2023-11-05",
+    "2025-05-01",
+    362,
+    "https://images.unsplash.com/photo-1505751172876-fa1923c5c528?auto=format&fit=crop&w=1200&q=80"
+  ),
+  mk(
+    "برنامج تمكين المرأة في الجبل الغربي",
+    "charity",
+    "تمكين مجتمعي",
+    "غريان",
+    "LY88NCB00000000000077889911",
+    ["favorite", "ongoing"],
+    "تأهيل مشاغل إنتاجية لدعم رائدات الأعمال في الحرف اليدوية وتوفير منح صغيرة للتوسع في المشاريع المنزلية.",
+    420000,
+    268000,
+    "2024-04-01",
+    "2025-02-15",
+    247,
+    "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&w=1200&q=80"
+  ),
+  mk(
+    "حاضنة المدار للشركات الناشئة",
+    "education",
+    "تقنية وابتكار",
+    "طرابلس",
+    "LY10SARA00000000000066778899",
+    ["ongoing"],
+    "تجهيز مساحة عمل مشتركة لرواد الأعمال مع برامج إرشاد وتمويل بذري لشركات التقنية المالية وخدمات الدفع.",
+    620000,
+    305000,
+    "2024-01-20",
+    "2025-07-30",
+    174,
+    "https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?auto=format&fit=crop&w=1200&q=80"
+  ),
+  mk(
+    "توسعة ميناء طرابلس اللوجستي",
+    "infrastructure",
+    "لوجستيات",
+    "طرابلس",
+    "LY63RIBL00000000000099887766",
+    ["urgent"],
+    "تطوير الأرصفة وأنظمة التتبع الرقمي لتسريع تفريغ الحاويات وتعزيز حركة التجارة البحرية إلى شمال أفريقيا.",
+    2400000,
+    1510000,
+    "2023-07-15",
+    "2025-11-22",
+    518,
+    "https://images.unsplash.com/photo-1505196298144-4559b22f43ff?auto=format&fit=crop&w=1200&q=80"
+  ),
+  mk(
+    "مركز الرواد للتعلم الرقمي",
+    "education",
+    "تعليم مبتكر",
+    "بنغازي",
+    "LY24RIBL00000000000011552233",
+    ["favorite", "ongoing"],
+    "معامل STEAM للأطفال والشباب مع مختبر واقع افتراضي ومناهج ريادة أعمال رقمية بالشراكة مع الجامعات المحلية.",
+    560000,
+    402000,
+    "2024-03-05",
+    "2025-04-18",
+    211,
+    "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1200&q=80"
+  ),
+  mk(
+    "برنامج الشفاء لمرضى القلب",
+    "health",
+    "صحة تخصصية",
+    "مصراتة",
+    "LY32WABA00000000000033445566",
+    ["favorite", "urgent"],
+    "توسعة قسم علاج أمراض القلب مع عيادات متنقلة للفحص المبكر وتوفير أجهزة قسطرة حديثة.",
+    980000,
+    720000,
+    "2024-02-18",
+    "2025-10-10",
+    298,
+    "https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=1200&q=80"
+  ),
+  mk(
+    "مبادرة الذكاء الاصطناعي في المصارف",
+    "infrastructure",
+    "تحول رقمي",
+    "سبها",
+    "LY57NCB00000000000055667788",
+    ["ongoing"],
+    "تطبيق حلول تحليل بيانات واحتيال ذكي داخل الفروع المصرفية لتسريع اكتشاف العمليات المشبوهة وتحسين تجربة العملاء.",
+    830000,
+    410000,
+    "2024-05-12",
+    "2025-09-01",
+    163,
+    "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80"
   ),
 ]);
 
@@ -776,7 +900,8 @@ function mk(
   collectedAmount: number,
   startDate: string,
   endDate: string,
-  contributors: number
+  contributors: number,
+  imageUrl?: string
 ): Beneficiary {
   const progress = Math.round((collectedAmount / targetAmount) * 100);
   return {
@@ -788,9 +913,11 @@ function mk(
     iban,
     tags,
     favorite: tags.includes("favorite"),
-    avatar: `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(
-      name
-    )}`,
+    avatar:
+      imageUrl ||
+      `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(
+        name
+      )}`,
     description,
     targetAmount,
     collectedAmount,

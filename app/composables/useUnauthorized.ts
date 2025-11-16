@@ -69,7 +69,7 @@ export const useUnauthorized = () => {
 
   const redirectToDashboard = async () => {
     if (!authStore.isAuthenticated) return redirectToLogin(false);
-    await redirectTo("/wallet");
+    await redirectTo("/atm-locations");
   };
 
   const checkAuthAndRedirect = () =>

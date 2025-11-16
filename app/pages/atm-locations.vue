@@ -733,6 +733,7 @@ const atms = ref<ATM[]>([
     available24h: true,
     accessible: true,
     merchant: 'متاجر الإلكترونيات المتحدة',
+    image: 'https://images.unsplash.com/photo-1515165562835-c4c1bfae7a46?auto=format&fit=crop&w=1200&q=80',
     promo: {
       badge: 'عرض الأسبوع',
       title: 'خصم 15%',
@@ -753,6 +754,7 @@ const atms = ref<ATM[]>([
     available24h: false,
     accessible: true,
     merchant: 'أزياء زمزم',
+    image: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1200&q=80',
     promo: {
       badge: 'تخفيض 10%',
       title: 'أزياء جديدة',
@@ -772,7 +774,8 @@ const atms = ref<ATM[]>([
     status: 'available',
     available24h: false,
     accessible: true,
-    merchant: 'كافية الواحة'
+    merchant: 'كافية الواحة',
+    image: 'https://images.unsplash.com/photo-1504753793650-d4a2b783c15f?auto=format&fit=crop&w=1200&q=80'
   },
   {
     id: 'pos-104',
@@ -787,6 +790,7 @@ const atms = ref<ATM[]>([
     available24h: false,
     accessible: false,
     merchant: 'مجمع الزاوية التجاري',
+    image: 'https://images.unsplash.com/photo-1454372182658-c712e4c5a1db?auto=format&fit=crop&w=1200&q=80',
     promo: {
       badge: 'قسيمة 20 د.ل',
       title: 'قسائم فورية',

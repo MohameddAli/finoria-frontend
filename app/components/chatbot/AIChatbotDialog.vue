@@ -169,7 +169,7 @@ const quickLinks = computed(() => [
     icon: "mdi-hand-heart",
     label: t("chatbot.shortcuts.beneficiaries"),
   },
-  { to: "/wallet", icon: "mdi-wallet", label: t("chatbot.shortcuts.wallet") },
+  { to: "/atm-locations", icon: "mdi-wallet", label: t("chatbot.shortcuts.wallet") },
   {
     to: "/cards",
     icon: "mdi-credit-card-chip",

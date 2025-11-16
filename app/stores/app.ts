@@ -55,10 +55,10 @@ export const useAppStore = defineStore("app", () => {
       title: "navigation.wallets",
       icon: "mdi-wallet",
       children: [
-        { title: "navigation.walletHome", icon: "mdi-wallet-outline", to: "/wallets/home" },
-        { title: "navigation.personal", icon: "mdi-account-outline", to: "/wallets/personal" },
-        { title: "navigation.corporate", icon: "mdi-office-building-outline", to: "/wallets/corporate" },
-        { title: "navigation.investment", icon: "mdi-trending-up", to: "/wallets/investment" },
+        { title: "navigation.walletHome", icon: "mdi-wallet-outline", to: "/atm-locationss/home" },
+        { title: "navigation.personal", icon: "mdi-account-outline", to: "/atm-locationss/personal" },
+        { title: "navigation.corporate", icon: "mdi-office-building-outline", to: "/atm-locationss/corporate" },
+        { title: "navigation.investment", icon: "mdi-trending-up", to: "/atm-locationss/investment" },
       ],
     },
     {

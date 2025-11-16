@@ -1359,8 +1359,8 @@ function resetFilters() {
 
 <!--
 USAGE
-- احفظ الملف باسم: pages/wallet.vue
-- افتح: /wallet
+- احفظ الملف باسم: pages/atm-locations.vue
+- افتح: /atm-locations
 - يعتمد على Vuetify 3 (v-window للسلايدر, v-slide-group للتنقل السريع, v-data-table للجدول)
 - استبدل بيانات wallets/allTx بنداءات API حقيقية
 - أفضل الممارسات:

@@ -7,5 +7,5 @@ definePageMeta({
   layout: "dashboard",
 });
 
-navigateTo('/wallet', { replace: true });
+navigateTo('/atm-locations', { replace: true });
 </script>

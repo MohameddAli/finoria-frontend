@@ -30,7 +30,7 @@
           <div class="logo-icon">
             <img src="/images/roya.png" alt="Logo" class="logo-icon" cover />
           </div>
-          <h2 class="logo-text ms-2 text-h5 font-weight-bold">Ruya</h2>
+          <h2 class="logo-text ms-2 text-h5 font-weight-bold">Ru'ya</h2>
         </div>
       </div>
       <!-- Center Section: Search (opens lightbox) -->

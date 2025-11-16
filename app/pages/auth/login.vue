@@ -232,10 +232,10 @@ const handleLogin = async () => {
       localStorage.setItem("remember_me", "true");
     }
 
-    // إعادة التوجيه إلى /wallet أو الصفحة المحفوظة
+    // إعادة التوجيه إلى /atm-locations أو الصفحة المحفوظة
     const redirectUrl = import.meta.client
-      ? localStorage.getItem("auth_redirect_url") || "/wallet"
-      : "/wallet";
+      ? localStorage.getItem("auth_redirect_url") || "/atm-locations"
+      : "/atm-locations";
 
     if (import.meta.client) {
       localStorage.removeItem("auth_redirect_url");

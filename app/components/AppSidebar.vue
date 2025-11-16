@@ -301,12 +301,12 @@ const showUserMenu = ref(false);
 const getChildren = (item: NavigationItem) => item.children || [];
 
 const navigationItems = ref<NavigationItem[]>([
-  {
-    title: "navigation.wallet",
-    icon: "mdi-home",
-    to: "/wallet",
-    value: "wallet",
-  },
+  // {
+  //   title: "navigation.wallet",
+  //   icon: "mdi-home",
+  //   to: "/atm-locations",
+  //   value: "wallet",
+  // },
   // {
   //   title: "navigation.customers",
   //   icon: "mdi-account-group-outline",
@@ -320,6 +320,12 @@ const navigationItems = ref<NavigationItem[]>([
   //   value: "users",
   // },
   {
+    title: "navigation.atmLocations",
+    icon: "mdi-cash-multiple",
+    to: "/atm-locations",
+    value: "atm-locations",
+  },
+  {
     title: "navigation.beneficiaries",
     icon: "mdi-account-heart-outline",
     to: "/beneficiaries",
@@ -331,18 +337,12 @@ const navigationItems = ref<NavigationItem[]>([
   //   to: "/project-support-request",
   //   value: "project-support-request",
   // },
-  {
-    title: "navigation.posLocations",
-    icon: "mdi-map-marker-radius",
-    to: "/pos-locations",
-    value: "pos-locations",
-  },
-  {
-    title: "navigation.atmLocations",
-    icon: "mdi-cash-multiple",
-    to: "/atm-locations",
-    value: "atm-locations",
-  },
+  // {
+  //   title: "navigation.posLocations",
+  //   icon: "mdi-map-marker-radius",
+  //   to: "/pos-locations",
+  //   value: "pos-locations",
+  // },
   // {
   //   title: "navigation.installmentPaymentLink",
   //   icon: "mdi-credit-card-clock-outline",
