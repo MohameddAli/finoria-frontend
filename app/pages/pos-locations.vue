@@ -1,16 +1,16 @@
 <template>
-  <v-layout id="atm-finder">
+  <v-layout id="pos-finder">
     <v-main>
       <v-container fluid class="pa-0">
         <!-- <v-card flat class="top-bar px-6 py-4 mb-2">
           <div class="d-flex align-center justify-space-between flex-wrap ga-4">
             <div class="d-flex align-center ga-3">
               <v-avatar size="48" class="header-icon elevation-2">
-                <v-icon size="28" color="primary">mdi-cash-multiple</v-icon>
+                <v-icon size="28" color="primary">mdi-credit-card-wireless</v-icon>
               </v-avatar>
               <div>
-                <h2 class="text-h5 font-weight-bold mb-1">مواقع الصراف الآلي (ATM)</h2>
-                <p class="text-caption text-medium-emphasis mb-0">اكتشف ماكينات السحب الأقرب لك وتحقق من حالتها لحظيًا</p>
+                <h2 class="text-h5 font-weight-bold mb-1">شبكة نقاط البيع الذكية (POS)</h2>
+                <p class="text-caption text-medium-emphasis mb-0">تابع أجهزة Ru'ya POS، حالتها التشغيلية، والعروض الترويجية النشطة</p>
               </div>
             </div>
 
@@ -31,7 +31,7 @@
                 :items="statusOptions"
                 item-title="label"
                 item-value="value"
-                label="حالة الماكينة"
+                label="حالة الجهاز"
                 dense
                 hide-details
                 variant="outlined"
@@ -175,7 +175,7 @@
                         :class="atm.status === 'available' ? 'pulse-success' : 'pulse-error'"
                       >
                         <v-img v-if="atm.image" :src="atm.image" cover />
-                        <v-icon v-else size="32">{{ atm.type === 'pos' ? 'mdi-credit-card-wireless' : 'mdi-cash-multiple' }}</v-icon>
+                        <v-icon v-else size="32">mdi-credit-card-wireless</v-icon>
                       </v-avatar>
                       <div class="status-indicator" :class="atm.status" />
                     </template>
@@ -191,17 +191,21 @@
                       <v-icon size="14" class="mr-1">mdi-map-marker</v-icon>
                       {{ atm.address }}
                     </v-list-item-subtitle>
+                    <v-list-item-subtitle v-if="atm.merchant">
+                      <v-icon size="14" class="mr-1">mdi-storefront-outline</v-icon>
+                      {{ atm.merchant }}
+                    </v-list-item-subtitle>
 
                     <template #append>
                       <div class="d-flex flex-column align-end ga-2">
                         <v-chip
                           size="x-small"
-                          :color="atm.type === 'pos' ? 'deep-purple' : 'primary'"
+                          color="deep-purple"
                           variant="tonal"
                           class="type-chip"
                         >
-                          <v-icon start size="10">{{ atm.type === 'pos' ? 'mdi-credit-card-outline' : 'mdi-cash-multiple' }}</v-icon>
-                          {{ atm.type === 'pos' ? 'POS' : 'ATM' }}
+                          <v-icon start size="10">mdi-credit-card-outline</v-icon>
+                          POS
                         </v-chip>
                         <v-chip
                           size="x-small"
@@ -255,57 +259,29 @@
           <v-col cols="12" md="8" class="pa-0 order-1 order-md-2">
             <div class="map-wrapper">
               <div id="map" ref="mapEl" class="rounded-0 rounded-md-xl" />
-              
-              <!-- Map Controls -->
-              <!-- <div class="map-controls">
-                <v-btn
-                  icon
-                  size="large"
-                  class="mb-2 elevation-4"
-                  @click="toggleMapStyle"
-                >
-                  <v-icon>{{ mapStyle === 'streets' ? 'mdi-satellite-variant' : 'mdi-map' }}</v-icon>
-                </v-btn>
-                <v-btn
-                  icon
-                  size="large"
-                  class="mb-2 elevation-4"
-                  @click="toggle3D"
-                >
-                  <v-icon>{{ is3D ? 'mdi-axis-arrow' : 'mdi-video-3d' }}</v-icon>
-                </v-btn>
-                <v-btn
-                  icon
-                  size="large"
-                  class="mb-2 elevation-4"
-                  @click="fitToResults"
-                >
-                  <v-icon>mdi-fit-to-page-outline</v-icon>
-                </v-btn>
-                <v-btn
-                  icon
-                  size="large"
-                  class="elevation-4"
-                  @click="locateMe"
-                >
-                  <v-icon>mdi-crosshairs-gps</v-icon>
-                </v-btn>
-              </div> -->
 
               <!-- Legend -->
               <v-card class="map-legend pa-3 elevation-8">
                 <div class="text-subtitle-2 font-weight-bold mb-2">الدليل</div>
                 <div class="d-flex align-center mb-2">
                   <div class="legend-indicator success-indicator mr-2" />
-                  <span class="text-caption">متاحة (بها سيولة)</span>
+                  <span class="text-caption">متاحة (نشطة)</span>
                 </div>
                 <div class="d-flex align-center mb-2">
                   <div class="legend-indicator error-indicator mr-2" />
-                  <span class="text-caption">غير متاحة (لا سيولة)</span>
+                  <span class="text-caption">غير متاحة (خارج الخدمة)</span>
+                </div>
+                <div class="d-flex align-center mb-2">
+                  <div class="legend-indicator pos-indicator mr-2" />
+                  <span class="text-caption">أجهزة Ru'ya POS</span>
                 </div>
                 <div class="d-flex align-center">
                   <v-icon size="16" color="error" class="mr-2">mdi-account</v-icon>
                   <span class="text-caption">موقعك الحالي</span>
+                </div>
+                <div class="d-flex align-center mt-2">
+                  <v-icon size="16" color="warning" class="mr-2">mdi-star-shooting</v-icon>
+                  <span class="text-caption">عرض ترويجي متاح</span>
                 </div>
               </v-card>
 
@@ -323,7 +299,7 @@
         </v-row>
 
         <!-- Enhanced Details Dialog -->
-        <!-- <v-dialog v-model="detailsOpen" max-width="600">
+        <v-dialog v-model="detailsOpen" max-width="600">
           <v-card v-if="selectedAtm" class="details-dialog">
             <v-img
               v-if="selectedAtm.image"
@@ -459,7 +435,7 @@
               </v-btn>
             </v-card-actions>
           </v-card>
-        </v-dialog> -->
+        </v-dialog>
       </v-container>
     </v-main>
   </v-layout>
@@ -480,8 +456,6 @@ type ATM = LocationPoint;
  * State
  */
 const DEFAULT_RADIUS_KM = 1;
-const GHABAT_ATM_LIMIT = 3;
-const GHABAT_AL_NASR_COORDS = Object.freeze({ lat: 32.8754, lng: 13.1652 });
 
 const search = ref('');
 const statusFilter = ref<'all' | 'available' | 'unavailable'>('all');
@@ -498,7 +472,6 @@ const is3D = ref(false);
 // Map refs
 const mapEl = ref<HTMLDivElement | null>(null);
 const mapReady = ref(false);
-const ghabatFocusApplied = ref(false);
 let map: any = null;
 const markers = new Map<string, any>();
 let userMarker: any = null;
@@ -506,12 +479,12 @@ let userRadius: any = null;
 
 // User location
 const userLocation = ref<{ lat: number; lng: number } | null>(null);
+
 /**
  * Sample ATM Data
  */
 const { locations } = useLocationsData();
-const atms = computed<ATM[]>(() => locations.value.filter((item) => item.type === 'atm'));
-const ghabatAtms = computed<ATM[]>(() => getNearestAtms(GHABAT_AL_NASR_COORDS, GHABAT_ATM_LIMIT));
+const atms = computed<ATM[]>(() => locations.value.filter((item) => item.type === 'pos'));
 
 /**
  * UI Options
@@ -729,7 +702,7 @@ async function refreshMarkers() {
           <div class="tooltip-content">
             <div class="tooltip-title">${atm.name}</div>
             <div class="tooltip-bank">${atm.bank}</div>
-            <div class="tooltip-type">${atm.type === 'pos' ? 'نقطة بيع POS' : 'ماكينة ATM'}</div>
+            <div class="tooltip-type">نقطة بيع POS</div>
             <div class="tooltip-status ${atm.status}">
               ${atm.status === 'available' ? '✓ متاحة' : '✗ غير متاحة'}
             </div>
@@ -804,18 +777,6 @@ function fitToResults() {
   const L = (window as any).L;
   const bounds = L.latLngBounds(filteredAtms.value.map(a => [a.lat, a.lng]));
   map.fitBounds(bounds, { padding: [50, 50] });
-}
-
-function focusGhabatNasrArea(force = false) {
-  if (!map || !ghabatAtms.value.length) return;
-
-  if (!force && ghabatFocusApplied.value) return;
-
-  // @ts-ignore
-  const L = (window as any).L;
-  const bounds = L.latLngBounds(ghabatAtms.value.map(a => [a.lat, a.lng]));
-  map.fitBounds(bounds, { padding: [60, 60], maxZoom: 15 });
-  ghabatFocusApplied.value = true;
 }
 
 function clearUserLocationLayers() {
@@ -947,7 +908,7 @@ function exportCsv() {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = 'atm-locations.csv';
+  a.download = 'pos-locations.csv';
   a.click();
   URL.revokeObjectURL(url);
 }
@@ -964,28 +925,12 @@ function haversine(lat1: number, lon1: number, lat2: number, lon2: number) {
   return R * c;
 }
 
-function getNearestAtms(point: { lat: number; lng: number }, limit: number): ATM[] {
-  return atms.value
-    .map(atm => ({ atm, distance: haversine(point.lat, point.lng, atm.lat, atm.lng) }))
-    .sort((a, b) => a.distance - b.distance)
-    .slice(0, limit)
-    .map(({ atm, distance }) => ({ ...atm, distanceKm: distance }));
-}
-
 /**
  * Watchers
  */
 watch([filteredAtms], () => {
   refreshMarkers();
 });
-
-watch(
-  () => ({ ready: mapReady.value, count: ghabatAtms.value.length }),
-  ({ ready, count }) => {
-    if (!ready || !count || ghabatFocusApplied.value) return;
-    focusGhabatNasrArea();
-  }
-);
 
 onMounted(() => {
   if (process.client) {
@@ -995,7 +940,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
-#atm-finder {
+#pos-finder {
   direction: rtl;
   background: #ffffff;
   min-height: 100vh;
@@ -1051,7 +996,6 @@ onMounted(() => {
 .content-row {
   min-height: calc(100vh - 120px);
 }
-
 
 .sidebar-search-action {
   direction: rtl;

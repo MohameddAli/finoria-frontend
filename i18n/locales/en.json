@@ -21,6 +21,7 @@
       "profile": "Profile",
       "users": "Users",
       "news": "Banking News",
+      "pos-locations": "POS Locations",
       "reports": "Reports",
       "transactions": "Transactions",
       "wallets": "Wallets",
@@ -187,7 +188,11 @@
     "exportDemo": "Export Demo",
     "printDemo": "Print Demo",
     "print-demo": "Print Demo",
-    "printDialogDemo": "Modern Print Component Demo"
+    "printDialogDemo": "Modern Print Component Demo",
+    "sections": {
+      "shortcuts": "Shortcuts",
+      "explore": "Explore"
+    }
   },
   "table": {
     "id": "ID",
@@ -219,6 +224,14 @@
     "canceledAt": "Canceled At",
     "deliveredBy": "Delivered By",
     "deliveredDate": "Delivered Date"
+  },
+  "locations": {
+    "alerts": {
+      "locating": "Locating you to show nearby points within 1 km…",
+      "permissionDenied": "We couldn't access your location. Showing all locations instead.",
+      "unsupported": "Geolocation isn't available in this browser. Showing all locations.",
+      "unavailable": "We couldn't determine your location. Showing all locations."
+    }
   },
   "attributes": {
     "reference_number": "Reference Number",

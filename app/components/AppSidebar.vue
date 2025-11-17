@@ -53,7 +53,17 @@
 
     <!-- Navigation Menu -->
     <v-list class="navigation-list pa-2" nav>
-      <template v-for="(item, index) in navigationItems" :key="index">
+      <template v-for="section in navigationSections" :key="section.key">
+        <div
+          v-if="!railMode"
+          class="sidebar-subheader text-caption text-medium-emphasis d-flex align-center px-4 py-2"
+        >
+          <v-icon v-if="section.icon" :icon="section.icon" size="16" class="me-2" />
+          <span>{{ $t(section.title) }}</span>
+        </div>
+        <v-divider v-else class="section-divider mx-auto my-3" />
+
+        <template v-for="item in section.items" :key="item.value">
         <!-- Menu Group with Children -->
         <!-- @ts-ignore -->
         <v-list-group
@@ -172,8 +182,9 @@
           </template>
         </v-list-item>
 
-        <!-- Divider -->
-        <v-divider v-if="item.divider" class="my-3 mx-4" />
+          <!-- Divider -->
+          <v-divider v-if="item.divider" class="my-3 mx-4" />
+        </template>
       </template>
     </v-list>
 
@@ -284,6 +295,13 @@ interface NavigationItem {
   divider?: boolean;
 }
 
+interface SidebarSection {
+  key: string;
+  title: string;
+  icon?: string;
+  items: NavigationItem[];
+}
+
 const { mobile } = useDisplay();
 const appStore = useAppStore();
 const authStore = useAuthStore();
@@ -326,28 +344,28 @@ const navigationItems = ref<NavigationItem[]>([
     value: "atm-locations",
   },
   {
+    title: "navigation.posLocations",
+    icon: "mdi-credit-card-wireless",
+    to: "/pos-locations",
+    value: "pos-locations",
+  },
+  {
     title: "navigation.news",
     icon: "mdi-newspaper-variant-outline",
     to: "/news",
     value: "news",
   },
-  {
-    title: "navigation.beneficiaries",
-    icon: "mdi-account-heart-outline",
-    to: "/beneficiaries",
-    value: "beneficiaries",
-  },
+  // {
+  //   title: "navigation.beneficiaries",
+  //   icon: "mdi-account-heart-outline",
+  //   to: "/beneficiaries",
+  //   value: "beneficiaries",
+  // },
   // {
   //   title: "navigation.projectSupportRequest",
   //   icon: "mdi-hand-heart-outline",
   //   to: "/project-support-request",
   //   value: "project-support-request",
-  // },
-  // {
-  //   title: "navigation.posLocations",
-  //   icon: "mdi-map-marker-radius",
-  //   to: "/pos-locations",
-  //   value: "pos-locations",
   // },
   // {
   //   title: "navigation.installmentPaymentLink",
@@ -374,6 +392,40 @@ const navigationItems = ref<NavigationItem[]>([
   //   value: "multi-steps-form",
   // },
 ]);
+
+const highlightedRoutes = ["atm-locations", "pos-locations", "news"];
+
+const navigationSections = computed<SidebarSection[]>(() => {
+  const highlightSet = new Set(highlightedRoutes);
+  const highlightItems = navigationItems.value.filter((item) =>
+    highlightSet.has(item.value)
+  );
+  const remainingItems = navigationItems.value.filter(
+    (item) => !highlightSet.has(item.value)
+  );
+
+  const sections: SidebarSection[] = [];
+
+  if (highlightItems.length) {
+    sections.push({
+      key: "shortcuts",
+      title: "navigation.sections.shortcuts",
+      icon: "mdi-star-outline",
+      items: highlightItems,
+    });
+  }
+
+  if (remainingItems.length) {
+    sections.push({
+      key: "explore",
+      title: "navigation.sections.explore",
+      icon: "mdi-compass-outline",
+      items: remainingItems,
+    });
+  }
+
+  return sections;
+});
 
 const railMode = computed(() => !mobile.value && appStore.sidebarMini);
 const railItemVars = {
@@ -424,6 +476,17 @@ watch(
 .navigation-list {
   flex: 1;
   overflow-y: auto;
+}
+
+.sidebar-subheader {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+}
+
+.section-divider {
+  width: 36px;
+  opacity: 0.4;
 }
 
 /* Icon alignment improvements for compact mode */

@@ -23,7 +23,7 @@
         }"
       >
         <!-- Breadcrumbs -->
-        <div
+        <!-- <div
           v-if="showBreadcrumbs"
           class="breadcrumbs-container mb-4"
           :dir="locale === 'ar' ? 'rtl' : 'ltr'"
@@ -49,10 +49,10 @@
               <v-icon size="14">{{ chevronDivider }}</v-icon>
             </template>
           </v-breadcrumbs>
-        </div>
+        </div> -->
 
         <!-- Page Content -->
-        <div class="page-content">
+        <div class="page-content mt-4">
           <div :key="route.path" class="page-wrapper">
             <!-- Page Header -->
             <!-- <div v-if="pageTitle" class="page-header mb-6">
